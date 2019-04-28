@@ -1285,11 +1285,6 @@ var bcBasedExplorer = {
 		});
 	};
 
-	/* bit(coinb.in) api vars */
-	coinjs.host = '//coinb.in/api/';
-	coinjs.uid = '1';
-	coinjs.key = '12345678901234567890123456789012';
-	
 	var providers = {
 		bitcoin: {
 			listUnspent: {

@@ -542,7 +542,7 @@
 		return ret;
 	}	
 
-	coinjs.	bech32_verifyChecksum = function(hrp, data) {
+	coinjs.bech32_verifyChecksum = function(hrp, data) {
 		return coinjs.bech32_polymod(coinjs.bech32_hrpExpand(hrp).concat(data)) === 1;
 	}
 
@@ -1241,7 +1241,7 @@
 		/* add unspent to transaction */
 		r.addUnspent = function(address, callback, script, segwit, sequence){
 			var self = this;
-			/*this.listUnspent(address, function(data){ TODO: not available anymore
+			this.listUnspent(address, function(data){
 				var s = coinjs.script();
 				var value = 0;
 				var total = 0;
@@ -1285,7 +1285,7 @@
 				x.value = value;
 				x.total = total;
 				return callback(x);
-			});*/
+			});
 		}
 
 		/* add unspent and sign */
@@ -1697,6 +1697,7 @@
 		}
 		
 		/* sign a multisig input */
+/*
 		r.signmultisig = function(index, wif){
 			var newSignature = this.transactionSig(index, wif);
 
@@ -1734,7 +1735,7 @@
 			this.ins[index].script = s;
 			return true;
 		}
-
+*/
 		/* sign segwit input */
 		r.signsegwit = function(index, wif, sigHashType){
 			var shType = sigHashType || 1;
