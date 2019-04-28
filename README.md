@@ -22,3 +22,6 @@ Github URL: https://github.com/indiciumfund/cointoolkit
 - Brain wallet support.
 - Offline qrcode creator and scanning tool
 - HD (bip32) support
+- Replace by fee (RBF) Support
+- Segwit Support
+- Bech32 address support
