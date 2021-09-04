@@ -1203,7 +1203,7 @@ $(document).ready(function() {
 					$.ajax ({
 						type: "POST",
 						url: "https://api.blockcypher.com/v1/btc/main/txs/push?token=c351f5d9782543b8b0416b8dff76b8e2",
-						data: {"tx":$("#rawTransaction").val()},
+						data: JSON.stringify({"tx":$("#rawTransaction").val()}),
 						dataType: "json",
 						error: function(data) {
 							var r = '';
@@ -1213,15 +1213,15 @@ $(document).ready(function() {
 							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 						},
 						success: function(data) {
-							if(data.hash){
-								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.hash);
+							if(data.tx.hash){
+								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.tx.hash);
 							} else {
 								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-							}				
+							}
 						},
 						complete: function(data, status) {
 							$("#rawTransactionStatus").fadeOut().fadeIn();
-							$(thisbtn).html(orig_html).attr('disabled',false);				
+							$(thisbtn).html(orig_html).attr('disabled',false);
 						}
 					});
 				},
