@@ -737,9 +737,7 @@ $(document).ready(function() {
 						console.log("raw inputs",inputs,"paths",paths,"outputs",outputsBuffer,"time",currenttransaction.nTime);
 
 						var timeStamp = undefined;
-						if (isPeercoin) {
-							timeStamp = currenttransaction.nTime;
-							}
+						if (isPeercoin){timeStamp = currenttransaction.nTime;}
 
 						// sort array
 
@@ -2156,16 +2154,23 @@ $(document).ready(function() {
 
 	$("#transactionBtn").click(function(){
 		var tx = coinjs.transaction();
+
+		if ($("#coinSelector").val() == "peercoin" || $("#coinSelector").val() == "peercoin_testnet") {
+			tx.version = 3;
+			tx.timestamp = null
+			coinjs.txExtraTimeField = false
+		} else {
+			if(($("#nTime").val()).match(/^[0-9]+$/g)){
+				tx.nTime = $("#nTime").val()*1;
+			}
+		}
+
 		var estimatedTxSize = 10; // <4:version><1:txInCount><1:txOutCount><4:nLockTime>
 
 		$("#transactionCreate, #transactionCreateStatus").addClass("hidden");
 
 		if(($("#nLockTime").val()).match(/^[0-9]+$/g)){
 			tx.lock_time = $("#nLockTime").val()*1;
-		}
-
-		if(($("#nTime").val()).match(/^[0-9]+$/g)){
-			tx.nTime = $("#nTime").val()*1;
 		}
 
 		$("#inputs .row").removeClass('has-error');
