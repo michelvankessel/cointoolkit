@@ -24,6 +24,7 @@
 	coinjs.txExtraTimeFieldValue = false;
 	coinjs.txExtraUnitField = false;
 	coinjs.txExtraUnitFieldValue = false;
+	
 	coinjs.decimalPlaces = 8;
 	coinjs.symbol = 'BTC';
 	
@@ -2110,6 +2111,7 @@
 			}
 
 			obj.lock_time = readAsInt(4);
+			
 			if (coinjs.txExtraUnitField) {
 				obj.nUnit = readAsInt(1);
 			}
