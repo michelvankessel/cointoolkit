@@ -2881,7 +2881,7 @@ window.Buffer = buffer.Buffer;
 
 	(function (module, exports) {
 	/* eslint-disable node/no-deprecated-api */
-	var buffer = require$$0__default$1["default"];
+	var buffer = window.Buffer;
 	var Buffer = buffer.Buffer;
 
 	// alternative to using Object.keys for old browsers
