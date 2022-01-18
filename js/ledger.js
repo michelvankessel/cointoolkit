@@ -2882,7 +2882,7 @@ window.Buffer = buffer.Buffer;
 	(function (module, exports) {
 	/* eslint-disable node/no-deprecated-api */
 	var buffer = window.Buffer;
-	var Buffer = buffer.Buffer;
+	var Buffer = buffer;
 
 	// alternative to using Object.keys for old browsers
 	function copyProps (src, dst) {
