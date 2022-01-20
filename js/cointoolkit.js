@@ -767,7 +767,8 @@ $(document).ready(function() {
 									}
 								}
 						else {
-							result = await appBtc.createPaymentTransactionNew(inputs=inputs, associatedKeysets=paths, outputScriptHex=outputsBuffer, initialTimestamp=timeStamp);
+							var params = {inputs:inputs, associatedKeysets:paths, outputScriptHex:outputsBuffer, initialTimestamp:timeStamp}
+							result = await appBtc.createPaymentTransactionNew(params);
 							callback(result);
 							}
 						}
