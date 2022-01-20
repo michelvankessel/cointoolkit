@@ -748,7 +748,8 @@ $(document).ready(function() {
 						var result=false;
 						if (currenttransaction.ins[0].script.buffer.slice(-1) == coinjs.opcode.OP_CHECKMULTISIG) {
 							// check if public key is part of multisig
-							result = await appBtc.signP2SHTransaction(inputs, paths, outputsBuffer, undefined, hashType, false, undefined, timeStamp);
+							var params = {inputs:inputs, associatedKeysets:paths, outputScriptHex:outputsBuffer, initialTimestamp:timeStamp, sigHashType: hashType,  additionals: ["peercoin"]};
+							result = await appBtc.signP2SHTransaction(params);
 
 							var success=false;
 
@@ -767,7 +768,7 @@ $(document).ready(function() {
 									}
 								}
 						else {
-							var params = {inputs:inputs, associatedKeysets:paths, outputScriptHex:outputsBuffer, initialTimestamp:timeStamp, additionals: ["peercoin"]}
+							var params = {inputs:inputs, associatedKeysets:paths, outputScriptHex:outputsBuffer, initialTimestamp:timeStamp, additionals: ["peercoin"]};
 							result = await appBtc.createPaymentTransactionNew(params);
 							callback(result);
 							}
