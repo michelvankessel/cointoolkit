@@ -767,7 +767,7 @@ $(document).ready(function() {
 									}
 								}
 						else {
-							var params = {inputs:inputs, associatedKeysets:paths, outputScriptHex:outputsBuffer, initialTimestamp:timeStamp}
+							var params = {inputs:inputs, associatedKeysets:paths, outputScriptHex:outputsBuffer, initialTimestamp:timeStamp, additionals: ["peercoin"]}
 							result = await appBtc.createPaymentTransactionNew(params);
 							callback(result);
 							}
