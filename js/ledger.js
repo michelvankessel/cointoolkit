@@ -32925,35 +32925,6 @@ window.Buffer = buffer.Buffer;
 	  subset: subset_1$1,
 	};
 
-	function unsafeTo64bitLE(n) {
-	    // we want to represent the input as a 8-bytes array
-	    if (n > Number.MAX_SAFE_INTEGER) {
-	        throw new Error("Can't convert numbers > MAX_SAFE_INT");
-	    }
-	    var byteArray = Buffer$m.alloc(8, 0);
-	    for (var index = 0; index < byteArray.length; index++) {
-	        var byte = n & 0xff;
-	        byteArray[index] = byte;
-	        n = (n - byte) / 256;
-	    }
-	    return byteArray;
-	}
-	function unsafeFrom64bitLE(byteArray) {
-	    var value = 0;
-	    if (byteArray.length != 8) {
-	        throw new Error("Expected Bufffer of lenght 8");
-	    }
-	    if (byteArray[7] != 0) {
-	        throw new Error("Can't encode numbers > MAX_SAFE_INT");
-	    }
-	    if (byteArray[6] > 0x1f) {
-	        throw new Error("Can't encode numbers > MAX_SAFE_INT");
-	    }
-	    for (var i = byteArray.length - 1; i >= 0; i--) {
-	        value = value * 256 + byteArray[i];
-	    }
-	    return value;
-	}
 	var BufferWriter = /** @class */ (function () {
 	    function BufferWriter() {
 	        this.bufs = [];
@@ -32973,8 +32944,7 @@ window.Buffer = buffer.Buffer;
 	        this.write(4, function (b) { return b.writeUInt32LE(i, 0); });
 	    };
 	    BufferWriter.prototype.writeUInt64 = function (i) {
-	        var bytes = unsafeTo64bitLE(i);
-	        this.writeSlice(bytes);
+	        this.write(8, function (b) { return b.writeBigUInt64LE(i, 0); });
 	    };
 	    BufferWriter.prototype.writeVarInt = function (i) {
 	        this.bufs.push(varuintBitcoin.encode(i));
@@ -33016,9 +32986,9 @@ window.Buffer = buffer.Buffer;
 	        return result;
 	    };
 	    BufferReader.prototype.readUInt64 = function () {
-	        var buf = this.readSlice(8);
-	        var n = unsafeFrom64bitLE(buf);
-	        return n;
+	        var result = this.buffer.readBigUInt64LE(this.offset);
+	        this.offset += 8;
+	        return result;
 	    };
 	    BufferReader.prototype.readVarInt = function () {
 	        var vi = varuintBitcoin.decode(this.buffer, this.offset);
@@ -33240,7 +33210,7 @@ window.Buffer = buffer.Buffer;
 	        if (userSuppliedRedeemScript &&
 	            !expectedRedeemScript.equals(userSuppliedRedeemScript)) {
 	            // At what point might a user set the redeemScript on its own?
-	            throw new Error("User-supplied redeemScript ".concat(userSuppliedRedeemScript.toString("hex"), " doesn't\n       match expected ").concat(expectedRedeemScript.toString("hex"), " for input ").concat(i));
+	            throw new Error("User-supplied redeemScript " + userSuppliedRedeemScript.toString("hex") + " doesn't\n       match expected " + expectedRedeemScript.toString("hex") + " for input " + i);
 	        }
 	        this.psbt.setInputRedeemScript(i, expectedRedeemScript);
 	        this.psbt.setInputWitnessUtxo(i, spentOutput.amount, spentOutput.cond.scriptPubKey);
@@ -33455,7 +33425,7 @@ window.Buffer = buffer.Buffer;
 	}());
 	function createKey$1(masterFingerprint, path, xpub) {
 	    var accountPath = pathArrayToString(path);
-	    return "[".concat(masterFingerprint.toString("hex")).concat(accountPath.substring(1), "]").concat(xpub, "/**");
+	    return "[" + masterFingerprint.toString("hex") + accountPath.substring(1) + "]" + xpub + "/**";
 	}
 
 	/**
@@ -33487,7 +33457,7 @@ window.Buffer = buffer.Buffer;
 	    var outputCount = psbt.getGlobalOutputCount();
 	    tx.writeVarInt(outputCount);
 	    for (var i = 0; i < outputCount; i++) {
-	        tx.writeUInt64(psbt.getOutputAmount(i));
+	        tx.writeUInt64(BigInt(psbt.getOutputAmount(i)));
 	        tx.writeVarSlice(psbt.getOutputScript(i));
 	    }
 	    tx.writeSlice(witnessWriter.buffer());
@@ -33741,8 +33711,7 @@ window.Buffer = buffer.Buffer;
 	        this.setOutput(outputIndex, psbtOut.AMOUNT, b(), uint64LE(amount));
 	    };
 	    PsbtV2.prototype.getOutputAmount = function (outputIndex) {
-	        var buf = this.getOutput(outputIndex, psbtOut.AMOUNT, b());
-	        return unsafeFrom64bitLE(buf);
+	        return Number(this.getOutput(outputIndex, psbtOut.AMOUNT, b()).readBigUInt64LE(0));
 	    };
 	    PsbtV2.prototype.setOutputScript = function (outputIndex, scriptPubKey) {
 	        this.setOutput(outputIndex, psbtOut.SCRIPT, b(), scriptPubKey);
@@ -33982,7 +33951,9 @@ window.Buffer = buffer.Buffer;
 	    return b;
 	}
 	function uint64LE(n) {
-	    return unsafeTo64bitLE(n);
+	    var b = Buffer$m.alloc(8);
+	    b.writeBigUInt64LE(BigInt(n), 0);
+	    return b;
 	}
 	function varint(n) {
 	    var b = new BufferWriter();
@@ -34014,11 +33985,11 @@ window.Buffer = buffer.Buffer;
 	        var legacyPubkeys = psbt.getInputKeyDatas(i, psbtIn.PARTIAL_SIG);
 	        var taprootSig = psbt.getInputTapKeySig(i);
 	        if (legacyPubkeys.length == 0 && !taprootSig) {
-	            throw Error("No signature for input ".concat(i, " present"));
+	            throw Error("No signature for input " + i + " present");
 	        }
 	        if (legacyPubkeys.length > 0) {
 	            if (legacyPubkeys.length > 1) {
-	                throw Error("Expected exactly one signature, got ".concat(legacyPubkeys.length));
+	                throw Error("Expected exactly one signature, got " + legacyPubkeys.length);
 	            }
 	            if (taprootSig) {
 	                throw Error("Both taproot and non-taproot signatures present.");
@@ -34329,7 +34300,7 @@ window.Buffer = buffer.Buffer;
 	                        xpub = _b.sent();
 	                        xpubComponents = getXpubComponents(xpub);
 	                        if (xpubComponents.version != xpubVersion) {
-	                            throw new Error("Expected xpub version ".concat(xpubVersion, " doesn't match the xpub version from the device ").concat(xpubComponents.version));
+	                            throw new Error("Expected xpub version " + xpubVersion + " doesn't match the xpub version from the device " + xpubComponents.version);
 	                        }
 	                        return [2 /*return*/, xpub];
 	                }
@@ -34430,7 +34401,7 @@ window.Buffer = buffer.Buffer;
 	                    case 1:
 	                        masterFp = _a.sent();
 	                        accountType = accountTypeFromArg(arg, psbt, masterFp);
-	                        if (arg.lockTime != undefined) {
+	                        if (arg.lockTime) {
 	                            // The signer will assume locktime 0 if unset
 	                            psbt.setGlobalFallbackLocktime(arg.lockTime);
 	                        }
@@ -34541,7 +34512,7 @@ window.Buffer = buffer.Buffer;
 	                        // going on.
 	                        for (i = 0; i < accountPath.length; i++) {
 	                            if (accountPath[i] != pathElems[i]) {
-	                                throw new Error("Path ".concat(path, " not in account ").concat(pathArrayToString(accountPath)));
+	                                throw new Error("Path " + path + " not in account " + pathArrayToString(accountPath));
 	                            }
 	                        }
 	                        return [4 /*yield*/, this.client.getExtendedPubkey(false, pathElems)];
@@ -34569,10 +34540,10 @@ window.Buffer = buffer.Buffer;
 	                        spentOutputIndex = input[1];
 	                        redeemScript = input[2] ? Buffer$m.from(input[2], "hex") : undefined;
 	                        sequence = input[3];
-	                        if (sequence != undefined) {
+	                        if (sequence) {
 	                            psbt.setInputSequence(i, sequence);
 	                        }
-	                        if (sigHashType != undefined) {
+	                        if (sigHashType) {
 	                            psbt.setInputSighashType(i, sigHashType);
 	                        }
 	                        inputTxBuffer = serializeTransaction(inputTx, true);
@@ -34623,7 +34594,7 @@ window.Buffer = buffer.Buffer;
 	                                // No legacy BIP32_DERIVATION, assume we're using taproot.
 	                                pubkey = psbt.getInputKeyDatas(k, psbtIn.TAP_BIP32_DERIVATION);
 	                                if (pubkey.length == 0) {
-	                                    throw Error("Missing pubkey derivation for input ".concat(k));
+	                                    throw Error("Missing pubkey derivation for input " + k);
 	                                }
 	                                psbt.setInputTapKeySig(k, v);
 	                            }
@@ -36682,7 +36653,7 @@ window.Buffer = buffer.Buffer;
 	        return _this;
 	    }
 	    GetPreimageCommand.prototype.execute = function (request) {
-	        var req = Buffer$m.from(request.subarray(1));
+	        var req = request.subarray(1);
 	        // we expect no more data to read
 	        if (req.length != 1 + 32) {
 	            throw new Error("Invalid request, unexpected trailing data");
@@ -36711,10 +36682,10 @@ window.Buffer = buffer.Buffer;
 	            return Buffer$m.concat([
 	                preimage_len_varint,
 	                Buffer$m.from([payload_size]),
-	                Buffer$m.from(known_preimage.subarray(0, payload_size)),
+	                known_preimage.subarray(0, payload_size),
 	            ]);
 	        }
-	        throw Error("Requested unknown preimage for: ".concat(req_hash_hex));
+	        throw Error("Requested unknown preimage for: " + req_hash_hex);
 	    };
 	    return GetPreimageCommand;
 	}(ClientCommand));
@@ -36729,7 +36700,7 @@ window.Buffer = buffer.Buffer;
 	    }
 	    GetMerkleLeafProofCommand.prototype.execute = function (request) {
 	        var _a;
-	        var req = Buffer$m.from(request.subarray(1));
+	        var req = request.subarray(1);
 	        if (req.length < 32 + 1 + 1) {
 	            throw new Error("Invalid request, expected at least 34 bytes");
 	        }
@@ -36747,7 +36718,7 @@ window.Buffer = buffer.Buffer;
 	        }
 	        var mt = this.known_trees.get(hash_hex);
 	        if (!mt) {
-	            throw Error("Requested Merkle leaf proof for unknown tree: ".concat(hash_hex));
+	            throw Error("Requested Merkle leaf proof for unknown tree: " + hash_hex);
 	        }
 	        if (leaf_index >= tree_size || mt.size() != tree_size) {
 	            throw Error("Invalid index or tree size.");
@@ -36779,7 +36750,7 @@ window.Buffer = buffer.Buffer;
 	        return _this;
 	    }
 	    GetMerkleLeafIndexCommand.prototype.execute = function (request) {
-	        var req = Buffer$m.from(request.subarray(1));
+	        var req = request.subarray(1);
 	        if (req.length != 32 + 32) {
 	            throw new Error("Invalid request, unexpected trailing data");
 	        }
@@ -36797,7 +36768,7 @@ window.Buffer = buffer.Buffer;
 	        var leef_hash_hex = leef_hash.toString("hex");
 	        var mt = this.known_trees.get(root_hash_hex);
 	        if (!mt) {
-	            throw Error("Requested Merkle leaf index for unknown root: ".concat(root_hash_hex));
+	            throw Error("Requested Merkle leaf index for unknown root: " + root_hash_hex);
 	        }
 	        var leaf_index = 0;
 	        var found = 0;
@@ -36876,7 +36847,7 @@ window.Buffer = buffer.Buffer;
 	            for (var commands_1 = __values$3(commands), commands_1_1 = commands_1.next(); !commands_1_1.done; commands_1_1 = commands_1.next()) {
 	                var cmd = commands_1_1.value;
 	                if (this.commands.has(cmd.code)) {
-	                    throw new Error("Multiple commands with code ".concat(cmd.code));
+	                    throw new Error("Multiple commands with code " + cmd.code);
 	                }
 	                this.commands.set(cmd.code, cmd);
 	            }
@@ -36925,7 +36896,7 @@ window.Buffer = buffer.Buffer;
 	        var cmdCode = request[0];
 	        var cmd = this.commands.get(cmdCode);
 	        if (!cmd) {
-	            throw new Error("Unexpected command code ".concat(cmdCode));
+	            throw new Error("Unexpected command code " + cmdCode);
 	        }
 	        return cmd.execute(request);
 	    };
@@ -37192,16 +37163,16 @@ window.Buffer = buffer.Buffer;
 	    }
 	    transaction.inputs.forEach(function (_a, i) {
 	        var prevout = _a.prevout, script = _a.script, sequence = _a.sequence;
-	        str += "\ninput ".concat(i, ":");
-	        str += " prevout ".concat(prevout.toString("hex"));
-	        str += " script ".concat(script.toString("hex"));
-	        str += " sequence ".concat(sequence.toString("hex"));
+	        str += "\ninput " + i + ":";
+	        str += " prevout " + prevout.toString("hex");
+	        str += " script " + script.toString("hex");
+	        str += " sequence " + sequence.toString("hex");
 	    });
 	    (transaction.outputs || []).forEach(function (_a, i) {
 	        var amount = _a.amount, script = _a.script;
-	        str += "\noutput ".concat(i, ":");
-	        str += " amount ".concat(amount.toString("hex"));
-	        str += " script ".concat(script.toString("hex"));
+	        str += "\noutput " + i + ":";
+	        str += " amount " + amount.toString("hex");
+	        str += " script " + script.toString("hex");
 	    });
 	    return str;
 	}
@@ -37220,10 +37191,13 @@ window.Buffer = buffer.Buffer;
 	    var nVersionGroupId = Buffer$m.alloc(0);
 	    var extraData = Buffer$m.alloc(0);
 	    var isDecred = additionals.includes("decred");
+	    var isPeercoin = additionals.includes("peercoin");
 	    var transaction = Buffer$m.from(transactionHex, "hex");
 	    var version = transaction.slice(offset, offset + 4);
 	    var overwinter = version.equals(Buffer$m.from([0x03, 0x00, 0x00, 0x80])) ||
 	        version.equals(Buffer$m.from([0x04, 0x00, 0x00, 0x80]));
+	    var oldpeercoin = version.equals(Buffer$m.from([0x01, 0x00, 0x00, 0x00])) ||
+	        version.equals(Buffer$m.from([0x02, 0x00, 0x00, 0x00]));
 	    offset += 4;
 	    if (!hasTimestamp &&
 	        isSegwitSupported &&
@@ -37233,8 +37207,11 @@ window.Buffer = buffer.Buffer;
 	        witness = true;
 	    }
 	    if (hasTimestamp) {
-	        timestamp = transaction.slice(offset, 4 + offset);
-	        offset += 4;
+	        if (!isPeercoin ||
+	            (isPeercoin && oldpeercoin)) {
+	            timestamp = transaction.slice(offset, 4 + offset);
+	            offset += 4;
+	        }
 	    }
 	    if (overwinter) {
 	        nVersionGroupId = transaction.slice(offset, 4 + offset);
@@ -37337,7 +37314,7 @@ window.Buffer = buffer.Buffer;
 	        nExpiryHeight: nExpiryHeight,
 	        extraData: extraData
 	    };
-	    log$1("btc", "splitTransaction ".concat(transactionHex, ":\n").concat(formatTransactionDebug(t)));
+	    log$1("btc", "splitTransaction " + transactionHex + ":\n" + formatTransactionDebug(t));
 	    return t;
 	}
 
@@ -37381,7 +37358,7 @@ window.Buffer = buffer.Buffer;
 	 * Bitcoin API.
 	 *
 	 * @example
-	 * import Btc from "@ledgerhq/hw-app-btc";
+	 * import Btc from "@backpacker69/hw-app-btc";
 	 * const btc = new Btc(transport)
 	 */
 	var Btc = /** @class */ (function () {
