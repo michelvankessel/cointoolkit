@@ -39268,7 +39268,7 @@ window.Buffer = buffer.Buffer;
 	};
 	function signP2SHTransaction(transport, arg) {
 	    return __awaiter$6(this, void 0, void 0, function () {
-	        var _a, inputs, associatedKeysets, outputScriptHex, lockTime, sigHashType, segwit, transactionVersion, initialTimestamp, nullScript, nullPrevout, defaultVersion, trustedInputs, regularOutputs, signatures, firstRun, resuming, targetTransaction, getTrustedInputCall, outputScript, startTime, inputs_1, inputs_1_1, input, trustedInput, sequence, outputs, index, e_1_1, i, sequence, i, input, script, pseudoTX, pseudoTrustedInputs, signature;
+	        var _a, inputs, associatedKeysets, outputScriptHex, lockTime, sigHashType, segwit, transactionVersion, initialTimestamp, nullScript, nullPrevout, defaultVersion, trustedInputs, regularOutputs, signatures, firstRun, resuming, startTime, targetTransaction, getTrustedInputCall, outputScript, inputs_1, inputs_1_1, input, trustedInput, sequence, outputs, index, e_1_1, i, sequence, i, input, script, pseudoTX, pseudoTrustedInputs, signature;
 	        var e_1, _b;
 	        return __generator$6(this, function (_c) {
 	            switch (_c.label) {
@@ -39283,6 +39283,7 @@ window.Buffer = buffer.Buffer;
 	                    signatures = [];
 	                    firstRun = true;
 	                    resuming = false;
+	                    startTime = Date.now();
 	                    targetTransaction = {
 	                        inputs: [],
 	                        timestamp: Buffer$l.alloc(0),
@@ -39290,7 +39291,6 @@ window.Buffer = buffer.Buffer;
 	                    };
 	                    getTrustedInputCall = segwit ? getTrustedInputBIP143 : getTrustedInput;
 	                    outputScript = Buffer$l.from(outputScriptHex, "hex");
-	                    startTime = Date.now();
 	                    _c.label = 1;
 	                case 1:
 	                    _c.trys.push([1, 7, 8, 9]);
@@ -39378,7 +39378,7 @@ window.Buffer = buffer.Buffer;
 	                    else {
 	                        pseudoTX.inputs[i].script = script;
 	                    }
-	                    return [4 /*yield*/, startUntrustedHashTransactionInput(transport, !segwit && firstRun, pseudoTX, pseudoTrustedInputs, segwit)];
+	                    return [4 /*yield*/, startUntrustedHashTransactionInput(transport, firstRun, pseudoTX, pseudoTrustedInputs, segwit)];
 	                case 14:
 	                    _c.sent();
 	                    if (!!segwit) return [3 /*break*/, 16];
@@ -40587,7 +40587,7 @@ window.Buffer = buffer.Buffer;
 	 * Bitcoin API.
 	 *
 	 * @example
-	 * import Btc from "@backpacker69/hw-app-btc";
+	 * import Btc from "@ledgerhq/hw-app-btc";
 	 * const btc = new Btc(transport)
 	 */
 	var Btc = /** @class */ (function () {
