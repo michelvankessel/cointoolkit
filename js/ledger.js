@@ -33236,7 +33236,7 @@
 	        if (userSuppliedRedeemScript &&
 	            !expectedRedeemScript.equals(userSuppliedRedeemScript)) {
 	            // At what point might a user set the redeemScript on its own?
-	            throw new Error("User-supplied redeemScript ".concat(userSuppliedRedeemScript.toString("hex"), " doesn't\n       match expected ").concat(expectedRedeemScript.toString("hex"), " for input ").concat(i));
+	            throw new Error("User-supplied redeemScript " + userSuppliedRedeemScript.toString("hex") + " doesn't\n       match expected " + expectedRedeemScript.toString("hex") + " for input " + i);
 	        }
 	        this.psbt.setInputRedeemScript(i, expectedRedeemScript);
 	        this.psbt.setInputWitnessUtxo(i, spentOutput.amount, spentOutput.cond.scriptPubKey);
@@ -33451,7 +33451,7 @@
 	}());
 	function createKey$1(masterFingerprint, path, xpub) {
 	    var accountPath = pathArrayToString(path);
-	    return "[".concat(masterFingerprint.toString("hex")).concat(accountPath.substring(1), "]").concat(xpub, "/**");
+	    return "[" + masterFingerprint.toString("hex") + accountPath.substring(1) + "]" + xpub + "/**";
 	}
 
 	/**
@@ -34010,11 +34010,11 @@
 	        var legacyPubkeys = psbt.getInputKeyDatas(i, psbtIn.PARTIAL_SIG);
 	        var taprootSig = psbt.getInputTapKeySig(i);
 	        if (legacyPubkeys.length == 0 && !taprootSig) {
-	            throw Error("No signature for input ".concat(i, " present"));
+	            throw Error("No signature for input " + i + " present");
 	        }
 	        if (legacyPubkeys.length > 0) {
 	            if (legacyPubkeys.length > 1) {
-	                throw Error("Expected exactly one signature, got ".concat(legacyPubkeys.length));
+	                throw Error("Expected exactly one signature, got " + legacyPubkeys.length);
 	            }
 	            if (taprootSig) {
 	                throw Error("Both taproot and non-taproot signatures present.");
@@ -34325,7 +34325,7 @@
 	                        xpub = _b.sent();
 	                        xpubComponents = getXpubComponents(xpub);
 	                        if (xpubComponents.version != xpubVersion) {
-	                            throw new Error("Expected xpub version ".concat(xpubVersion, " doesn't match the xpub version from the device ").concat(xpubComponents.version));
+	                            throw new Error("Expected xpub version " + xpubVersion + " doesn't match the xpub version from the device " + xpubComponents.version);
 	                        }
 	                        return [2 /*return*/, xpub];
 	                }
@@ -34537,7 +34537,7 @@
 	                        // going on.
 	                        for (i = 0; i < accountPath.length; i++) {
 	                            if (accountPath[i] != pathElems[i]) {
-	                                throw new Error("Path ".concat(path, " not in account ").concat(pathArrayToString(accountPath)));
+	                                throw new Error("Path " + path + " not in account " + pathArrayToString(accountPath));
 	                            }
 	                        }
 	                        return [4 /*yield*/, this.client.getExtendedPubkey(false, pathElems)];
@@ -34619,7 +34619,7 @@
 	                                // No legacy BIP32_DERIVATION, assume we're using taproot.
 	                                pubkey = psbt.getInputKeyDatas(k, psbtIn.TAP_BIP32_DERIVATION);
 	                                if (pubkey.length == 0) {
-	                                    throw Error("Missing pubkey derivation for input ".concat(k));
+	                                    throw Error("Missing pubkey derivation for input " + k);
 	                                }
 	                                psbt.setInputTapKeySig(k, v);
 	                            }
@@ -36070,12 +36070,12 @@
 	};
 	function signP2SHTransaction(transport, arg) {
 	    return __awaiter$6(this, void 0, void 0, function () {
-	        var _a, inputs, associatedKeysets, outputScriptHex, lockTime, sigHashType, segwit, transactionVersion, nullScript, nullPrevout, defaultVersion, trustedInputs, regularOutputs, signatures, firstRun, resuming, targetTransaction, getTrustedInputCall, outputScript, inputs_1, inputs_1_1, input, trustedInput, sequence, outputs, index, e_1_1, i, sequence, i, input, script, pseudoTX, pseudoTrustedInputs, signature;
+	        var _a, inputs, associatedKeysets, outputScriptHex, lockTime, sigHashType, segwit, transactionVersion, initialTimestamp, nullScript, nullPrevout, defaultVersion, trustedInputs, regularOutputs, signatures, firstRun, resuming, startTime, targetTransaction, getTrustedInputCall, outputScript, inputs_1, inputs_1_1, input, trustedInput, sequence, outputs, index, e_1_1, i, sequence, i, input, script, pseudoTX, pseudoTrustedInputs, signature;
 	        var e_1, _b;
 	        return __generator$6(this, function (_c) {
 	            switch (_c.label) {
 	                case 0:
-	                    _a = __assign$2(__assign$2({}, defaultArg), arg), inputs = _a.inputs, associatedKeysets = _a.associatedKeysets, outputScriptHex = _a.outputScriptHex, lockTime = _a.lockTime, sigHashType = _a.sigHashType, segwit = _a.segwit, transactionVersion = _a.transactionVersion;
+	                    _a = __assign$2(__assign$2({}, defaultArg), arg), inputs = _a.inputs, associatedKeysets = _a.associatedKeysets, outputScriptHex = _a.outputScriptHex, lockTime = _a.lockTime, sigHashType = _a.sigHashType, segwit = _a.segwit, transactionVersion = _a.transactionVersion, initialTimestamp = _a.initialTimestamp;
 	                    nullScript = Buffer$m.alloc(0);
 	                    nullPrevout = Buffer$m.alloc(0);
 	                    defaultVersion = Buffer$m.alloc(4);
@@ -36085,8 +36085,10 @@
 	                    signatures = [];
 	                    firstRun = true;
 	                    resuming = false;
+	                    startTime = Date.now();
 	                    targetTransaction = {
 	                        inputs: [],
+	                        timestamp: Buffer$m.alloc(0),
 	                        version: defaultVersion
 	                    };
 	                    getTrustedInputCall = segwit ? getTrustedInputBIP143 : getTrustedInput;
@@ -36168,13 +36170,17 @@
 	                        : regularOutputs[i].script;
 	                    pseudoTX = Object.assign({}, targetTransaction);
 	                    pseudoTrustedInputs = segwit ? [trustedInputs[i]] : trustedInputs;
+	                    if (initialTimestamp !== undefined) {
+	                        pseudoTX.timestamp = Buffer$m.alloc(4);
+	                        pseudoTX.timestamp.writeUInt32LE(Math.floor(initialTimestamp + (Date.now() - startTime) / 1000), 0);
+	                    }
 	                    if (segwit) {
 	                        pseudoTX.inputs = [__assign$2(__assign$2({}, pseudoTX.inputs[i]), { script: script })];
 	                    }
 	                    else {
 	                        pseudoTX.inputs[i].script = script;
 	                    }
-	                    return [4 /*yield*/, startUntrustedHashTransactionInput(transport, !segwit && firstRun, pseudoTX, pseudoTrustedInputs, segwit)];
+	                    return [4 /*yield*/, startUntrustedHashTransactionInput(transport, firstRun, pseudoTX, pseudoTrustedInputs, segwit)];
 	                case 14:
 	                    _c.sent();
 	                    if (!!segwit) return [3 /*break*/, 16];
@@ -36710,7 +36716,7 @@
 	                Buffer$m.from(known_preimage.subarray(0, payload_size)),
 	            ]);
 	        }
-	        throw Error("Requested unknown preimage for: ".concat(req_hash_hex));
+	        throw Error("Requested unknown preimage for: " + req_hash_hex);
 	    };
 	    return GetPreimageCommand;
 	}(ClientCommand));
@@ -36743,7 +36749,7 @@
 	        }
 	        var mt = this.known_trees.get(hash_hex);
 	        if (!mt) {
-	            throw Error("Requested Merkle leaf proof for unknown tree: ".concat(hash_hex));
+	            throw Error("Requested Merkle leaf proof for unknown tree: " + hash_hex);
 	        }
 	        if (leaf_index >= tree_size || mt.size() != tree_size) {
 	            throw Error("Invalid index or tree size.");
@@ -36793,7 +36799,7 @@
 	        var leef_hash_hex = leef_hash.toString("hex");
 	        var mt = this.known_trees.get(root_hash_hex);
 	        if (!mt) {
-	            throw Error("Requested Merkle leaf index for unknown root: ".concat(root_hash_hex));
+	            throw Error("Requested Merkle leaf index for unknown root: " + root_hash_hex);
 	        }
 	        var leaf_index = 0;
 	        var found = 0;
@@ -36872,7 +36878,7 @@
 	            for (var commands_1 = __values$3(commands), commands_1_1 = commands_1.next(); !commands_1_1.done; commands_1_1 = commands_1.next()) {
 	                var cmd = commands_1_1.value;
 	                if (this.commands.has(cmd.code)) {
-	                    throw new Error("Multiple commands with code ".concat(cmd.code));
+	                    throw new Error("Multiple commands with code " + cmd.code);
 	                }
 	                this.commands.set(cmd.code, cmd);
 	            }
@@ -36921,7 +36927,7 @@
 	        var cmdCode = request[0];
 	        var cmd = this.commands.get(cmdCode);
 	        if (!cmd) {
-	            throw new Error("Unexpected command code ".concat(cmdCode));
+	            throw new Error("Unexpected command code " + cmdCode);
 	        }
 	        return cmd.execute(request);
 	    };
@@ -37188,16 +37194,16 @@
 	    }
 	    transaction.inputs.forEach(function (_a, i) {
 	        var prevout = _a.prevout, script = _a.script, sequence = _a.sequence;
-	        str += "\ninput ".concat(i, ":");
-	        str += " prevout ".concat(prevout.toString("hex"));
-	        str += " script ".concat(script.toString("hex"));
-	        str += " sequence ".concat(sequence.toString("hex"));
+	        str += "\ninput " + i + ":";
+	        str += " prevout " + prevout.toString("hex");
+	        str += " script " + script.toString("hex");
+	        str += " sequence " + sequence.toString("hex");
 	    });
 	    (transaction.outputs || []).forEach(function (_a, i) {
 	        var amount = _a.amount, script = _a.script;
-	        str += "\noutput ".concat(i, ":");
-	        str += " amount ".concat(amount.toString("hex"));
-	        str += " script ".concat(script.toString("hex"));
+	        str += "\noutput " + i + ":";
+	        str += " amount " + amount.toString("hex");
+	        str += " script " + script.toString("hex");
 	    });
 	    return str;
 	}
@@ -37333,7 +37339,7 @@
 	        nExpiryHeight: nExpiryHeight,
 	        extraData: extraData
 	    };
-	    log("btc", "splitTransaction ".concat(transactionHex, ":\n").concat(formatTransactionDebug(t)));
+	    log("btc", "splitTransaction " + transactionHex + ":\n" + formatTransactionDebug(t));
 	    return t;
 	}
 
