@@ -707,11 +707,12 @@ $(document).ready(function() {
 				{verify: false, format: "legacy"}
 				);
 
+			var hasTimestamp = isPeercoin && currenttransaction.version < 3;
 			var publicKey = result.publicKey;
 			var path = coinjs.ledgerPath;
 
 			console.log("path",path,"address",result.bitcoinAddress,"pubkey",result.publicKey);
-			var txn = appBtc.splitTransaction(currenttransaction.serialize(),false,isPeercoin,false,["peercoin"]);
+			var txn = appBtc.splitTransaction(currenttransaction.serialize(),false,hasTimestamp,false);
 			var outputsBuffer = Crypto.util.bytesToHex(appBtc.serializeTransactionOutputs(txn));
 
 			var inputs = [];
@@ -729,7 +730,8 @@ $(document).ready(function() {
 			for (var i = 0; i < currenttransaction.ins.length; i++) {
 				var result = providers[$("#coinSelector").val()].getTransaction[toolkit.getTransaction](currenttransaction.ins[i].outpoint.hash,i,async function(result) {
 				// todo replace !isPeercoin with proper segwit support flag from coinjs params
-					inputs.push([result[1],appBtc.splitTransaction(result[0],false,isPeercoin,false,["peercoin"]),currenttransaction.ins[result[1]].outpoint.index,script]);
+					hasTimestamp = isPeercoin && result[0][1] in ['1','2']
+					inputs.push([result[1],appBtc.splitTransaction(result[0],false,hasTimestamp,false),currenttransaction.ins[result[1]].outpoint.index,script]);
 					paths.push(path);
 					if (inputs.length == currenttransaction.ins.length) {
 						// we are ready
