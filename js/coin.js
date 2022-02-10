@@ -2064,7 +2064,7 @@
 
 			obj.version = readAsInt(4);
 
-			if (coinjs.txExtraTimeField && (coinjs.symbol in ['tPPC', 'PPC'] && obj.version<3)) {
+			if (coinjs.txExtraTimeField && (['tPPC','PPC'].includes(coinjs.symbol) && obj.version<3)) {
 				obj.nTime = readAsInt(4);
 			}
 
