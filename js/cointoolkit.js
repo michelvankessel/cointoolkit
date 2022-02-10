@@ -367,6 +367,13 @@ $(document).ready(function() {
 					h += '<td class="col-xs-1">'+(o.value/("1e"+coinjs.decimalPlaces)).toFixed(coinjs.decimalPlaces)+'</td>';
 					h += '<td class="col-xs-2"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
 					h += '</tr>';
+				} else if(o.script.chunks.length==0) {
+					h += '<tr>';
+					h += '<td><input type="text" class="form-control" value="coinstake" readonly></td>';
+					h += '<td></td>'; // to account for known address value
+					h += '<td class="col-xs-1">0.0000000</td>';
+					h += '<td class="col-xs-2"><input class="form-control" type="text" value="" readonly></td>';
+					h += '</tr>';
 				} else {
 
 					var addr = '';
