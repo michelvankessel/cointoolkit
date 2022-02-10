@@ -760,7 +760,10 @@ $(document).ready(function() {
 						var result=false;
 						if (currenttransaction.ins[0].script.buffer.slice(-1) == coinjs.opcode.OP_CHECKMULTISIG) {
 							// check if public key is part of multisig
-							var params = {inputs:inputs, associatedKeysets:paths, outputScriptHex:outputsBuffer, initialTimestamp:timeStamp, transactionVersion:1, sigHashType: hashType, segwit:false, additionals: ["peercoin"]};
+							var params = {inputs:inputs, associatedKeysets:paths, outputScriptHex:outputsBuffer, transactionVersion:currenttransaction.version, sigHashType: hashType, segwit:false, additionals: ["peercoin"]};
+							if (timeStamp) {
+								params.initialTimestamp = timeStamp;
+								}
 							result = await appBtc.signP2SHTransaction(params);
 
 							var success=false;
