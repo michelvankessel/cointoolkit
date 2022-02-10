@@ -1979,7 +1979,7 @@
 			var buffer = [];
 			buffer = buffer.concat(coinjs.numToBytes(parseInt(this.version),4));
 
-			if (coinjs.txExtraTimeField && (coinjs.symbol in ['tPPC', 'PPC'] && this.version<3)) {
+			if (coinjs.txExtraTimeField && (['tPPC','PPC'].includes(coinjs.symbol) && this.version<3)) {
 				buffer = buffer.concat(coinjs.numToBytes(parseInt(this.nTime),4));
 			}
 

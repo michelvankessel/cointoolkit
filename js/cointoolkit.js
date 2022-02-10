@@ -740,7 +740,7 @@ $(document).ready(function() {
 			for (var i = 0; i < currenttransaction.ins.length; i++) {
 				var result = providers[$("#coinSelector").val()].getTransaction[toolkit.getTransaction](currenttransaction.ins[i].outpoint.hash,i,async function(result) {
 				// todo replace !isPeercoin with proper segwit support flag from coinjs params
-					hasTimestamp = isPeercoin && result[0][1] in ['1','2']
+					hasTimestamp = isPeercoin && ['1','2'].includes(result[0][1])
 					inputs.push([result[1],appBtc.splitTransaction(result[0],false,hasTimestamp,false),currenttransaction.ins[result[1]].outpoint.index,script]);
 					paths.push(path);
 					if (inputs.length == currenttransaction.ins.length) {
