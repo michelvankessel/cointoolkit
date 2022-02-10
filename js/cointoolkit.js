@@ -389,6 +389,9 @@ $(document).ready(function() {
 						});
 					} else if((o.script.chunks.length==2) && o.script.chunks[0]==0){
 						addr = coinjs.bech32_encode(coinjs.bech32.hrp, [coinjs.bech32.version].concat(coinjs.bech32_convert(o.script.chunks[1], 8, 5, true)));
+					} else if((o.script.chunks.length==2) && o.script.chunks[1]==172){
+						var pubKey = Crypto.util.bytesToHex(o.script.chunks[0])
+						addr = coinjs.pubkey2address(pubKey, coinjs.pub);
 					} else {
 						var scriptHash = Crypto.util.bytesToHex(o.script.chunks[1]);
 						addr = coinjs.scripthash2address(scriptHash, coinjs.multisig);
