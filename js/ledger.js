@@ -42053,9 +42053,14 @@
 	    return payload;
 	}
 
+	var SpeculosTransport$1 = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		'default': SpeculosTransport
+	});
+
 	exports.Btc = Btc$1;
 	exports.Log = index;
-	exports.SpeculosTransport = SpeculosTransport;
+	exports.SpeculosTransport = SpeculosTransport$1;
 	exports.TransportWebUSB = TransportWebUSB$1;
 	exports.createHash = browser$4;
 
