@@ -999,7 +999,7 @@
 
 	var toString = {}.toString;
 
-	var isArray$4 = Array.isArray || function (arr) {
+	var isArray$3 = Array.isArray || function (arr) {
 	  return toString.call(arr) == '[object Array]';
 	};
 
@@ -1267,7 +1267,7 @@
 	      return fromArrayLike(that, obj)
 	    }
 
-	    if (obj.type === 'Buffer' && isArray$4(obj.data)) {
+	    if (obj.type === 'Buffer' && isArray$3(obj.data)) {
 	      return fromArrayLike(that, obj.data)
 	    }
 	  }
@@ -1332,7 +1332,7 @@
 	};
 
 	Buffer$k.concat = function concat (list, length) {
-	  if (!isArray$4(list)) {
+	  if (!isArray$3(list)) {
 	    throw new TypeError('"list" argument must be an Array of Buffers')
 	  }
 
@@ -5162,7 +5162,7 @@
 	var version$1 = ''; // empty string to avoid regexp issues
 	var versions = {};
 	var release = {};
-	var config$1 = {};
+	var config = {};
 
 	function noop() {}
 
@@ -5239,7 +5239,7 @@
 	  hrtime: hrtime,
 	  platform: platform,
 	  release: release,
-	  config: config$1,
+	  config: config,
 	  uptime: uptime
 	};
 
@@ -5778,7 +5778,7 @@
 	    }
 	  });
 	  for (var x = args[i]; i < len; x = args[++i]) {
-	    if (isNull$1(x) || !isObject$2(x)) {
+	    if (isNull$1(x) || !isObject$1(x)) {
 	      str += ' ' + x;
 	    } else {
 	      str += ' ' + inspect(x);
@@ -5929,7 +5929,7 @@
 	  // Check that value is an object with an inspect function on it
 	  if (ctx.customInspect &&
 	      value &&
-	      isFunction$2(value.inspect) &&
+	      isFunction$1(value.inspect) &&
 	      // Filter out the util module, it's inspect function is special
 	      value.inspect !== inspect &&
 	      // Also filter out any prototype objects using the circular check.
@@ -5964,7 +5964,7 @@
 
 	  // Some type of object without properties can be shortcutted.
 	  if (keys.length === 0) {
-	    if (isFunction$2(value)) {
+	    if (isFunction$1(value)) {
 	      var name = value.name ? ': ' + value.name : '';
 	      return ctx.stylize('[Function' + name + ']', 'special');
 	    }
@@ -5982,13 +5982,13 @@
 	  var base = '', array = false, braces = ['{', '}'];
 
 	  // Make Array say that they are Array
-	  if (isArray$3(value)) {
+	  if (isArray$2(value)) {
 	    array = true;
 	    braces = ['[', ']'];
 	  }
 
 	  // Make functions say that they are functions
-	  if (isFunction$2(value)) {
+	  if (isFunction$1(value)) {
 	    var n = value.name ? ': ' + value.name : '';
 	    base = ' [Function' + n + ']';
 	  }
@@ -6161,7 +6161,7 @@
 
 	// NOTE: These type checking functions intentionally don't use `instanceof`
 	// because it is fragile and can be easily faked with `Object.create()`.
-	function isArray$3(ar) {
+	function isArray$2(ar) {
 	  return Array.isArray(ar);
 	}
 
@@ -6186,23 +6186,23 @@
 	}
 
 	function isRegExp$1(re) {
-	  return isObject$2(re) && objectToString$1(re) === '[object RegExp]';
+	  return isObject$1(re) && objectToString$1(re) === '[object RegExp]';
 	}
 
-	function isObject$2(arg) {
+	function isObject$1(arg) {
 	  return typeof arg === 'object' && arg !== null;
 	}
 
 	function isDate$1(d) {
-	  return isObject$2(d) && objectToString$1(d) === '[object Date]';
+	  return isObject$1(d) && objectToString$1(d) === '[object Date]';
 	}
 
 	function isError$1(e) {
-	  return isObject$2(e) &&
+	  return isObject$1(e) &&
 	      (objectToString$1(e) === '[object Error]' || e instanceof Error);
 	}
 
-	function isFunction$2(arg) {
+	function isFunction$1(arg) {
 	  return typeof arg === 'function';
 	}
 
@@ -6212,7 +6212,7 @@
 
 	function _extend(origin, add) {
 	  // Don't do anything if add isn't an object
-	  if (!add || !isObject$2(add)) return origin;
+	  if (!add || !isObject$1(add)) return origin;
 
 	  var keys = Object.keys(add);
 	  var i = keys.length;
@@ -8186,13 +8186,13 @@
 	// NOTE: These type checking functions intentionally don't use `instanceof`
 	// because it is fragile and can be easily faked with `Object.create()`.
 
-	function isArray$2(arg) {
+	function isArray$1(arg) {
 	  if (Array.isArray) {
 	    return Array.isArray(arg);
 	  }
 	  return objectToString(arg) === '[object Array]';
 	}
-	util$5.isArray = isArray$2;
+	util$5.isArray = isArray$1;
 
 	function isBoolean(arg) {
 	  return typeof arg === 'boolean';
@@ -8234,10 +8234,10 @@
 	}
 	util$5.isRegExp = isRegExp;
 
-	function isObject$1(arg) {
+	function isObject(arg) {
 	  return typeof arg === 'object' && arg !== null;
 	}
-	util$5.isObject = isObject$1;
+	util$5.isObject = isObject;
 
 	function isDate(d) {
 	  return objectToString(d) === '[object Date]';
@@ -8249,10 +8249,10 @@
 	}
 	util$5.isError = isError;
 
-	function isFunction$1(arg) {
+	function isFunction(arg) {
 	  return typeof arg === 'function';
 	}
-	util$5.isFunction = isFunction$1;
+	util$5.isFunction = isFunction;
 
 	function isPrimitive(arg) {
 	  return arg === null ||
@@ -8294,7 +8294,7 @@
 	var _stream_readable = Readable$1;
 
 	/*<replacement>*/
-	var isArray$1 = isarray;
+	var isArray = isarray;
 	/*</replacement>*/
 
 
@@ -8833,7 +8833,7 @@
 	  // is attached before any userland ones.  NEVER DO THIS.
 	  if (!dest._events || !dest._events.error)
 	    dest.on('error', onerror);
-	  else if (isArray$1(dest._events.error))
+	  else if (isArray(dest._events.error))
 	    dest._events.error.unshift(onerror);
 	  else
 	    dest._events.error = [onerror, dest._events.error];
@@ -35076,7 +35076,7 @@
 	    return new ripemd160$2().update(sha$3("sha256").update(buffer).digest()).digest();
 	}
 
-	var __extends$6 = (undefined && undefined.__extends) || (function () {
+	var __extends$4 = (undefined && undefined.__extends) || (function () {
 	    var extendStatics = function (d, b) {
 	        extendStatics = Object.setPrototypeOf ||
 	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35104,7 +35104,7 @@
 	 * and calls an abstract method to do the actual work.
 	 */
 	var SingleKeyAccount = /** @class */ (function (_super) {
-	    __extends$6(SingleKeyAccount, _super);
+	    __extends$4(SingleKeyAccount, _super);
 	    function SingleKeyAccount() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -35135,7 +35135,7 @@
 	    return SingleKeyAccount;
 	}(BaseAccount));
 	var p2pkh = /** @class */ (function (_super) {
-	    __extends$6(p2pkh, _super);
+	    __extends$4(p2pkh, _super);
 	    function p2pkh() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -35163,7 +35163,7 @@
 	    return p2pkh;
 	}(SingleKeyAccount));
 	var p2tr = /** @class */ (function (_super) {
-	    __extends$6(p2tr, _super);
+	    __extends$4(p2tr, _super);
 	    function p2tr() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -35229,7 +35229,7 @@
 	    return p2tr;
 	}(SingleKeyAccount));
 	var p2wpkhWrapped = /** @class */ (function (_super) {
-	    __extends$6(p2wpkhWrapped, _super);
+	    __extends$4(p2wpkhWrapped, _super);
 	    function p2wpkhWrapped() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -35272,7 +35272,7 @@
 	    return p2wpkhWrapped;
 	}(SingleKeyAccount));
 	var p2wpkh = /** @class */ (function (_super) {
-	    __extends$6(p2wpkh, _super);
+	    __extends$4(p2wpkh, _super);
 	    function p2wpkh() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -35508,7 +35508,7 @@
 	    return tx.buffer();
 	}
 
-	var __extends$5 = (undefined && undefined.__extends) || (function () {
+	var __extends$3 = (undefined && undefined.__extends) || (function () {
 	    var extendStatics = function (d, b) {
 	        extendStatics = Object.setPrototypeOf ||
 	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35569,7 +35569,7 @@
 	})(psbtOut || (psbtOut = {}));
 	var PSBT_MAGIC_BYTES = Buffer$k.from([0x70, 0x73, 0x62, 0x74, 0xff]);
 	var NoSuchEntry = /** @class */ (function (_super) {
-	    __extends$5(NoSuchEntry, _super);
+	    __extends$3(NoSuchEntry, _super);
 	    function NoSuchEntry() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -36241,7 +36241,7 @@
 	    ]);
 	}
 
-	var __awaiter$f = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$e = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -36250,7 +36250,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$f = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$e = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -36331,9 +36331,9 @@
 	     */
 	    BtcNew.prototype.getWalletXpub = function (_a) {
 	        var path = _a.path, xpubVersion = _a.xpubVersion;
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var pathElements, xpub, xpubComponents;
-	            return __generator$f(this, function (_b) {
+	            return __generator$e(this, function (_b) {
 	                switch (_b.label) {
 	                    case 0:
 	                        pathElements = pathStringToArray(path);
@@ -36358,9 +36358,9 @@
 	     */
 	    BtcNew.prototype.getWalletPublicKey = function (path, opts) {
 	        var _a, _b;
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var pathElements, xpub, display, address, components, uncompressedPubkey;
-	            return __generator$f(this, function (_c) {
+	            return __generator$e(this, function (_c) {
 	                switch (_c.label) {
 	                    case 0:
 	                        pathElements = pathStringToArray(path);
@@ -36398,9 +36398,9 @@
 	     * ourselves, but we don't at this time, and instead return an empty ("") address.
 	     */
 	    BtcNew.prototype.getWalletAddress = function (pathElements, descrTempl, display) {
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var accountPath, accountXpub, masterFingerprint, policy, changeAndIndex;
-	            return __generator$f(this, function (_a) {
+	            return __generator$e(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        accountPath = hardenedPathOf(pathElements);
@@ -36429,9 +36429,9 @@
 	     * transaction is returned.
 	     */
 	    BtcNew.prototype.createPaymentTransactionNew = function (arg) {
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var inputCount, psbt, masterFp, accountType, notifyCount, progress, accountXpub, accountPath, i, pathElems, outputsConcat, outputsBufferReader, outputCount, changeData, changeFound, i, amount, outputScript, isChange, changePath, pubkey, key, p, firstSigned, progressCallback, serializedTx;
-	            return __generator$f(this, function (_a) {
+	            return __generator$e(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        inputCount = arg.inputs.length;
@@ -36542,9 +36542,9 @@
 	     * properties depend on the accountType used.
 	     */
 	    BtcNew.prototype.outputScriptAt = function (accountPath, accountType, path) {
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var pathElems, i, xpub, pubkey, cond;
-	            return __generator$f(this, function (_a) {
+	            return __generator$e(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        if (!path)
@@ -36573,9 +36573,9 @@
 	     * public key and its derivation path.
 	     */
 	    BtcNew.prototype.setInput = function (psbt, i, input, pathElements, accountType, masterFP, sigHashType) {
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var inputTx, spentOutputIndex, redeemScript, sequence, inputTxBuffer, inputTxid, xpubBase58, pubkey, spentTxOutput, spendCondition, spentOutput;
-	            return __generator$f(this, function (_a) {
+	            return __generator$e(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        inputTx = input[0];
@@ -36620,9 +36620,9 @@
 	     * to the appropriate input fields of the PSBT.
 	     */
 	    BtcNew.prototype.signPsbt = function (psbt, walletPolicy, progressCallback) {
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var sigs;
-	            return __generator$f(this, function (_a) {
+	            return __generator$e(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, this.client.signPsbt(psbt, walletPolicy, Buffer$k.alloc(32, 0), progressCallback)];
 	                    case 1:
@@ -36739,7 +36739,7 @@
 	    };
 	    return __assign$4.apply(this, arguments);
 	};
-	var __awaiter$e = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$d = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -36748,7 +36748,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$e = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$d = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -36782,9 +36782,9 @@
 	    cashaddr: 3
 	};
 	function getWalletPublicKey(transport, options) {
-	    return __awaiter$e(this, void 0, void 0, function () {
+	    return __awaiter$d(this, void 0, void 0, function () {
 	        var _a, path, verify, format, buffer, p1, p2, response, publicKeyLength, addressLength, publicKey, bitcoinAddress, chainCode;
-	        return __generator$e(this, function (_b) {
+	        return __generator$d(this, function (_b) {
 	            switch (_b.label) {
 	                case 0:
 	                    _a = __assign$4({ verify: false, format: "legacy" }, options), path = _a.path, verify = _a.verify, format = _a.format;
@@ -36857,7 +36857,7 @@
 
 	var browser = invariant;
 
-	var __awaiter$d = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$c = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -36866,7 +36866,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$d = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$c = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -36905,9 +36905,9 @@
 	    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 	};
 	function getTrustedInputRaw(transport, transactionData, indexLookup) {
-	    return __awaiter$d(this, void 0, void 0, function () {
+	    return __awaiter$c(this, void 0, void 0, function () {
 	        var data, firstRound, prefix, trustedInput, res;
-	        return __generator$d(this, function (_a) {
+	        return __generator$c(this, function (_a) {
 	            switch (_a.label) {
 	                case 0:
 	                    firstRound = false;
@@ -36931,11 +36931,11 @@
 	}
 	function getTrustedInput(transport, indexLookup, transaction, additionals) {
 	    if (additionals === void 0) { additionals = []; }
-	    return __awaiter$d(this, void 0, void 0, function () {
+	    return __awaiter$c(this, void 0, void 0, function () {
 	        var version, inputs, outputs, locktime, nExpiryHeight, extraData, isDecred, isXST, processScriptBlocks, processWholeScriptBlock, inputs_1, inputs_1_1, input, isXSTV2, treeField, data, e_1_1, outputs_1, outputs_1_1, output, data, e_2_1, endData, extraPart, data, res;
 	        var e_1, _a, e_2, _b;
 	        var _this = this;
-	        return __generator$d(this, function (_c) {
+	        return __generator$c(this, function (_c) {
 	            switch (_c.label) {
 	                case 0:
 	                    version = transaction.version, inputs = transaction.inputs, outputs = transaction.outputs, locktime = transaction.locktime, nExpiryHeight = transaction.nExpiryHeight, extraData = transaction.extraData;
@@ -36944,10 +36944,10 @@
 	                    }
 	                    isDecred = additionals.includes("decred");
 	                    isXST = additionals.includes("stealthcoin");
-	                    processScriptBlocks = function (script, sequence) { return __awaiter$d(_this, void 0, void 0, function () {
+	                    processScriptBlocks = function (script, sequence) { return __awaiter$c(_this, void 0, void 0, function () {
 	                        var seq, scriptBlocks, offset, blockSize, res, scriptBlocks_1, scriptBlocks_1_1, scriptBlock, e_3_1;
 	                        var e_3, _a;
-	                        return __generator$d(this, function (_b) {
+	                        return __generator$c(this, function (_b) {
 	                            switch (_b.label) {
 	                                case 0:
 	                                    seq = sequence || Buffer$k.alloc(0);
@@ -37121,7 +37121,7 @@
 	    });
 	}
 
-	var __awaiter$c = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$b = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -37130,7 +37130,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$c = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$b = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -37188,10 +37188,10 @@
 	    if (overwinter === void 0) { overwinter = false; }
 	    if (additionals === void 0) { additionals = []; }
 	    if (useTrustedInputForSegwit === void 0) { useTrustedInputForSegwit = false; }
-	    return __awaiter$c(this, void 0, void 0, function () {
+	    return __awaiter$b(this, void 0, void 0, function () {
 	        var data, i, isDecred, _a, _b, input, prefix, inputValue, scriptBlocks, offset, blockSize, scriptBlocks_1, scriptBlocks_1_1, scriptBlock, e_1_1, e_2_1;
 	        var e_2, _c, e_1, _d;
-	        return __generator$c(this, function (_e) {
+	        return __generator$b(this, function (_e) {
 	            switch (_e.label) {
 	                case 0:
 	                    data = Buffer$k.concat([
@@ -37374,80 +37374,6 @@
 	    });
 	}
 
-	var __awaiter$b = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-	    return new (P || (P = Promise))(function (resolve, reject) {
-	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-	        step((generator = generator.apply(thisArg, _arguments || [])).next());
-	    });
-	};
-	var __generator$b = (undefined && undefined.__generator) || function (thisArg, body) {
-	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-	    function verb(n) { return function (v) { return step([n, v]); }; }
-	    function step(op) {
-	        if (f) throw new TypeError("Generator is already executing.");
-	        while (_) try {
-	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [op[0] & 2, t.value];
-	            switch (op[0]) {
-	                case 0: case 1: t = op; break;
-	                case 4: _.label++; return { value: op[1], done: false };
-	                case 5: _.label++; y = op[1]; op = [0]; continue;
-	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-	                default:
-	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-	                    if (t[2]) _.ops.pop();
-	                    _.trys.pop(); continue;
-	            }
-	            op = body.call(thisArg, _);
-	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-	    }
-	};
-	function provideOutputFullChangePath(transport, path) {
-	    var buffer = bip32asBuffer(path);
-	    return transport.send(0xe0, 0x4a, 0xff, 0x00, buffer);
-	}
-	function hashOutputFull(transport, outputScript, additionals) {
-	    if (additionals === void 0) { additionals = []; }
-	    return __awaiter$b(this, void 0, void 0, function () {
-	        var offset, p1, isDecred, blockSize, p1_1, data;
-	        return __generator$b(this, function (_a) {
-	            switch (_a.label) {
-	                case 0:
-	                    offset = 0;
-	                    p1 = Number(0x80);
-	                    isDecred = additionals.includes("decred");
-	                    ///WARNING: Decred works only with one call (without chunking)
-	                    //TODO: test without this for Decred
-	                    if (isDecred) {
-	                        return [2 /*return*/, transport.send(0xe0, 0x4a, p1, 0x00, outputScript)];
-	                    }
-	                    _a.label = 1;
-	                case 1:
-	                    if (!(offset < outputScript.length)) return [3 /*break*/, 3];
-	                    blockSize = offset + MAX_SCRIPT_BLOCK >= outputScript.length
-	                        ? outputScript.length - offset
-	                        : MAX_SCRIPT_BLOCK;
-	                    p1_1 = offset + blockSize === outputScript.length ? 0x80 : 0x00;
-	                    data = outputScript.slice(offset, offset + blockSize);
-	                    return [4 /*yield*/, transport.send(0xe0, 0x4a, p1_1, 0x00, data)];
-	                case 2:
-	                    _a.sent();
-	                    offset += blockSize;
-	                    return [3 /*break*/, 1];
-	                case 3: return [2 /*return*/];
-	            }
-	        });
-	    });
-	}
-
 	var __awaiter$a = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
@@ -37484,9 +37410,83 @@
 	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
 	    }
 	};
-	var getAppAndVersion = function (transport) { return __awaiter$a(void 0, void 0, void 0, function () {
+	function provideOutputFullChangePath(transport, path) {
+	    var buffer = bip32asBuffer(path);
+	    return transport.send(0xe0, 0x4a, 0xff, 0x00, buffer);
+	}
+	function hashOutputFull(transport, outputScript, additionals) {
+	    if (additionals === void 0) { additionals = []; }
+	    return __awaiter$a(this, void 0, void 0, function () {
+	        var offset, p1, isDecred, blockSize, p1_1, data;
+	        return __generator$a(this, function (_a) {
+	            switch (_a.label) {
+	                case 0:
+	                    offset = 0;
+	                    p1 = Number(0x80);
+	                    isDecred = additionals.includes("decred");
+	                    ///WARNING: Decred works only with one call (without chunking)
+	                    //TODO: test without this for Decred
+	                    if (isDecred) {
+	                        return [2 /*return*/, transport.send(0xe0, 0x4a, p1, 0x00, outputScript)];
+	                    }
+	                    _a.label = 1;
+	                case 1:
+	                    if (!(offset < outputScript.length)) return [3 /*break*/, 3];
+	                    blockSize = offset + MAX_SCRIPT_BLOCK >= outputScript.length
+	                        ? outputScript.length - offset
+	                        : MAX_SCRIPT_BLOCK;
+	                    p1_1 = offset + blockSize === outputScript.length ? 0x80 : 0x00;
+	                    data = outputScript.slice(offset, offset + blockSize);
+	                    return [4 /*yield*/, transport.send(0xe0, 0x4a, p1_1, 0x00, data)];
+	                case 2:
+	                    _a.sent();
+	                    offset += blockSize;
+	                    return [3 /*break*/, 1];
+	                case 3: return [2 /*return*/];
+	            }
+	        });
+	    });
+	}
+
+	var __awaiter$9 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	var __generator$9 = (undefined && undefined.__generator) || function (thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	};
+	var getAppAndVersion = function (transport) { return __awaiter$9(void 0, void 0, void 0, function () {
 	    var r, i, format, nameLength, name, versionLength, version, flagLength, flags;
-	    return __generator$a(this, function (_a) {
+	    return __generator$9(this, function (_a) {
 	        switch (_a.label) {
 	            case 0: return [4 /*yield*/, transport.send(0xb0, 0x01, 0x00, 0x00)];
 	            case 1:
@@ -37529,7 +37529,7 @@
 	    };
 	    return __assign$3.apply(this, arguments);
 	};
-	var __awaiter$9 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$8 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -37538,7 +37538,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$9 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$8 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -37586,10 +37586,10 @@
 	    onDeviceSignatureRequested: function () { }
 	};
 	function createTransaction(transport, arg) {
-	    return __awaiter$9(this, void 0, void 0, function () {
+	    return __awaiter$8(this, void 0, void 0, function () {
 	        var signTx, inputs, associatedKeysets, changePath, outputScriptHex, lockTime, sigHashType, segwit, initialTimestamp, additionals, expiryHeight, onDeviceStreaming, onDeviceSignatureGranted, onDeviceSignatureRequested, useTrustedInputForSegwit, a, e_1, notify, isDecred, isXST, startTime, sapling, bech32, useBip143, nullScript, nullPrevout, defaultVersion, trustedInputs, regularOutputs, signatures, publicKeys, firstRun, resuming, targetTransaction, getTrustedInputCall, outputScript, inputs_1, inputs_1_1, input, trustedInput, sequence, outputs, index, e_2_1, result_1, i, r, i, i, input, script, pseudoTX, pseudoTrustedInputs, signature, i, signatureSize, keySize, offset, lockTimeBuffer, result, witness, i, tmpScriptData, decredWitness_1;
 	        var e_2, _a;
-	        return __generator$9(this, function (_b) {
+	        return __generator$8(this, function (_b) {
 	            switch (_b.label) {
 	                case 0:
 	                    signTx = __assign$3(__assign$3({}, defaultsSignTransaction), arg);
@@ -37912,7 +37912,7 @@
 	    });
 	}
 
-	var __awaiter$8 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$7 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -37921,7 +37921,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$8 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$7 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -37950,9 +37950,9 @@
 	};
 	function signMessage(transport, _a) {
 	    var path = _a.path, messageHex = _a.messageHex;
-	    return __awaiter$8(this, void 0, void 0, function () {
+	    return __awaiter$7(this, void 0, void 0, function () {
 	        var paths, message, offset, _loop_1, res, v, r, s;
-	        return __generator$8(this, function (_b) {
+	        return __generator$7(this, function (_b) {
 	            switch (_b.label) {
 	                case 0:
 	                    paths = bip32Path.fromString(path).toPathArray();
@@ -37960,7 +37960,7 @@
 	                    offset = 0;
 	                    _loop_1 = function () {
 	                        var maxChunkSize, chunkSize, buffer;
-	                        return __generator$8(this, function (_c) {
+	                        return __generator$7(this, function (_c) {
 	                            switch (_c.label) {
 	                                case 0:
 	                                    maxChunkSize = offset === 0
@@ -38032,7 +38032,7 @@
 	    };
 	    return __assign$2.apply(this, arguments);
 	};
-	var __awaiter$7 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$6 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -38041,7 +38041,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$7 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$6 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -38086,10 +38086,10 @@
 	    transactionVersion: DEFAULT_VERSION
 	};
 	function signP2SHTransaction(transport, arg) {
-	    return __awaiter$7(this, void 0, void 0, function () {
+	    return __awaiter$6(this, void 0, void 0, function () {
 	        var _a, inputs, associatedKeysets, outputScriptHex, lockTime, sigHashType, segwit, transactionVersion, initialTimestamp, nullScript, nullPrevout, defaultVersion, trustedInputs, regularOutputs, signatures, firstRun, resuming, startTime, targetTransaction, getTrustedInputCall, outputScript, inputs_1, inputs_1_1, input, trustedInput, sequence, outputs, index, e_1_1, i, sequence, i, input, script, pseudoTX, pseudoTrustedInputs, signature;
 	        var e_1, _b;
-	        return __generator$7(this, function (_c) {
+	        return __generator$6(this, function (_c) {
 	            switch (_c.label) {
 	                case 0:
 	                    _a = __assign$2(__assign$2({}, defaultArg), arg), inputs = _a.inputs, associatedKeysets = _a.associatedKeysets, outputScriptHex = _a.outputScriptHex, lockTime = _a.lockTime, sigHashType = _a.sigHashType, segwit = _a.segwit, transactionVersion = _a.transactionVersion, initialTimestamp = _a.initialTimestamp;
@@ -38236,7 +38236,7 @@
 	    };
 	    return __assign$1.apply(this, arguments);
 	};
-	var __awaiter$6 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$5 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -38245,7 +38245,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$6 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$5 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -38285,9 +38285,9 @@
 	        this.derivationsCache = {};
 	    }
 	    BtcOld.prototype.derivatePath = function (path) {
-	        return __awaiter$6(this, void 0, void 0, function () {
+	        return __awaiter$5(this, void 0, void 0, function () {
 	            var res;
-	            return __generator$6(this, function (_a) {
+	            return __generator$5(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        if (this.derivationsCache[path])
@@ -38305,9 +38305,9 @@
 	    };
 	    BtcOld.prototype.getWalletXpub = function (_a) {
 	        var path = _a.path, xpubVersion = _a.xpubVersion;
-	        return __awaiter$6(this, void 0, void 0, function () {
+	        return __awaiter$5(this, void 0, void 0, function () {
 	            var pathElements, parentPath, parentDerivation, accountDerivation, fingerprint, xpub;
-	            return __generator$6(this, function (_b) {
+	            return __generator$5(this, function (_b) {
 	                switch (_b.label) {
 	                    case 0:
 	                        pathElements = pathStringToArray(path);
@@ -38515,7 +38515,7 @@
 	    return MerkleMap;
 	}());
 
-	var __extends$4 = (undefined && undefined.__extends) || (function () {
+	var __extends$2 = (undefined && undefined.__extends) || (function () {
 	    var extendStatics = function (d, b) {
 	        extendStatics = Object.setPrototypeOf ||
 	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -38567,7 +38567,7 @@
 	 * https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md#sign_psbt
 	 */
 	var MerkelizedPsbt = /** @class */ (function (_super) {
-	    __extends$4(MerkelizedPsbt, _super);
+	    __extends$2(MerkelizedPsbt, _super);
 	    function MerkelizedPsbt(psbt) {
 	        var _this = _super.call(this) || this;
 	        _this.inputMerkleMaps = [];
@@ -38611,7 +38611,7 @@
 	    return MerkelizedPsbt;
 	}(PsbtV2));
 
-	var __extends$3 = (undefined && undefined.__extends) || (function () {
+	var __extends$1 = (undefined && undefined.__extends) || (function () {
 	    var extendStatics = function (d, b) {
 	        extendStatics = Object.setPrototypeOf ||
 	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -38676,7 +38676,7 @@
 	    return ClientCommand;
 	}());
 	var YieldCommand = /** @class */ (function (_super) {
-	    __extends$3(YieldCommand, _super);
+	    __extends$1(YieldCommand, _super);
 	    function YieldCommand(results, progressCallback) {
 	        var _this = _super.call(this) || this;
 	        _this.progressCallback = progressCallback;
@@ -38692,7 +38692,7 @@
 	    return YieldCommand;
 	}(ClientCommand));
 	var GetPreimageCommand = /** @class */ (function (_super) {
-	    __extends$3(GetPreimageCommand, _super);
+	    __extends$1(GetPreimageCommand, _super);
 	    function GetPreimageCommand(known_preimages, queue) {
 	        var _this = _super.call(this) || this;
 	        _this.code = ClientCommandCode.GET_PREIMAGE;
@@ -38738,7 +38738,7 @@
 	    return GetPreimageCommand;
 	}(ClientCommand));
 	var GetMerkleLeafProofCommand = /** @class */ (function (_super) {
-	    __extends$3(GetMerkleLeafProofCommand, _super);
+	    __extends$1(GetMerkleLeafProofCommand, _super);
 	    function GetMerkleLeafProofCommand(known_trees, queue) {
 	        var _this = _super.call(this) || this;
 	        _this.code = ClientCommandCode.GET_MERKLE_LEAF_PROOF;
@@ -38790,7 +38790,7 @@
 	    return GetMerkleLeafProofCommand;
 	}(ClientCommand));
 	var GetMerkleLeafIndexCommand = /** @class */ (function (_super) {
-	    __extends$3(GetMerkleLeafIndexCommand, _super);
+	    __extends$1(GetMerkleLeafIndexCommand, _super);
 	    function GetMerkleLeafIndexCommand(known_trees) {
 	        var _this = _super.call(this) || this;
 	        _this.code = ClientCommandCode.GET_MERKLE_LEAF_INDEX;
@@ -38832,7 +38832,7 @@
 	    return GetMerkleLeafIndexCommand;
 	}(ClientCommand));
 	var GetMoreElementsCommand = /** @class */ (function (_super) {
-	    __extends$3(GetMoreElementsCommand, _super);
+	    __extends$1(GetMoreElementsCommand, _super);
 	    function GetMoreElementsCommand(queue) {
 	        var _this = _super.call(this) || this;
 	        _this.code = ClientCommandCode.GET_MORE_ELEMENTS;
@@ -38951,7 +38951,7 @@
 	    return ClientCommandInterpreter;
 	}());
 
-	var __awaiter$5 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -38960,7 +38960,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$5 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$4 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -39022,9 +39022,9 @@
 	        this.transport = transport;
 	    }
 	    AppClient.prototype.makeRequest = function (ins, data, cci) {
-	        return __awaiter$5(this, void 0, void 0, function () {
+	        return __awaiter$4(this, void 0, void 0, function () {
 	            var response, hwRequest, commandResponse;
-	            return __generator$5(this, function (_a) {
+	            return __generator$4(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, this.transport.send(CLA_BTC, ins, 0, 0, data, [
 	                            0x9000,
@@ -39050,9 +39050,9 @@
 	        });
 	    };
 	    AppClient.prototype.getExtendedPubkey = function (display, pathElements) {
-	        return __awaiter$5(this, void 0, void 0, function () {
+	        return __awaiter$4(this, void 0, void 0, function () {
 	            var response;
-	            return __generator$5(this, function (_a) {
+	            return __generator$4(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        if (pathElements.length > 6) {
@@ -39070,9 +39070,9 @@
 	        });
 	    };
 	    AppClient.prototype.getWalletAddress = function (walletPolicy, walletHMAC, change, addressIndex, display) {
-	        return __awaiter$5(this, void 0, void 0, function () {
+	        return __awaiter$4(this, void 0, void 0, function () {
 	            var clientInterpreter, addressIndexBuffer, response;
-	            return __generator$5(this, function (_a) {
+	            return __generator$4(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        if (change !== 0 && change !== 1)
@@ -39102,10 +39102,10 @@
 	        });
 	    };
 	    AppClient.prototype.signPsbt = function (psbt, walletPolicy, walletHMAC, progressCallback) {
-	        return __awaiter$5(this, void 0, void 0, function () {
+	        return __awaiter$4(this, void 0, void 0, function () {
 	            var merkelizedPsbt, clientInterpreter, _a, _b, map, _c, _d, map, inputMapsRoot, outputMapsRoot, yielded, ret, yielded_1, yielded_1_1, inputAndSig;
 	            var e_1, _e, e_2, _f, e_3, _g;
-	            return __generator$5(this, function (_h) {
+	            return __generator$4(this, function (_h) {
 	                switch (_h.label) {
 	                    case 0:
 	                        merkelizedPsbt = new MerkelizedPsbt(psbt);
@@ -39179,8 +39179,8 @@
 	        });
 	    };
 	    AppClient.prototype.getMasterFingerprint = function () {
-	        return __awaiter$5(this, void 0, void 0, function () {
-	            return __generator$5(this, function (_a) {
+	        return __awaiter$4(this, void 0, void 0, function () {
+	            return __generator$4(this, function (_a) {
 	                return [2 /*return*/, this.makeRequest(BitcoinIns.GET_MASTER_FINGERPRINT, Buffer$k.from([]))];
 	            });
 	        });
@@ -39360,7 +39360,7 @@
 	    return t;
 	}
 
-	var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -39369,7 +39369,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$4 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$3 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -39605,9 +39605,9 @@
 	        return getTrustedInputBIP143(this.transport, indexLookup, transaction, additionals);
 	    };
 	    Btc.prototype.getCorrectImpl = function () {
-	        return __awaiter$4(this, void 0, void 0, function () {
+	        return __awaiter$3(this, void 0, void 0, function () {
 	            var _lazyImpl, impl;
-	            return __generator$4(this, function (_a) {
+	            return __generator$3(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        _lazyImpl = this._lazyImpl;
@@ -39623,9 +39623,9 @@
 	        });
 	    };
 	    Btc.prototype.inferCorrectImpl = function () {
-	        return __awaiter$4(this, void 0, void 0, function () {
+	        return __awaiter$3(this, void 0, void 0, function () {
 	            var appAndVersion, canUseNewImplementation;
-	            return __generator$4(this, function (_a) {
+	            return __generator$3(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, getAppAndVersion(this.transport)];
 	                    case 1:
@@ -40101,7 +40101,7 @@
 		TransportStatusError: TransportStatusError
 	});
 
-	var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -40110,7 +40110,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$3 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$2 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -40198,9 +40198,9 @@
 	        this.send = function (cla, ins, p1, p2, data, statusList) {
 	            if (data === void 0) { data = Buffer$k.alloc(0); }
 	            if (statusList === void 0) { statusList = [StatusCodes.OK]; }
-	            return __awaiter$3(_this, void 0, void 0, function () {
+	            return __awaiter$2(_this, void 0, void 0, function () {
 	                var response, sw;
-	                return __generator$3(this, function (_a) {
+	                return __generator$2(this, function (_a) {
 	                    switch (_a.label) {
 	                        case 0:
 	                            if (data.length >= 256) {
@@ -40222,10 +40222,10 @@
 	                });
 	            });
 	        };
-	        this.exchangeAtomicImpl = function (f) { return __awaiter$3(_this, void 0, void 0, function () {
+	        this.exchangeAtomicImpl = function (f) { return __awaiter$2(_this, void 0, void 0, function () {
 	            var resolveBusy, busyPromise, unresponsiveReached, timeout, res;
 	            var _this = this;
-	            return __generator$3(this, function (_a) {
+	            return __generator$2(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        if (this.exchangeBusyPromise) {
@@ -40390,9 +40390,9 @@
 	            for (var _i = 0; _i < arguments.length; _i++) {
 	                args[_i] = arguments[_i];
 	            }
-	            return __awaiter$3(_this, void 0, void 0, function () {
+	            return __awaiter$2(_this, void 0, void 0, function () {
 	                var _appAPIlock;
-	                return __generator$3(this, function (_a) {
+	                return __generator$2(this, function (_a) {
 	                    switch (_a.label) {
 	                        case 0:
 	                            _appAPIlock = this._appAPIlock;
@@ -40617,111 +40617,6 @@
 	    }
 	}
 
-	var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-	    return new (P || (P = Promise))(function (resolve, reject) {
-	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-	        step((generator = generator.apply(thisArg, _arguments || [])).next());
-	    });
-	};
-	var __generator$2 = (undefined && undefined.__generator) || function (thisArg, body) {
-	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-	    function verb(n) { return function (v) { return step([n, v]); }; }
-	    function step(op) {
-	        if (f) throw new TypeError("Generator is already executing.");
-	        while (_) try {
-	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [op[0] & 2, t.value];
-	            switch (op[0]) {
-	                case 0: case 1: t = op; break;
-	                case 4: _.label++; return { value: op[1], done: false };
-	                case 5: _.label++; y = op[1]; op = [0]; continue;
-	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-	                default:
-	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-	                    if (t[2]) _.ops.pop();
-	                    _.trys.pop(); continue;
-	            }
-	            op = body.call(thisArg, _);
-	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-	    }
-	};
-	var ledgerDevices = [
-	    {
-	        vendorId: ledgerUSBVendorId
-	    },
-	];
-	function requestLedgerDevice() {
-	    return __awaiter$2(this, void 0, void 0, function () {
-	        var device;
-	        return __generator$2(this, function (_a) {
-	            switch (_a.label) {
-	                case 0: return [4 /*yield*/, navigator.usb.requestDevice({
-	                        filters: ledgerDevices
-	                    })];
-	                case 1:
-	                    device = _a.sent();
-	                    return [2 /*return*/, device];
-	            }
-	        });
-	    });
-	}
-	function getLedgerDevices() {
-	    return __awaiter$2(this, void 0, void 0, function () {
-	        var devices;
-	        return __generator$2(this, function (_a) {
-	            switch (_a.label) {
-	                case 0: return [4 /*yield*/, navigator.usb.getDevices()];
-	                case 1:
-	                    devices = _a.sent();
-	                    return [2 /*return*/, devices.filter(function (d) { return d.vendorId === ledgerUSBVendorId; })];
-	            }
-	        });
-	    });
-	}
-	function getFirstLedgerDevice() {
-	    return __awaiter$2(this, void 0, void 0, function () {
-	        var existingDevices;
-	        return __generator$2(this, function (_a) {
-	            switch (_a.label) {
-	                case 0: return [4 /*yield*/, getLedgerDevices()];
-	                case 1:
-	                    existingDevices = _a.sent();
-	                    if (existingDevices.length > 0)
-	                        return [2 /*return*/, existingDevices[0]];
-	                    return [2 /*return*/, requestLedgerDevice()];
-	            }
-	        });
-	    });
-	}
-	var isSupported = function () {
-	    return Promise.resolve(!!navigator &&
-	        !!navigator.usb &&
-	        typeof navigator.usb.getDevices === "function");
-	};
-
-	var __extends$2 = (undefined && undefined.__extends) || (function () {
-	    var extendStatics = function (d, b) {
-	        extendStatics = Object.setPrototypeOf ||
-	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-	            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-	        return extendStatics(d, b);
-	    };
-	    return function (d, b) {
-	        if (typeof b !== "function" && b !== null)
-	            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-	        extendStatics(d, b);
-	        function __() { this.constructor = d; }
-	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	    };
-	})();
 	var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
@@ -40758,6 +40653,111 @@
 	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
 	    }
 	};
+	var ledgerDevices = [
+	    {
+	        vendorId: ledgerUSBVendorId
+	    },
+	];
+	function requestLedgerDevice() {
+	    return __awaiter$1(this, void 0, void 0, function () {
+	        var device;
+	        return __generator$1(this, function (_a) {
+	            switch (_a.label) {
+	                case 0: return [4 /*yield*/, navigator.usb.requestDevice({
+	                        filters: ledgerDevices
+	                    })];
+	                case 1:
+	                    device = _a.sent();
+	                    return [2 /*return*/, device];
+	            }
+	        });
+	    });
+	}
+	function getLedgerDevices() {
+	    return __awaiter$1(this, void 0, void 0, function () {
+	        var devices;
+	        return __generator$1(this, function (_a) {
+	            switch (_a.label) {
+	                case 0: return [4 /*yield*/, navigator.usb.getDevices()];
+	                case 1:
+	                    devices = _a.sent();
+	                    return [2 /*return*/, devices.filter(function (d) { return d.vendorId === ledgerUSBVendorId; })];
+	            }
+	        });
+	    });
+	}
+	function getFirstLedgerDevice() {
+	    return __awaiter$1(this, void 0, void 0, function () {
+	        var existingDevices;
+	        return __generator$1(this, function (_a) {
+	            switch (_a.label) {
+	                case 0: return [4 /*yield*/, getLedgerDevices()];
+	                case 1:
+	                    existingDevices = _a.sent();
+	                    if (existingDevices.length > 0)
+	                        return [2 /*return*/, existingDevices[0]];
+	                    return [2 /*return*/, requestLedgerDevice()];
+	            }
+	        });
+	    });
+	}
+	var isSupported = function () {
+	    return Promise.resolve(!!navigator &&
+	        !!navigator.usb &&
+	        typeof navigator.usb.getDevices === "function");
+	};
+
+	var __extends = (undefined && undefined.__extends) || (function () {
+	    var extendStatics = function (d, b) {
+	        extendStatics = Object.setPrototypeOf ||
+	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+	        return extendStatics(d, b);
+	    };
+	    return function (d, b) {
+	        if (typeof b !== "function" && b !== null)
+	            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
+	var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	};
 	var configurationValue = 1;
 	var endpointNumber = 3;
 	/**
@@ -40768,7 +40768,7 @@
 	 * TransportWebUSB.create().then(transport => ...)
 	 */
 	var TransportWebUSB = /** @class */ (function (_super) {
-	    __extends$2(TransportWebUSB, _super);
+	    __extends(TransportWebUSB, _super);
 	    function TransportWebUSB(device, interfaceNumber) {
 	        var _this = _super.call(this) || this;
 	        _this.channel = Math.floor(Math.random() * 0xffff);
@@ -40789,9 +40789,9 @@
 	     * Similar to create() except it will always display the device permission (even if some devices are already accepted).
 	     */
 	    TransportWebUSB.request = function () {
-	        return __awaiter$1(this, void 0, void 0, function () {
+	        return __awaiter(this, void 0, void 0, function () {
 	            var device;
-	            return __generator$1(this, function (_a) {
+	            return __generator(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, requestLedgerDevice()];
 	                    case 1:
@@ -40805,9 +40805,9 @@
 	     * Similar to create() except it will never display the device permission (it returns a Promise<?Transport>, null if it fails to find a device).
 	     */
 	    TransportWebUSB.openConnected = function () {
-	        return __awaiter$1(this, void 0, void 0, function () {
+	        return __awaiter(this, void 0, void 0, function () {
 	            var devices;
-	            return __generator$1(this, function (_a) {
+	            return __generator(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, getLedgerDevices()];
 	                    case 1:
@@ -40823,9 +40823,9 @@
 	     * Create a Ledger transport with a USBDevice
 	     */
 	    TransportWebUSB.open = function (device) {
-	        return __awaiter$1(this, void 0, void 0, function () {
+	        return __awaiter(this, void 0, void 0, function () {
 	            var iface, interfaceNumber, e_1, transport, onDisconnect;
-	            return __generator$1(this, function (_a) {
+	            return __generator(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, device.open()];
 	                    case 1:
@@ -40879,8 +40879,8 @@
 	     * Release the transport device
 	     */
 	    TransportWebUSB.prototype.close = function () {
-	        return __awaiter$1(this, void 0, void 0, function () {
-	            return __generator$1(this, function (_a) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, this.exchangeBusyPromise];
 	                    case 1:
@@ -40905,14 +40905,14 @@
 	     * @returns a promise of apdu response
 	     */
 	    TransportWebUSB.prototype.exchange = function (apdu) {
-	        return __awaiter$1(this, void 0, void 0, function () {
+	        return __awaiter(this, void 0, void 0, function () {
 	            var b;
 	            var _this = this;
-	            return __generator$1(this, function (_a) {
+	            return __generator(this, function (_a) {
 	                switch (_a.label) {
-	                    case 0: return [4 /*yield*/, this.exchangeAtomicImpl(function () { return __awaiter$1(_this, void 0, void 0, function () {
+	                    case 0: return [4 /*yield*/, this.exchangeAtomicImpl(function () { return __awaiter(_this, void 0, void 0, function () {
 	                            var _a, channel, packetSize, framing, blocks, i, result, acc, r, buffer;
-	                            return __generator$1(this, function (_b) {
+	                            return __generator(this, function (_b) {
 	                                switch (_b.label) {
 	                                    case 0:
 	                                        _a = this, channel = _a.channel, packetSize = _a.packetSize;
@@ -41004,9 +41004,9 @@
 	    return TransportWebUSB;
 	}(Transport));
 	function gracefullyResetDevice(device) {
-	    return __awaiter$1(this, void 0, void 0, function () {
+	    return __awaiter(this, void 0, void 0, function () {
 	        var err_1;
-	        return __generator$1(this, function (_a) {
+	        return __generator(this, function (_a) {
 	            switch (_a.label) {
 	                case 0:
 	                    _a.trys.push([0, 2, , 3]);
@@ -41029,1038 +41029,8 @@
 		'default': TransportWebUSB
 	});
 
-	/*! *****************************************************************************
-	Copyright (c) Microsoft Corporation.
-
-	Permission to use, copy, modify, and/or distribute this software for any
-	purpose with or without fee is hereby granted.
-
-	THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-	REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-	INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-	LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-	OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-	PERFORMANCE OF THIS SOFTWARE.
-	***************************************************************************** */
-	/* global Reflect, Promise */
-
-	var extendStatics = function(d, b) {
-	    extendStatics = Object.setPrototypeOf ||
-	        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-	        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-	    return extendStatics(d, b);
-	};
-
-	function __extends$1(d, b) {
-	    extendStatics(d, b);
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	}
-
-	/** PURE_IMPORTS_START  PURE_IMPORTS_END */
-	function isFunction(x) {
-	    return typeof x === 'function';
-	}
-
-	/** PURE_IMPORTS_START  PURE_IMPORTS_END */
-	var _enable_super_gross_mode_that_will_cause_bad_things = false;
-	var config = {
-	    Promise: undefined,
-	    set useDeprecatedSynchronousErrorHandling(value) {
-	        if (value) {
-	            var error = /*@__PURE__*/ new Error();
-	            /*@__PURE__*/ console.warn('DEPRECATED! RxJS was set to use deprecated synchronous error handling behavior by code at: \n' + error.stack);
-	        }
-	        _enable_super_gross_mode_that_will_cause_bad_things = value;
-	    },
-	    get useDeprecatedSynchronousErrorHandling() {
-	        return _enable_super_gross_mode_that_will_cause_bad_things;
-	    },
-	};
-
-	/** PURE_IMPORTS_START  PURE_IMPORTS_END */
-	function hostReportError(err) {
-	    setTimeout(function () { throw err; }, 0);
-	}
-
-	/** PURE_IMPORTS_START _config,_util_hostReportError PURE_IMPORTS_END */
-	var empty = {
-	    closed: true,
-	    next: function (value) { },
-	    error: function (err) {
-	        if (config.useDeprecatedSynchronousErrorHandling) {
-	            throw err;
-	        }
-	        else {
-	            hostReportError(err);
-	        }
-	    },
-	    complete: function () { }
-	};
-
-	/** PURE_IMPORTS_START  PURE_IMPORTS_END */
-	var isArray = /*@__PURE__*/ (function () { return Array.isArray || (function (x) { return x && typeof x.length === 'number'; }); })();
-
-	/** PURE_IMPORTS_START  PURE_IMPORTS_END */
-	function isObject(x) {
-	    return x !== null && typeof x === 'object';
-	}
-
-	/** PURE_IMPORTS_START  PURE_IMPORTS_END */
-	var UnsubscriptionErrorImpl = /*@__PURE__*/ (function () {
-	    function UnsubscriptionErrorImpl(errors) {
-	        Error.call(this);
-	        this.message = errors ?
-	            errors.length + " errors occurred during unsubscription:\n" + errors.map(function (err, i) { return i + 1 + ") " + err.toString(); }).join('\n  ') : '';
-	        this.name = 'UnsubscriptionError';
-	        this.errors = errors;
-	        return this;
-	    }
-	    UnsubscriptionErrorImpl.prototype = /*@__PURE__*/ Object.create(Error.prototype);
-	    return UnsubscriptionErrorImpl;
-	})();
-	var UnsubscriptionError = UnsubscriptionErrorImpl;
-
-	/** PURE_IMPORTS_START _util_isArray,_util_isObject,_util_isFunction,_util_UnsubscriptionError PURE_IMPORTS_END */
-	var Subscription = /*@__PURE__*/ (function () {
-	    function Subscription(unsubscribe) {
-	        this.closed = false;
-	        this._parentOrParents = null;
-	        this._subscriptions = null;
-	        if (unsubscribe) {
-	            this._ctorUnsubscribe = true;
-	            this._unsubscribe = unsubscribe;
-	        }
-	    }
-	    Subscription.prototype.unsubscribe = function () {
-	        var errors;
-	        if (this.closed) {
-	            return;
-	        }
-	        var _a = this, _parentOrParents = _a._parentOrParents, _ctorUnsubscribe = _a._ctorUnsubscribe, _unsubscribe = _a._unsubscribe, _subscriptions = _a._subscriptions;
-	        this.closed = true;
-	        this._parentOrParents = null;
-	        this._subscriptions = null;
-	        if (_parentOrParents instanceof Subscription) {
-	            _parentOrParents.remove(this);
-	        }
-	        else if (_parentOrParents !== null) {
-	            for (var index = 0; index < _parentOrParents.length; ++index) {
-	                var parent_1 = _parentOrParents[index];
-	                parent_1.remove(this);
-	            }
-	        }
-	        if (isFunction(_unsubscribe)) {
-	            if (_ctorUnsubscribe) {
-	                this._unsubscribe = undefined;
-	            }
-	            try {
-	                _unsubscribe.call(this);
-	            }
-	            catch (e) {
-	                errors = e instanceof UnsubscriptionError ? flattenUnsubscriptionErrors(e.errors) : [e];
-	            }
-	        }
-	        if (isArray(_subscriptions)) {
-	            var index = -1;
-	            var len = _subscriptions.length;
-	            while (++index < len) {
-	                var sub = _subscriptions[index];
-	                if (isObject(sub)) {
-	                    try {
-	                        sub.unsubscribe();
-	                    }
-	                    catch (e) {
-	                        errors = errors || [];
-	                        if (e instanceof UnsubscriptionError) {
-	                            errors = errors.concat(flattenUnsubscriptionErrors(e.errors));
-	                        }
-	                        else {
-	                            errors.push(e);
-	                        }
-	                    }
-	                }
-	            }
-	        }
-	        if (errors) {
-	            throw new UnsubscriptionError(errors);
-	        }
-	    };
-	    Subscription.prototype.add = function (teardown) {
-	        var subscription = teardown;
-	        if (!teardown) {
-	            return Subscription.EMPTY;
-	        }
-	        switch (typeof teardown) {
-	            case 'function':
-	                subscription = new Subscription(teardown);
-	            case 'object':
-	                if (subscription === this || subscription.closed || typeof subscription.unsubscribe !== 'function') {
-	                    return subscription;
-	                }
-	                else if (this.closed) {
-	                    subscription.unsubscribe();
-	                    return subscription;
-	                }
-	                else if (!(subscription instanceof Subscription)) {
-	                    var tmp = subscription;
-	                    subscription = new Subscription();
-	                    subscription._subscriptions = [tmp];
-	                }
-	                break;
-	            default: {
-	                throw new Error('unrecognized teardown ' + teardown + ' added to Subscription.');
-	            }
-	        }
-	        var _parentOrParents = subscription._parentOrParents;
-	        if (_parentOrParents === null) {
-	            subscription._parentOrParents = this;
-	        }
-	        else if (_parentOrParents instanceof Subscription) {
-	            if (_parentOrParents === this) {
-	                return subscription;
-	            }
-	            subscription._parentOrParents = [_parentOrParents, this];
-	        }
-	        else if (_parentOrParents.indexOf(this) === -1) {
-	            _parentOrParents.push(this);
-	        }
-	        else {
-	            return subscription;
-	        }
-	        var subscriptions = this._subscriptions;
-	        if (subscriptions === null) {
-	            this._subscriptions = [subscription];
-	        }
-	        else {
-	            subscriptions.push(subscription);
-	        }
-	        return subscription;
-	    };
-	    Subscription.prototype.remove = function (subscription) {
-	        var subscriptions = this._subscriptions;
-	        if (subscriptions) {
-	            var subscriptionIndex = subscriptions.indexOf(subscription);
-	            if (subscriptionIndex !== -1) {
-	                subscriptions.splice(subscriptionIndex, 1);
-	            }
-	        }
-	    };
-	    Subscription.EMPTY = (function (empty) {
-	        empty.closed = true;
-	        return empty;
-	    }(new Subscription()));
-	    return Subscription;
-	}());
-	function flattenUnsubscriptionErrors(errors) {
-	    return errors.reduce(function (errs, err) { return errs.concat((err instanceof UnsubscriptionError) ? err.errors : err); }, []);
-	}
-
-	/** PURE_IMPORTS_START  PURE_IMPORTS_END */
-	var rxSubscriber = /*@__PURE__*/ (function () {
-	    return typeof Symbol === 'function'
-	        ? /*@__PURE__*/ Symbol('rxSubscriber')
-	        : '@@rxSubscriber_' + /*@__PURE__*/ Math.random();
-	})();
-
-	/** PURE_IMPORTS_START tslib,_util_isFunction,_Observer,_Subscription,_internal_symbol_rxSubscriber,_config,_util_hostReportError PURE_IMPORTS_END */
-	var Subscriber = /*@__PURE__*/ (function (_super) {
-	    __extends$1(Subscriber, _super);
-	    function Subscriber(destinationOrNext, error, complete) {
-	        var _this = _super.call(this) || this;
-	        _this.syncErrorValue = null;
-	        _this.syncErrorThrown = false;
-	        _this.syncErrorThrowable = false;
-	        _this.isStopped = false;
-	        switch (arguments.length) {
-	            case 0:
-	                _this.destination = empty;
-	                break;
-	            case 1:
-	                if (!destinationOrNext) {
-	                    _this.destination = empty;
-	                    break;
-	                }
-	                if (typeof destinationOrNext === 'object') {
-	                    if (destinationOrNext instanceof Subscriber) {
-	                        _this.syncErrorThrowable = destinationOrNext.syncErrorThrowable;
-	                        _this.destination = destinationOrNext;
-	                        destinationOrNext.add(_this);
-	                    }
-	                    else {
-	                        _this.syncErrorThrowable = true;
-	                        _this.destination = new SafeSubscriber(_this, destinationOrNext);
-	                    }
-	                    break;
-	                }
-	            default:
-	                _this.syncErrorThrowable = true;
-	                _this.destination = new SafeSubscriber(_this, destinationOrNext, error, complete);
-	                break;
-	        }
-	        return _this;
-	    }
-	    Subscriber.prototype[rxSubscriber] = function () { return this; };
-	    Subscriber.create = function (next, error, complete) {
-	        var subscriber = new Subscriber(next, error, complete);
-	        subscriber.syncErrorThrowable = false;
-	        return subscriber;
-	    };
-	    Subscriber.prototype.next = function (value) {
-	        if (!this.isStopped) {
-	            this._next(value);
-	        }
-	    };
-	    Subscriber.prototype.error = function (err) {
-	        if (!this.isStopped) {
-	            this.isStopped = true;
-	            this._error(err);
-	        }
-	    };
-	    Subscriber.prototype.complete = function () {
-	        if (!this.isStopped) {
-	            this.isStopped = true;
-	            this._complete();
-	        }
-	    };
-	    Subscriber.prototype.unsubscribe = function () {
-	        if (this.closed) {
-	            return;
-	        }
-	        this.isStopped = true;
-	        _super.prototype.unsubscribe.call(this);
-	    };
-	    Subscriber.prototype._next = function (value) {
-	        this.destination.next(value);
-	    };
-	    Subscriber.prototype._error = function (err) {
-	        this.destination.error(err);
-	        this.unsubscribe();
-	    };
-	    Subscriber.prototype._complete = function () {
-	        this.destination.complete();
-	        this.unsubscribe();
-	    };
-	    Subscriber.prototype._unsubscribeAndRecycle = function () {
-	        var _parentOrParents = this._parentOrParents;
-	        this._parentOrParents = null;
-	        this.unsubscribe();
-	        this.closed = false;
-	        this.isStopped = false;
-	        this._parentOrParents = _parentOrParents;
-	        return this;
-	    };
-	    return Subscriber;
-	}(Subscription));
-	var SafeSubscriber = /*@__PURE__*/ (function (_super) {
-	    __extends$1(SafeSubscriber, _super);
-	    function SafeSubscriber(_parentSubscriber, observerOrNext, error, complete) {
-	        var _this = _super.call(this) || this;
-	        _this._parentSubscriber = _parentSubscriber;
-	        var next;
-	        var context = _this;
-	        if (isFunction(observerOrNext)) {
-	            next = observerOrNext;
-	        }
-	        else if (observerOrNext) {
-	            next = observerOrNext.next;
-	            error = observerOrNext.error;
-	            complete = observerOrNext.complete;
-	            if (observerOrNext !== empty) {
-	                context = Object.create(observerOrNext);
-	                if (isFunction(context.unsubscribe)) {
-	                    _this.add(context.unsubscribe.bind(context));
-	                }
-	                context.unsubscribe = _this.unsubscribe.bind(_this);
-	            }
-	        }
-	        _this._context = context;
-	        _this._next = next;
-	        _this._error = error;
-	        _this._complete = complete;
-	        return _this;
-	    }
-	    SafeSubscriber.prototype.next = function (value) {
-	        if (!this.isStopped && this._next) {
-	            var _parentSubscriber = this._parentSubscriber;
-	            if (!config.useDeprecatedSynchronousErrorHandling || !_parentSubscriber.syncErrorThrowable) {
-	                this.__tryOrUnsub(this._next, value);
-	            }
-	            else if (this.__tryOrSetError(_parentSubscriber, this._next, value)) {
-	                this.unsubscribe();
-	            }
-	        }
-	    };
-	    SafeSubscriber.prototype.error = function (err) {
-	        if (!this.isStopped) {
-	            var _parentSubscriber = this._parentSubscriber;
-	            var useDeprecatedSynchronousErrorHandling = config.useDeprecatedSynchronousErrorHandling;
-	            if (this._error) {
-	                if (!useDeprecatedSynchronousErrorHandling || !_parentSubscriber.syncErrorThrowable) {
-	                    this.__tryOrUnsub(this._error, err);
-	                    this.unsubscribe();
-	                }
-	                else {
-	                    this.__tryOrSetError(_parentSubscriber, this._error, err);
-	                    this.unsubscribe();
-	                }
-	            }
-	            else if (!_parentSubscriber.syncErrorThrowable) {
-	                this.unsubscribe();
-	                if (useDeprecatedSynchronousErrorHandling) {
-	                    throw err;
-	                }
-	                hostReportError(err);
-	            }
-	            else {
-	                if (useDeprecatedSynchronousErrorHandling) {
-	                    _parentSubscriber.syncErrorValue = err;
-	                    _parentSubscriber.syncErrorThrown = true;
-	                }
-	                else {
-	                    hostReportError(err);
-	                }
-	                this.unsubscribe();
-	            }
-	        }
-	    };
-	    SafeSubscriber.prototype.complete = function () {
-	        var _this = this;
-	        if (!this.isStopped) {
-	            var _parentSubscriber = this._parentSubscriber;
-	            if (this._complete) {
-	                var wrappedComplete = function () { return _this._complete.call(_this._context); };
-	                if (!config.useDeprecatedSynchronousErrorHandling || !_parentSubscriber.syncErrorThrowable) {
-	                    this.__tryOrUnsub(wrappedComplete);
-	                    this.unsubscribe();
-	                }
-	                else {
-	                    this.__tryOrSetError(_parentSubscriber, wrappedComplete);
-	                    this.unsubscribe();
-	                }
-	            }
-	            else {
-	                this.unsubscribe();
-	            }
-	        }
-	    };
-	    SafeSubscriber.prototype.__tryOrUnsub = function (fn, value) {
-	        try {
-	            fn.call(this._context, value);
-	        }
-	        catch (err) {
-	            this.unsubscribe();
-	            if (config.useDeprecatedSynchronousErrorHandling) {
-	                throw err;
-	            }
-	            else {
-	                hostReportError(err);
-	            }
-	        }
-	    };
-	    SafeSubscriber.prototype.__tryOrSetError = function (parent, fn, value) {
-	        if (!config.useDeprecatedSynchronousErrorHandling) {
-	            throw new Error('bad call');
-	        }
-	        try {
-	            fn.call(this._context, value);
-	        }
-	        catch (err) {
-	            if (config.useDeprecatedSynchronousErrorHandling) {
-	                parent.syncErrorValue = err;
-	                parent.syncErrorThrown = true;
-	                return true;
-	            }
-	            else {
-	                hostReportError(err);
-	                return true;
-	            }
-	        }
-	        return false;
-	    };
-	    SafeSubscriber.prototype._unsubscribe = function () {
-	        var _parentSubscriber = this._parentSubscriber;
-	        this._context = null;
-	        this._parentSubscriber = null;
-	        _parentSubscriber.unsubscribe();
-	    };
-	    return SafeSubscriber;
-	}(Subscriber));
-
-	/** PURE_IMPORTS_START _Subscriber PURE_IMPORTS_END */
-	function canReportError(observer) {
-	    while (observer) {
-	        var _a = observer, closed_1 = _a.closed, destination = _a.destination, isStopped = _a.isStopped;
-	        if (closed_1 || isStopped) {
-	            return false;
-	        }
-	        else if (destination && destination instanceof Subscriber) {
-	            observer = destination;
-	        }
-	        else {
-	            observer = null;
-	        }
-	    }
-	    return true;
-	}
-
-	/** PURE_IMPORTS_START _Subscriber,_symbol_rxSubscriber,_Observer PURE_IMPORTS_END */
-	function toSubscriber(nextOrObserver, error, complete) {
-	    if (nextOrObserver) {
-	        if (nextOrObserver instanceof Subscriber) {
-	            return nextOrObserver;
-	        }
-	        if (nextOrObserver[rxSubscriber]) {
-	            return nextOrObserver[rxSubscriber]();
-	        }
-	    }
-	    if (!nextOrObserver && !error && !complete) {
-	        return new Subscriber(empty);
-	    }
-	    return new Subscriber(nextOrObserver, error, complete);
-	}
-
-	/** PURE_IMPORTS_START  PURE_IMPORTS_END */
-	var observable = /*@__PURE__*/ (function () { return typeof Symbol === 'function' && Symbol.observable || '@@observable'; })();
-
-	/** PURE_IMPORTS_START  PURE_IMPORTS_END */
-	function identity(x) {
-	    return x;
-	}
-
-	/** PURE_IMPORTS_START _identity PURE_IMPORTS_END */
-	function pipeFromArray(fns) {
-	    if (fns.length === 0) {
-	        return identity;
-	    }
-	    if (fns.length === 1) {
-	        return fns[0];
-	    }
-	    return function piped(input) {
-	        return fns.reduce(function (prev, fn) { return fn(prev); }, input);
-	    };
-	}
-
-	/** PURE_IMPORTS_START _util_canReportError,_util_toSubscriber,_symbol_observable,_util_pipe,_config PURE_IMPORTS_END */
-	var Observable = /*@__PURE__*/ (function () {
-	    function Observable(subscribe) {
-	        this._isScalar = false;
-	        if (subscribe) {
-	            this._subscribe = subscribe;
-	        }
-	    }
-	    Observable.prototype.lift = function (operator) {
-	        var observable = new Observable();
-	        observable.source = this;
-	        observable.operator = operator;
-	        return observable;
-	    };
-	    Observable.prototype.subscribe = function (observerOrNext, error, complete) {
-	        var operator = this.operator;
-	        var sink = toSubscriber(observerOrNext, error, complete);
-	        if (operator) {
-	            sink.add(operator.call(sink, this.source));
-	        }
-	        else {
-	            sink.add(this.source || (config.useDeprecatedSynchronousErrorHandling && !sink.syncErrorThrowable) ?
-	                this._subscribe(sink) :
-	                this._trySubscribe(sink));
-	        }
-	        if (config.useDeprecatedSynchronousErrorHandling) {
-	            if (sink.syncErrorThrowable) {
-	                sink.syncErrorThrowable = false;
-	                if (sink.syncErrorThrown) {
-	                    throw sink.syncErrorValue;
-	                }
-	            }
-	        }
-	        return sink;
-	    };
-	    Observable.prototype._trySubscribe = function (sink) {
-	        try {
-	            return this._subscribe(sink);
-	        }
-	        catch (err) {
-	            if (config.useDeprecatedSynchronousErrorHandling) {
-	                sink.syncErrorThrown = true;
-	                sink.syncErrorValue = err;
-	            }
-	            if (canReportError(sink)) {
-	                sink.error(err);
-	            }
-	            else {
-	                console.warn(err);
-	            }
-	        }
-	    };
-	    Observable.prototype.forEach = function (next, promiseCtor) {
-	        var _this = this;
-	        promiseCtor = getPromiseCtor(promiseCtor);
-	        return new promiseCtor(function (resolve, reject) {
-	            var subscription;
-	            subscription = _this.subscribe(function (value) {
-	                try {
-	                    next(value);
-	                }
-	                catch (err) {
-	                    reject(err);
-	                    if (subscription) {
-	                        subscription.unsubscribe();
-	                    }
-	                }
-	            }, reject, resolve);
-	        });
-	    };
-	    Observable.prototype._subscribe = function (subscriber) {
-	        var source = this.source;
-	        return source && source.subscribe(subscriber);
-	    };
-	    Observable.prototype[observable] = function () {
-	        return this;
-	    };
-	    Observable.prototype.pipe = function () {
-	        var operations = [];
-	        for (var _i = 0; _i < arguments.length; _i++) {
-	            operations[_i] = arguments[_i];
-	        }
-	        if (operations.length === 0) {
-	            return this;
-	        }
-	        return pipeFromArray(operations)(this);
-	    };
-	    Observable.prototype.toPromise = function (promiseCtor) {
-	        var _this = this;
-	        promiseCtor = getPromiseCtor(promiseCtor);
-	        return new promiseCtor(function (resolve, reject) {
-	            var value;
-	            _this.subscribe(function (x) { return value = x; }, function (err) { return reject(err); }, function () { return resolve(value); });
-	        });
-	    };
-	    Observable.create = function (subscribe) {
-	        return new Observable(subscribe);
-	    };
-	    return Observable;
-	}());
-	function getPromiseCtor(promiseCtor) {
-	    if (!promiseCtor) {
-	        promiseCtor = config.Promise || Promise;
-	    }
-	    if (!promiseCtor) {
-	        throw new Error('no Promise impl found');
-	    }
-	    return promiseCtor;
-	}
-
-	/** PURE_IMPORTS_START  PURE_IMPORTS_END */
-	var ObjectUnsubscribedErrorImpl = /*@__PURE__*/ (function () {
-	    function ObjectUnsubscribedErrorImpl() {
-	        Error.call(this);
-	        this.message = 'object unsubscribed';
-	        this.name = 'ObjectUnsubscribedError';
-	        return this;
-	    }
-	    ObjectUnsubscribedErrorImpl.prototype = /*@__PURE__*/ Object.create(Error.prototype);
-	    return ObjectUnsubscribedErrorImpl;
-	})();
-	var ObjectUnsubscribedError = ObjectUnsubscribedErrorImpl;
-
-	/** PURE_IMPORTS_START tslib,_Subscription PURE_IMPORTS_END */
-	var SubjectSubscription = /*@__PURE__*/ (function (_super) {
-	    __extends$1(SubjectSubscription, _super);
-	    function SubjectSubscription(subject, subscriber) {
-	        var _this = _super.call(this) || this;
-	        _this.subject = subject;
-	        _this.subscriber = subscriber;
-	        _this.closed = false;
-	        return _this;
-	    }
-	    SubjectSubscription.prototype.unsubscribe = function () {
-	        if (this.closed) {
-	            return;
-	        }
-	        this.closed = true;
-	        var subject = this.subject;
-	        var observers = subject.observers;
-	        this.subject = null;
-	        if (!observers || observers.length === 0 || subject.isStopped || subject.closed) {
-	            return;
-	        }
-	        var subscriberIndex = observers.indexOf(this.subscriber);
-	        if (subscriberIndex !== -1) {
-	            observers.splice(subscriberIndex, 1);
-	        }
-	    };
-	    return SubjectSubscription;
-	}(Subscription));
-
-	/** PURE_IMPORTS_START tslib,_Observable,_Subscriber,_Subscription,_util_ObjectUnsubscribedError,_SubjectSubscription,_internal_symbol_rxSubscriber PURE_IMPORTS_END */
-	var SubjectSubscriber = /*@__PURE__*/ (function (_super) {
-	    __extends$1(SubjectSubscriber, _super);
-	    function SubjectSubscriber(destination) {
-	        var _this = _super.call(this, destination) || this;
-	        _this.destination = destination;
-	        return _this;
-	    }
-	    return SubjectSubscriber;
-	}(Subscriber));
-	var Subject = /*@__PURE__*/ (function (_super) {
-	    __extends$1(Subject, _super);
-	    function Subject() {
-	        var _this = _super.call(this) || this;
-	        _this.observers = [];
-	        _this.closed = false;
-	        _this.isStopped = false;
-	        _this.hasError = false;
-	        _this.thrownError = null;
-	        return _this;
-	    }
-	    Subject.prototype[rxSubscriber] = function () {
-	        return new SubjectSubscriber(this);
-	    };
-	    Subject.prototype.lift = function (operator) {
-	        var subject = new AnonymousSubject(this, this);
-	        subject.operator = operator;
-	        return subject;
-	    };
-	    Subject.prototype.next = function (value) {
-	        if (this.closed) {
-	            throw new ObjectUnsubscribedError();
-	        }
-	        if (!this.isStopped) {
-	            var observers = this.observers;
-	            var len = observers.length;
-	            var copy = observers.slice();
-	            for (var i = 0; i < len; i++) {
-	                copy[i].next(value);
-	            }
-	        }
-	    };
-	    Subject.prototype.error = function (err) {
-	        if (this.closed) {
-	            throw new ObjectUnsubscribedError();
-	        }
-	        this.hasError = true;
-	        this.thrownError = err;
-	        this.isStopped = true;
-	        var observers = this.observers;
-	        var len = observers.length;
-	        var copy = observers.slice();
-	        for (var i = 0; i < len; i++) {
-	            copy[i].error(err);
-	        }
-	        this.observers.length = 0;
-	    };
-	    Subject.prototype.complete = function () {
-	        if (this.closed) {
-	            throw new ObjectUnsubscribedError();
-	        }
-	        this.isStopped = true;
-	        var observers = this.observers;
-	        var len = observers.length;
-	        var copy = observers.slice();
-	        for (var i = 0; i < len; i++) {
-	            copy[i].complete();
-	        }
-	        this.observers.length = 0;
-	    };
-	    Subject.prototype.unsubscribe = function () {
-	        this.isStopped = true;
-	        this.closed = true;
-	        this.observers = null;
-	    };
-	    Subject.prototype._trySubscribe = function (subscriber) {
-	        if (this.closed) {
-	            throw new ObjectUnsubscribedError();
-	        }
-	        else {
-	            return _super.prototype._trySubscribe.call(this, subscriber);
-	        }
-	    };
-	    Subject.prototype._subscribe = function (subscriber) {
-	        if (this.closed) {
-	            throw new ObjectUnsubscribedError();
-	        }
-	        else if (this.hasError) {
-	            subscriber.error(this.thrownError);
-	            return Subscription.EMPTY;
-	        }
-	        else if (this.isStopped) {
-	            subscriber.complete();
-	            return Subscription.EMPTY;
-	        }
-	        else {
-	            this.observers.push(subscriber);
-	            return new SubjectSubscription(this, subscriber);
-	        }
-	    };
-	    Subject.prototype.asObservable = function () {
-	        var observable = new Observable();
-	        observable.source = this;
-	        return observable;
-	    };
-	    Subject.create = function (destination, source) {
-	        return new AnonymousSubject(destination, source);
-	    };
-	    return Subject;
-	}(Observable));
-	var AnonymousSubject = /*@__PURE__*/ (function (_super) {
-	    __extends$1(AnonymousSubject, _super);
-	    function AnonymousSubject(destination, source) {
-	        var _this = _super.call(this) || this;
-	        _this.destination = destination;
-	        _this.source = source;
-	        return _this;
-	    }
-	    AnonymousSubject.prototype.next = function (value) {
-	        var destination = this.destination;
-	        if (destination && destination.next) {
-	            destination.next(value);
-	        }
-	    };
-	    AnonymousSubject.prototype.error = function (err) {
-	        var destination = this.destination;
-	        if (destination && destination.error) {
-	            this.destination.error(err);
-	        }
-	    };
-	    AnonymousSubject.prototype.complete = function () {
-	        var destination = this.destination;
-	        if (destination && destination.complete) {
-	            this.destination.complete();
-	        }
-	    };
-	    AnonymousSubject.prototype._subscribe = function (subscriber) {
-	        var source = this.source;
-	        if (source) {
-	            return this.source.subscribe(subscriber);
-	        }
-	        else {
-	            return Subscription.EMPTY;
-	        }
-	    };
-	    return AnonymousSubject;
-	}(Subject));
-
-	var net = {};
-
-	var __extends = (undefined && undefined.__extends) || (function () {
-	    var extendStatics = function (d, b) {
-	        extendStatics = Object.setPrototypeOf ||
-	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-	            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-	        return extendStatics(d, b);
-	    };
-	    return function (d, b) {
-	        if (typeof b !== "function" && b !== null)
-	            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-	        extendStatics(d, b);
-	        function __() { this.constructor = d; }
-	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	    };
-	})();
-	var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-	    return new (P || (P = Promise))(function (resolve, reject) {
-	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-	        step((generator = generator.apply(thisArg, _arguments || [])).next());
-	    });
-	};
-	var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
-	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-	    function verb(n) { return function (v) { return step([n, v]); }; }
-	    function step(op) {
-	        if (f) throw new TypeError("Generator is already executing.");
-	        while (_) try {
-	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [op[0] & 2, t.value];
-	            switch (op[0]) {
-	                case 0: case 1: t = op; break;
-	                case 4: _.label++; return { value: op[1], done: false };
-	                case 5: _.label++; y = op[1]; op = [0]; continue;
-	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-	                default:
-	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-	                    if (t[2]) _.ops.pop();
-	                    _.trys.pop(); continue;
-	            }
-	            op = body.call(thisArg, _);
-	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-	    }
-	};
-	/**
-	 * Speculos TCP transport implementation
-	 *
-	 * @example
-	 * import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos";
-	 * const transport = await SpeculosTransport.open({ apduPort });
-	 * const res = await transport.send(0xE0, 0x01, 0, 0);
-	 */
-	var SpeculosTransport = /** @class */ (function (_super) {
-	    __extends(SpeculosTransport, _super);
-	    function SpeculosTransport(apduSocket, opts) {
-	        var _this = _super.call(this) || this;
-	        _this.rejectExchange = function (_e) { };
-	        _this.resolveExchange = function (_b) { };
-	        _this.automationEvents = new Subject();
-	        /**
-	         * Send a speculos button command
-	         * typically "Ll" would press and release the left button
-	         * typically "Rr" would press and release the right button
-	         * @param {*} command
-	         */
-	        _this.button = function (command) {
-	            return new Promise(function (resolve, reject) {
-	                log("speculos-button", command);
-	                var _a = _this.opts, buttonPort = _a.buttonPort, host = _a.host;
-	                if (!buttonPort)
-	                    throw new Error("buttonPort is missing");
-	                var socket = new net.Socket();
-	                socket.on("error", function (e) {
-	                    socket.destroy();
-	                    reject(e);
-	                });
-	                socket.connect(buttonPort, host || "127.0.0.1", function () {
-	                    socket.write(Buffer$k.from(command, "ascii"));
-	                    socket.destroy();
-	                    resolve();
-	                });
-	            });
-	        };
-	        _this.opts = opts;
-	        _this.apduSocket = apduSocket;
-	        apduSocket.on("error", function (e) {
-	            _this.emit("disconnect", new DisconnectedDevice(e.message));
-	            _this.rejectExchange(e);
-	            _this.apduSocket.destroy();
-	        });
-	        apduSocket.on("end", function () {
-	            _this.emit("disconnect", new DisconnectedDevice());
-	            _this.rejectExchange(new DisconnectedDeviceDuringOperation());
-	        });
-	        apduSocket.on("data", function (data) {
-	            try {
-	                _this.resolveExchange(decodeAPDUPayload(data));
-	            }
-	            catch (e) {
-	                _this.rejectExchange(e);
-	            }
-	        });
-	        var automationPort = opts.automationPort;
-	        if (automationPort) {
-	            var socket_1 = new net.Socket();
-	            _this.automationSocket = socket_1;
-	            socket_1.on("error", function (e) {
-	                log("speculos-automation-error", String(e));
-	                socket_1.destroy();
-	            });
-	            socket_1.on("data", function (data) {
-	                log("speculos-automation-data", data.toString("ascii"));
-	                var split = data.toString("ascii").split("\n");
-	                split
-	                    .filter(function (ascii) { return !!ascii; })
-	                    .forEach(function (ascii) {
-	                    var json = JSON.parse(ascii);
-	                    _this.automationEvents.next(json);
-	                });
-	            });
-	            socket_1.connect(automationPort, opts.host || "127.0.0.1");
-	        }
-	        return _this;
-	    }
-	    SpeculosTransport.prototype.exchange = function (apdu) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            var hex, encoded, res;
-	            var _this = this;
-	            return __generator(this, function (_a) {
-	                switch (_a.label) {
-	                    case 0:
-	                        hex = apdu.toString("hex");
-	                        log("apdu", "=> " + hex);
-	                        encoded = encodeAPDU(apdu);
-	                        return [4 /*yield*/, new Promise(function (resolve, reject) {
-	                                _this.rejectExchange = reject;
-	                                _this.resolveExchange = resolve;
-	                                _this.apduSocket.write(encoded);
-	                            })];
-	                    case 1:
-	                        res = _a.sent();
-	                        log("apdu", "<= " + res.toString("hex"));
-	                        return [2 /*return*/, res];
-	                }
-	            });
-	        });
-	    };
-	    SpeculosTransport.prototype.setScrambleKey = function () { };
-	    SpeculosTransport.prototype.close = function () {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                if (this.automationSocket)
-	                    this.automationSocket.destroy();
-	                this.apduSocket.destroy();
-	                return [2 /*return*/, Promise.resolve()];
-	            });
-	        });
-	    };
-	    SpeculosTransport.isSupported = function () { return Promise.resolve(true); };
-	    // this transport is not discoverable
-	    SpeculosTransport.list = function () { return Promise.resolve([]); };
-	    SpeculosTransport.listen = function (_observer) { return ({
-	        unsubscribe: function () { }
-	    }); };
-	    /**
-	     *
-	     */
-	    SpeculosTransport.open = function (opts) {
-	        return new Promise(function (resolve, reject) {
-	            var socket = new net.Socket();
-	            socket.on("error", function (e) {
-	                socket.destroy();
-	                reject(e);
-	            });
-	            socket.on("end", function () {
-	                reject(new DisconnectedDevice("tcp closed"));
-	            });
-	            socket.connect(opts.apduPort, opts.host || "127.0.0.1", function () {
-	                // we delay a bit the transport creation to make sure the tcp does not hang up
-	                setTimeout(function () {
-	                    resolve(new SpeculosTransport(socket, opts));
-	                }, 100);
-	            });
-	        });
-	    };
-	    return SpeculosTransport;
-	}(Transport));
-	function encodeAPDU(apdu) {
-	    var size = Buffer$k.allocUnsafe(4);
-	    size.writeUIntBE(apdu.length, 0, 4);
-	    return Buffer$k.concat([size, apdu]);
-	}
-	function decodeAPDUPayload(data) {
-	    var dataLength = data.readUIntBE(0, 4); // 4 bytes tells the data length
-	    var size = dataLength + 2; // size does not include the status code so we add 2
-	    var payload = data.slice(4);
-	    if (payload.length !== size) {
-	        throw new TransportError("Expected payload of length ".concat(size, " but got ").concat(payload.length), "");
-	    }
-	    return payload;
-	}
-
-	var SpeculosTransport$1 = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		'default': SpeculosTransport
-	});
-
 	exports.Btc = Btc$1;
 	exports.Log = index;
-	exports.SpeculosTransport = SpeculosTransport$1;
 	exports.TransportWebUSB = TransportWebUSB$1;
 	exports.createHash = browser$4;
 
@@ -42070,6 +41040,6 @@
 
 window.Btc = NewLedger.Btc.default;
 window.TransportWebUSB = NewLedger.TransportWebUSB.default;
-window.TransportSpeculos = NewLedger.SpeculosTransport.default;
+//window.TransportSpeculos = NewLedger.SpeculosTransport.default;
 window.Log = NewLedger.Log.default;
 window.createHash = NewLedger.createHash.default;
