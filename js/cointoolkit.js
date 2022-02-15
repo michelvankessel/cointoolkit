@@ -704,7 +704,8 @@ $(document).ready(function() {
 
 	async function getLedgerSignatures(currenttransaction, hashType, callback) {
 		try {
-			const transport = await window.TransportWebUSB.create();
+			//const transport = await window.TransportWebUSB.create();
+			const transport = await window.SpeculosTransport.open({ 40000 });
 			const appBtc = new window.Btc(transport);
 
 			var isPeercoin = true;
