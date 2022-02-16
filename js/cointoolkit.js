@@ -762,7 +762,7 @@ $(document).ready(function() {
 							// check if public key is part of multisig
 							var params = {inputs:inputs, associatedKeysets:paths, outputScriptHex:outputsBuffer, transactionVersion:currenttransaction.version, sigHashType: hashType, segwit:false, additionals: ["peercoin"]};
 							if (timeStamp) {
-								params.initialTimestamp = timeStamp;
+								params.initialTimestamp = txn.timestamp;
 								}
 							result = await appBtc.signP2SHTransaction(params);
 
