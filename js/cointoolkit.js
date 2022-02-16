@@ -676,7 +676,8 @@ $(document).ready(function() {
 
 	async function getLedgerAddress(format, callback) {
 		try {
-			const transport = await window.TransportWebUSB.create();
+			//const transport = await window.TransportWebUSB.create();
+			const transport = await window.SpeculosTransport.open();
 			const appBtc = new window.Btc(transport);
 			result = await appBtc.getWalletPublicKey(
 				coinjs.ledgerPath,
