@@ -5023,6 +5023,8 @@
 
 	var readableBrowser = {exports: {}};
 
+	var _registry = {};
+
 	// shim for using process in browser
 	// based off https://github.com/defunctzombie/node-process/blob/master/browser.js
 
@@ -5732,7 +5734,7 @@
 		'default': _nodeResolve_empty
 	});
 
-	var require$$3 = /*@__PURE__*/getAugmentedNamespace(_nodeResolve_empty$1);
+	var require$$4 = /*@__PURE__*/getAugmentedNamespace(_nodeResolve_empty$1);
 
 	function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -5749,7 +5751,7 @@
 	var _require$2 = buffer,
 	    Buffer$k = _require$2.Buffer;
 
-	var _require2 = require$$3,
+	var _require2 = require$$4,
 	    inspect$1 = _require2.inspect;
 
 	var custom = inspect$1 && inspect$1.custom || 'inspect';
@@ -6201,861 +6203,14 @@
 	  getHighWaterMark: getHighWaterMark$2
 	};
 
-	/**
-	 * Module exports.
-	 */
-
-	var browser$5 = deprecate$1;
-
-	/**
-	 * Mark that a method should not be used.
-	 * Returns a modified function which warns once by default.
-	 *
-	 * If `localStorage.noDeprecation = true` is set, then it is a no-op.
-	 *
-	 * If `localStorage.throwDeprecation = true` is set, then deprecated functions
-	 * will throw an Error when invoked.
-	 *
-	 * If `localStorage.traceDeprecation = true` is set, then deprecated functions
-	 * will invoke `console.trace()` instead of `console.error()`.
-	 *
-	 * @param {Function} fn - the function to deprecate
-	 * @param {String} msg - the string to print to the console when `fn` is invoked
-	 * @returns {Function} a new "deprecated" version of `fn`
-	 * @api public
-	 */
-
-	function deprecate$1 (fn, msg) {
-	  if (config('noDeprecation')) {
-	    return fn;
-	  }
-
-	  var warned = false;
-	  function deprecated() {
-	    if (!warned) {
-	      if (config('throwDeprecation')) {
-	        throw new Error(msg);
-	      } else if (config('traceDeprecation')) {
-	        console.trace(msg);
-	      } else {
-	        console.warn(msg);
-	      }
-	      warned = true;
-	    }
-	    return fn.apply(this, arguments);
-	  }
-
-	  return deprecated;
-	}
-
-	/**
-	 * Checks `localStorage` for boolean values for the given `name`.
-	 *
-	 * @param {String} name
-	 * @returns {Boolean}
-	 * @api private
-	 */
-
-	function config (name) {
-	  // accessing global.localStorage can trigger a DOMException in sandboxed iframes
-	  try {
-	    if (!commonjsGlobal.localStorage) return false;
-	  } catch (_) {
-	    return false;
-	  }
-	  var val = commonjsGlobal.localStorage[name];
-	  if (null == val) return false;
-	  return String(val).toLowerCase() === 'true';
-	}
-
-	var _stream_writable = Writable$2;
-	// there will be only 2 of these for each stream
-
-
-	function CorkedRequest$1(state) {
-	  var _this = this;
-
-	  this.next = null;
-	  this.entry = null;
-
-	  this.finish = function () {
-	    onCorkedFinish(_this, state);
-	  };
-	}
-	/* </replacement> */
-
-	/*<replacement>*/
-
-
-	var Duplex$4;
-	/*</replacement>*/
-
-	Writable$2.WritableState = WritableState$1;
-	/*<replacement>*/
-
-	var internalUtil = {
-	  deprecate: browser$5
-	};
-	/*</replacement>*/
-
-	/*<replacement>*/
-
-	var Stream$2 = streamBrowser;
-	/*</replacement>*/
-
-
-	var Buffer$j = buffer.Buffer;
-
-	var OurUint8Array$1 = commonjsGlobal.Uint8Array || function () {};
-
-	function _uint8ArrayToBuffer$1(chunk) {
-	  return Buffer$j.from(chunk);
-	}
-
-	function _isUint8Array$1(obj) {
-	  return Buffer$j.isBuffer(obj) || obj instanceof OurUint8Array$1;
-	}
-
-	var destroyImpl$1 = destroy_1;
-
-	var _require$1 = state,
-	    getHighWaterMark$1 = _require$1.getHighWaterMark;
-
-	var _require$codes$3 = errorsBrowser.codes,
-	    ERR_INVALID_ARG_TYPE$1 = _require$codes$3.ERR_INVALID_ARG_TYPE,
-	    ERR_METHOD_NOT_IMPLEMENTED$2 = _require$codes$3.ERR_METHOD_NOT_IMPLEMENTED,
-	    ERR_MULTIPLE_CALLBACK$1 = _require$codes$3.ERR_MULTIPLE_CALLBACK,
-	    ERR_STREAM_CANNOT_PIPE = _require$codes$3.ERR_STREAM_CANNOT_PIPE,
-	    ERR_STREAM_DESTROYED$1 = _require$codes$3.ERR_STREAM_DESTROYED,
-	    ERR_STREAM_NULL_VALUES = _require$codes$3.ERR_STREAM_NULL_VALUES,
-	    ERR_STREAM_WRITE_AFTER_END = _require$codes$3.ERR_STREAM_WRITE_AFTER_END,
-	    ERR_UNKNOWN_ENCODING = _require$codes$3.ERR_UNKNOWN_ENCODING;
-
-	var errorOrDestroy$1 = destroyImpl$1.errorOrDestroy;
-
-	inherits_browser.exports(Writable$2, Stream$2);
-
-	function nop$1() {}
-
-	function WritableState$1(options, stream, isDuplex) {
-	  Duplex$4 = Duplex$4 || _stream_duplex;
-	  options = options || {}; // Duplex streams are both readable and writable, but share
-	  // the same options object.
-	  // However, some cases require setting options to different
-	  // values for the readable and the writable sides of the duplex stream,
-	  // e.g. options.readableObjectMode vs. options.writableObjectMode, etc.
-
-	  if (typeof isDuplex !== 'boolean') isDuplex = stream instanceof Duplex$4; // object stream flag to indicate whether or not this stream
-	  // contains buffers or objects.
-
-	  this.objectMode = !!options.objectMode;
-	  if (isDuplex) this.objectMode = this.objectMode || !!options.writableObjectMode; // the point at which write() starts returning false
-	  // Note: 0 is a valid value, means that we always return false if
-	  // the entire buffer is not flushed immediately on write()
-
-	  this.highWaterMark = getHighWaterMark$1(this, options, 'writableHighWaterMark', isDuplex); // if _final has been called
-
-	  this.finalCalled = false; // drain event flag.
-
-	  this.needDrain = false; // at the start of calling end()
-
-	  this.ending = false; // when end() has been called, and returned
-
-	  this.ended = false; // when 'finish' is emitted
-
-	  this.finished = false; // has it been destroyed
-
-	  this.destroyed = false; // should we decode strings into buffers before passing to _write?
-	  // this is here so that some node-core streams can optimize string
-	  // handling at a lower level.
-
-	  var noDecode = options.decodeStrings === false;
-	  this.decodeStrings = !noDecode; // Crypto is kind of old and crusty.  Historically, its default string
-	  // encoding is 'binary' so we have to make this configurable.
-	  // Everything else in the universe uses 'utf8', though.
-
-	  this.defaultEncoding = options.defaultEncoding || 'utf8'; // not an actual buffer we keep track of, but a measurement
-	  // of how much we're waiting to get pushed to some underlying
-	  // socket or file.
-
-	  this.length = 0; // a flag to see when we're in the middle of a write.
-
-	  this.writing = false; // when true all writes will be buffered until .uncork() call
-
-	  this.corked = 0; // a flag to be able to tell if the onwrite cb is called immediately,
-	  // or on a later tick.  We set this to true at first, because any
-	  // actions that shouldn't happen until "later" should generally also
-	  // not happen before the first write call.
-
-	  this.sync = true; // a flag to know if we're processing previously buffered items, which
-	  // may call the _write() callback in the same tick, so that we don't
-	  // end up in an overlapped onwrite situation.
-
-	  this.bufferProcessing = false; // the callback that's passed to _write(chunk,cb)
-
-	  this.onwrite = function (er) {
-	    onwrite$1(stream, er);
-	  }; // the callback that the user supplies to write(chunk,encoding,cb)
-
-
-	  this.writecb = null; // the amount that is being written when _write is called.
-
-	  this.writelen = 0;
-	  this.bufferedRequest = null;
-	  this.lastBufferedRequest = null; // number of pending user-supplied write callbacks
-	  // this must be 0 before 'finish' can be emitted
-
-	  this.pendingcb = 0; // emit prefinish if the only thing we're waiting for is _write cbs
-	  // This is relevant for synchronous Transform streams
-
-	  this.prefinished = false; // True if the error was already emitted and should not be thrown again
-
-	  this.errorEmitted = false; // Should close be emitted on destroy. Defaults to true.
-
-	  this.emitClose = options.emitClose !== false; // Should .destroy() be called after 'finish' (and potentially 'end')
-
-	  this.autoDestroy = !!options.autoDestroy; // count buffered requests
-
-	  this.bufferedRequestCount = 0; // allocate the first CorkedRequest, there is always
-	  // one allocated and free to use, and we maintain at most two
-
-	  this.corkedRequestsFree = new CorkedRequest$1(this);
-	}
-
-	WritableState$1.prototype.getBuffer = function getBuffer() {
-	  var current = this.bufferedRequest;
-	  var out = [];
-
-	  while (current) {
-	    out.push(current);
-	    current = current.next;
-	  }
-
-	  return out;
-	};
-
-	(function () {
-	  try {
-	    Object.defineProperty(WritableState$1.prototype, 'buffer', {
-	      get: internalUtil.deprecate(function writableStateBufferGetter() {
-	        return this.getBuffer();
-	      }, '_writableState.buffer is deprecated. Use _writableState.getBuffer ' + 'instead.', 'DEP0003')
-	    });
-	  } catch (_) {}
-	})(); // Test _writableState for inheritance to account for Duplex streams,
-	// whose prototype chain only points to Readable.
-
-
-	var realHasInstance;
-
-	if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.prototype[Symbol.hasInstance] === 'function') {
-	  realHasInstance = Function.prototype[Symbol.hasInstance];
-	  Object.defineProperty(Writable$2, Symbol.hasInstance, {
-	    value: function value(object) {
-	      if (realHasInstance.call(this, object)) return true;
-	      if (this !== Writable$2) return false;
-	      return object && object._writableState instanceof WritableState$1;
-	    }
-	  });
-	} else {
-	  realHasInstance = function realHasInstance(object) {
-	    return object instanceof this;
-	  };
-	}
-
-	function Writable$2(options) {
-	  Duplex$4 = Duplex$4 || _stream_duplex; // Writable ctor is applied to Duplexes, too.
-	  // `realHasInstance` is necessary because using plain `instanceof`
-	  // would return false, as no `_writableState` property is attached.
-	  // Trying to use the custom `instanceof` for Writable here will also break the
-	  // Node.js LazyTransform implementation, which has a non-trivial getter for
-	  // `_writableState` that would lead to infinite recursion.
-	  // Checking for a Stream.Duplex instance is faster here instead of inside
-	  // the WritableState constructor, at least with V8 6.5
-
-	  var isDuplex = this instanceof Duplex$4;
-	  if (!isDuplex && !realHasInstance.call(Writable$2, this)) return new Writable$2(options);
-	  this._writableState = new WritableState$1(options, this, isDuplex); // legacy.
-
-	  this.writable = true;
-
-	  if (options) {
-	    if (typeof options.write === 'function') this._write = options.write;
-	    if (typeof options.writev === 'function') this._writev = options.writev;
-	    if (typeof options.destroy === 'function') this._destroy = options.destroy;
-	    if (typeof options.final === 'function') this._final = options.final;
-	  }
-
-	  Stream$2.call(this);
-	} // Otherwise people can pipe Writable streams, which is just wrong.
-
-
-	Writable$2.prototype.pipe = function () {
-	  errorOrDestroy$1(this, new ERR_STREAM_CANNOT_PIPE());
-	};
-
-	function writeAfterEnd$1(stream, cb) {
-	  var er = new ERR_STREAM_WRITE_AFTER_END(); // TODO: defer error events consistently everywhere, not just the cb
-
-	  errorOrDestroy$1(stream, er);
-	  nextTick(cb, er);
-	} // Checks that a user-supplied chunk is valid, especially for the particular
-	// mode the stream is in. Currently this means that `null` is never accepted
-	// and undefined/non-string values are only allowed in object mode.
-
-
-	function validChunk$1(stream, state, chunk, cb) {
-	  var er;
-
-	  if (chunk === null) {
-	    er = new ERR_STREAM_NULL_VALUES();
-	  } else if (typeof chunk !== 'string' && !state.objectMode) {
-	    er = new ERR_INVALID_ARG_TYPE$1('chunk', ['string', 'Buffer'], chunk);
-	  }
-
-	  if (er) {
-	    errorOrDestroy$1(stream, er);
-	    nextTick(cb, er);
-	    return false;
-	  }
-
-	  return true;
-	}
-
-	Writable$2.prototype.write = function (chunk, encoding, cb) {
-	  var state = this._writableState;
-	  var ret = false;
-
-	  var isBuf = !state.objectMode && _isUint8Array$1(chunk);
-
-	  if (isBuf && !Buffer$j.isBuffer(chunk)) {
-	    chunk = _uint8ArrayToBuffer$1(chunk);
-	  }
-
-	  if (typeof encoding === 'function') {
-	    cb = encoding;
-	    encoding = null;
-	  }
-
-	  if (isBuf) encoding = 'buffer';else if (!encoding) encoding = state.defaultEncoding;
-	  if (typeof cb !== 'function') cb = nop$1;
-	  if (state.ending) writeAfterEnd$1(this, cb);else if (isBuf || validChunk$1(this, state, chunk, cb)) {
-	    state.pendingcb++;
-	    ret = writeOrBuffer$1(this, state, isBuf, chunk, encoding, cb);
-	  }
-	  return ret;
-	};
-
-	Writable$2.prototype.cork = function () {
-	  this._writableState.corked++;
-	};
-
-	Writable$2.prototype.uncork = function () {
-	  var state = this._writableState;
-
-	  if (state.corked) {
-	    state.corked--;
-	    if (!state.writing && !state.corked && !state.bufferProcessing && state.bufferedRequest) clearBuffer$1(this, state);
-	  }
-	};
-
-	Writable$2.prototype.setDefaultEncoding = function setDefaultEncoding(encoding) {
-	  // node::ParseEncoding() requires lower case.
-	  if (typeof encoding === 'string') encoding = encoding.toLowerCase();
-	  if (!(['hex', 'utf8', 'utf-8', 'ascii', 'binary', 'base64', 'ucs2', 'ucs-2', 'utf16le', 'utf-16le', 'raw'].indexOf((encoding + '').toLowerCase()) > -1)) throw new ERR_UNKNOWN_ENCODING(encoding);
-	  this._writableState.defaultEncoding = encoding;
-	  return this;
-	};
-
-	Object.defineProperty(Writable$2.prototype, 'writableBuffer', {
-	  // making it explicit this property is not enumerable
-	  // because otherwise some prototype manipulation in
-	  // userland will fail
-	  enumerable: false,
-	  get: function get() {
-	    return this._writableState && this._writableState.getBuffer();
-	  }
-	});
-
-	function decodeChunk$1(state, chunk, encoding) {
-	  if (!state.objectMode && state.decodeStrings !== false && typeof chunk === 'string') {
-	    chunk = Buffer$j.from(chunk, encoding);
-	  }
-
-	  return chunk;
-	}
-
-	Object.defineProperty(Writable$2.prototype, 'writableHighWaterMark', {
-	  // making it explicit this property is not enumerable
-	  // because otherwise some prototype manipulation in
-	  // userland will fail
-	  enumerable: false,
-	  get: function get() {
-	    return this._writableState.highWaterMark;
-	  }
-	}); // if we're already writing something, then just put this
-	// in the queue, and wait our turn.  Otherwise, call _write
-	// If we return false, then we need a drain event, so set that flag.
-
-	function writeOrBuffer$1(stream, state, isBuf, chunk, encoding, cb) {
-	  if (!isBuf) {
-	    var newChunk = decodeChunk$1(state, chunk, encoding);
-
-	    if (chunk !== newChunk) {
-	      isBuf = true;
-	      encoding = 'buffer';
-	      chunk = newChunk;
-	    }
-	  }
-
-	  var len = state.objectMode ? 1 : chunk.length;
-	  state.length += len;
-	  var ret = state.length < state.highWaterMark; // we must ensure that previous needDrain will not be reset to false.
-
-	  if (!ret) state.needDrain = true;
-
-	  if (state.writing || state.corked) {
-	    var last = state.lastBufferedRequest;
-	    state.lastBufferedRequest = {
-	      chunk: chunk,
-	      encoding: encoding,
-	      isBuf: isBuf,
-	      callback: cb,
-	      next: null
-	    };
-
-	    if (last) {
-	      last.next = state.lastBufferedRequest;
-	    } else {
-	      state.bufferedRequest = state.lastBufferedRequest;
-	    }
-
-	    state.bufferedRequestCount += 1;
-	  } else {
-	    doWrite$1(stream, state, false, len, chunk, encoding, cb);
-	  }
-
-	  return ret;
-	}
-
-	function doWrite$1(stream, state, writev, len, chunk, encoding, cb) {
-	  state.writelen = len;
-	  state.writecb = cb;
-	  state.writing = true;
-	  state.sync = true;
-	  if (state.destroyed) state.onwrite(new ERR_STREAM_DESTROYED$1('write'));else if (writev) stream._writev(chunk, state.onwrite);else stream._write(chunk, encoding, state.onwrite);
-	  state.sync = false;
-	}
-
-	function onwriteError$1(stream, state, sync, er, cb) {
-	  --state.pendingcb;
-
-	  if (sync) {
-	    // defer the callback if we are being called synchronously
-	    // to avoid piling up things on the stack
-	    nextTick(cb, er); // this can emit finish, and it will always happen
-	    // after error
-
-	    nextTick(finishMaybe$1, stream, state);
-	    stream._writableState.errorEmitted = true;
-	    errorOrDestroy$1(stream, er);
-	  } else {
-	    // the caller expect this to happen before if
-	    // it is async
-	    cb(er);
-	    stream._writableState.errorEmitted = true;
-	    errorOrDestroy$1(stream, er); // this can emit finish, but finish must
-	    // always follow error
-
-	    finishMaybe$1(stream, state);
-	  }
-	}
-
-	function onwriteStateUpdate$1(state) {
-	  state.writing = false;
-	  state.writecb = null;
-	  state.length -= state.writelen;
-	  state.writelen = 0;
-	}
-
-	function onwrite$1(stream, er) {
-	  var state = stream._writableState;
-	  var sync = state.sync;
-	  var cb = state.writecb;
-	  if (typeof cb !== 'function') throw new ERR_MULTIPLE_CALLBACK$1();
-	  onwriteStateUpdate$1(state);
-	  if (er) onwriteError$1(stream, state, sync, er, cb);else {
-	    // Check if we're actually ready to finish, but don't emit yet
-	    var finished = needFinish$1(state) || stream.destroyed;
-
-	    if (!finished && !state.corked && !state.bufferProcessing && state.bufferedRequest) {
-	      clearBuffer$1(stream, state);
-	    }
-
-	    if (sync) {
-	      nextTick(afterWrite$1, stream, state, finished, cb);
-	    } else {
-	      afterWrite$1(stream, state, finished, cb);
-	    }
-	  }
-	}
-
-	function afterWrite$1(stream, state, finished, cb) {
-	  if (!finished) onwriteDrain$1(stream, state);
-	  state.pendingcb--;
-	  cb();
-	  finishMaybe$1(stream, state);
-	} // Must force callback to be called on nextTick, so that we don't
-	// emit 'drain' before the write() consumer gets the 'false' return
-	// value, and has a chance to attach a 'drain' listener.
-
-
-	function onwriteDrain$1(stream, state) {
-	  if (state.length === 0 && state.needDrain) {
-	    state.needDrain = false;
-	    stream.emit('drain');
-	  }
-	} // if there's something in the buffer waiting, then process it
-
-
-	function clearBuffer$1(stream, state) {
-	  state.bufferProcessing = true;
-	  var entry = state.bufferedRequest;
-
-	  if (stream._writev && entry && entry.next) {
-	    // Fast case, write everything using _writev()
-	    var l = state.bufferedRequestCount;
-	    var buffer = new Array(l);
-	    var holder = state.corkedRequestsFree;
-	    holder.entry = entry;
-	    var count = 0;
-	    var allBuffers = true;
-
-	    while (entry) {
-	      buffer[count] = entry;
-	      if (!entry.isBuf) allBuffers = false;
-	      entry = entry.next;
-	      count += 1;
-	    }
-
-	    buffer.allBuffers = allBuffers;
-	    doWrite$1(stream, state, true, state.length, buffer, '', holder.finish); // doWrite is almost always async, defer these to save a bit of time
-	    // as the hot path ends with doWrite
-
-	    state.pendingcb++;
-	    state.lastBufferedRequest = null;
-
-	    if (holder.next) {
-	      state.corkedRequestsFree = holder.next;
-	      holder.next = null;
-	    } else {
-	      state.corkedRequestsFree = new CorkedRequest$1(state);
-	    }
-
-	    state.bufferedRequestCount = 0;
-	  } else {
-	    // Slow case, write chunks one-by-one
-	    while (entry) {
-	      var chunk = entry.chunk;
-	      var encoding = entry.encoding;
-	      var cb = entry.callback;
-	      var len = state.objectMode ? 1 : chunk.length;
-	      doWrite$1(stream, state, false, len, chunk, encoding, cb);
-	      entry = entry.next;
-	      state.bufferedRequestCount--; // if we didn't call the onwrite immediately, then
-	      // it means that we need to wait until it does.
-	      // also, that means that the chunk and cb are currently
-	      // being processed, so move the buffer counter past them.
-
-	      if (state.writing) {
-	        break;
-	      }
-	    }
-
-	    if (entry === null) state.lastBufferedRequest = null;
-	  }
-
-	  state.bufferedRequest = entry;
-	  state.bufferProcessing = false;
-	}
-
-	Writable$2.prototype._write = function (chunk, encoding, cb) {
-	  cb(new ERR_METHOD_NOT_IMPLEMENTED$2('_write()'));
-	};
-
-	Writable$2.prototype._writev = null;
-
-	Writable$2.prototype.end = function (chunk, encoding, cb) {
-	  var state = this._writableState;
-
-	  if (typeof chunk === 'function') {
-	    cb = chunk;
-	    chunk = null;
-	    encoding = null;
-	  } else if (typeof encoding === 'function') {
-	    cb = encoding;
-	    encoding = null;
-	  }
-
-	  if (chunk !== null && chunk !== undefined) this.write(chunk, encoding); // .end() fully uncorks
-
-	  if (state.corked) {
-	    state.corked = 1;
-	    this.uncork();
-	  } // ignore unnecessary end() calls.
-
-
-	  if (!state.ending) endWritable$1(this, state, cb);
-	  return this;
-	};
-
-	Object.defineProperty(Writable$2.prototype, 'writableLength', {
-	  // making it explicit this property is not enumerable
-	  // because otherwise some prototype manipulation in
-	  // userland will fail
-	  enumerable: false,
-	  get: function get() {
-	    return this._writableState.length;
-	  }
-	});
-
-	function needFinish$1(state) {
-	  return state.ending && state.length === 0 && state.bufferedRequest === null && !state.finished && !state.writing;
-	}
-
-	function callFinal(stream, state) {
-	  stream._final(function (err) {
-	    state.pendingcb--;
-
-	    if (err) {
-	      errorOrDestroy$1(stream, err);
-	    }
-
-	    state.prefinished = true;
-	    stream.emit('prefinish');
-	    finishMaybe$1(stream, state);
-	  });
-	}
-
-	function prefinish$2(stream, state) {
-	  if (!state.prefinished && !state.finalCalled) {
-	    if (typeof stream._final === 'function' && !state.destroyed) {
-	      state.pendingcb++;
-	      state.finalCalled = true;
-	      nextTick(callFinal, stream, state);
-	    } else {
-	      state.prefinished = true;
-	      stream.emit('prefinish');
-	    }
-	  }
-	}
-
-	function finishMaybe$1(stream, state) {
-	  var need = needFinish$1(state);
-
-	  if (need) {
-	    prefinish$2(stream, state);
-
-	    if (state.pendingcb === 0) {
-	      state.finished = true;
-	      stream.emit('finish');
-
-	      if (state.autoDestroy) {
-	        // In case of duplex streams we need a way to detect
-	        // if the readable side is ready for autoDestroy as well
-	        var rState = stream._readableState;
-
-	        if (!rState || rState.autoDestroy && rState.endEmitted) {
-	          stream.destroy();
-	        }
-	      }
-	    }
-	  }
-
-	  return need;
-	}
-
-	function endWritable$1(stream, state, cb) {
-	  state.ending = true;
-	  finishMaybe$1(stream, state);
-
-	  if (cb) {
-	    if (state.finished) nextTick(cb);else stream.once('finish', cb);
-	  }
-
-	  state.ended = true;
-	  stream.writable = false;
-	}
-
-	function onCorkedFinish(corkReq, state, err) {
-	  var entry = corkReq.entry;
-	  corkReq.entry = null;
-
-	  while (entry) {
-	    var cb = entry.callback;
-	    state.pendingcb--;
-	    cb(err);
-	    entry = entry.next;
-	  } // reuse the free corkReq.
-
-
-	  state.corkedRequestsFree.next = corkReq;
-	}
-
-	Object.defineProperty(Writable$2.prototype, 'destroyed', {
-	  // making it explicit this property is not enumerable
-	  // because otherwise some prototype manipulation in
-	  // userland will fail
-	  enumerable: false,
-	  get: function get() {
-	    if (this._writableState === undefined) {
-	      return false;
-	    }
-
-	    return this._writableState.destroyed;
-	  },
-	  set: function set(value) {
-	    // we ignore the value if the stream
-	    // has not been initialized yet
-	    if (!this._writableState) {
-	      return;
-	    } // backward compatibility, the user is explicitly
-	    // managing destroyed
-
-
-	    this._writableState.destroyed = value;
-	  }
-	});
-	Writable$2.prototype.destroy = destroyImpl$1.destroy;
-	Writable$2.prototype._undestroy = destroyImpl$1.undestroy;
-
-	Writable$2.prototype._destroy = function (err, cb) {
-	  cb(err);
-	};
-
-	/*<replacement>*/
-
-	var objectKeys = Object.keys || function (obj) {
-	  var keys = [];
-
-	  for (var key in obj) {
-	    keys.push(key);
-	  }
-
-	  return keys;
-	};
-	/*</replacement>*/
-
-
-	var _stream_duplex = Duplex$3;
-
-	var Readable$2 = _stream_readable;
-
-	var Writable$1 = _stream_writable;
-
-	inherits_browser.exports(Duplex$3, Readable$2);
-
-	{
-	  // Allow the keys array to be GC'ed.
-	  var keys$1 = objectKeys(Writable$1.prototype);
-
-	  for (var v$1 = 0; v$1 < keys$1.length; v$1++) {
-	    var method$1 = keys$1[v$1];
-	    if (!Duplex$3.prototype[method$1]) Duplex$3.prototype[method$1] = Writable$1.prototype[method$1];
-	  }
-	}
-
-	function Duplex$3(options) {
-	  if (!(this instanceof Duplex$3)) return new Duplex$3(options);
-	  Readable$2.call(this, options);
-	  Writable$1.call(this, options);
-	  this.allowHalfOpen = true;
-
-	  if (options) {
-	    if (options.readable === false) this.readable = false;
-	    if (options.writable === false) this.writable = false;
-
-	    if (options.allowHalfOpen === false) {
-	      this.allowHalfOpen = false;
-	      this.once('end', onend$1);
-	    }
-	  }
-	}
-
-	Object.defineProperty(Duplex$3.prototype, 'writableHighWaterMark', {
-	  // making it explicit this property is not enumerable
-	  // because otherwise some prototype manipulation in
-	  // userland will fail
-	  enumerable: false,
-	  get: function get() {
-	    return this._writableState.highWaterMark;
-	  }
-	});
-	Object.defineProperty(Duplex$3.prototype, 'writableBuffer', {
-	  // making it explicit this property is not enumerable
-	  // because otherwise some prototype manipulation in
-	  // userland will fail
-	  enumerable: false,
-	  get: function get() {
-	    return this._writableState && this._writableState.getBuffer();
-	  }
-	});
-	Object.defineProperty(Duplex$3.prototype, 'writableLength', {
-	  // making it explicit this property is not enumerable
-	  // because otherwise some prototype manipulation in
-	  // userland will fail
-	  enumerable: false,
-	  get: function get() {
-	    return this._writableState.length;
-	  }
-	}); // the no-half-open enforcer
-
-	function onend$1() {
-	  // If the writable side ended, then we're ok.
-	  if (this._writableState.ended) return; // no more data can be written.
-	  // But allow more writes to happen in this tick.
-
-	  nextTick(onEndNT$1, this);
-	}
-
-	function onEndNT$1(self) {
-	  self.end();
-	}
-
-	Object.defineProperty(Duplex$3.prototype, 'destroyed', {
-	  // making it explicit this property is not enumerable
-	  // because otherwise some prototype manipulation in
-	  // userland will fail
-	  enumerable: false,
-	  get: function get() {
-	    if (this._readableState === undefined || this._writableState === undefined) {
-	      return false;
-	    }
-
-	    return this._readableState.destroyed && this._writableState.destroyed;
-	  },
-	  set: function set(value) {
-	    // we ignore the value if the stream
-	    // has not been initialized yet
-	    if (this._readableState === undefined || this._writableState === undefined) {
-	      return;
-	    } // backward compatibility, the user is explicitly
-	    // managing destroyed
-
-
-	    this._readableState.destroyed = value;
-	    this._writableState.destroyed = value;
-	  }
-	});
-
 	var string_decoder = {};
 
 	/*<replacement>*/
 
-	var Buffer$i = safeBuffer.exports.Buffer;
+	var Buffer$j = safeBuffer.exports.Buffer;
 	/*</replacement>*/
 
-	var isEncoding = Buffer$i.isEncoding || function (encoding) {
+	var isEncoding = Buffer$j.isEncoding || function (encoding) {
 	  encoding = '' + encoding;
 	  switch (encoding && encoding.toLowerCase()) {
 	    case 'hex':case 'utf8':case 'utf-8':case 'ascii':case 'binary':case 'base64':case 'ucs2':case 'ucs-2':case 'utf16le':case 'utf-16le':case 'raw':
@@ -7096,7 +6251,7 @@
 	// modules monkey-patch it to support additional encodings
 	function normalizeEncoding(enc) {
 	  var nenc = _normalizeEncoding(enc);
-	  if (typeof nenc !== 'string' && (Buffer$i.isEncoding === isEncoding || !isEncoding(enc))) throw new Error('Unknown encoding: ' + enc);
+	  if (typeof nenc !== 'string' && (Buffer$j.isEncoding === isEncoding || !isEncoding(enc))) throw new Error('Unknown encoding: ' + enc);
 	  return nenc || enc;
 	}
 
@@ -7129,7 +6284,7 @@
 	  }
 	  this.lastNeed = 0;
 	  this.lastTotal = 0;
-	  this.lastChar = Buffer$i.allocUnsafe(nb);
+	  this.lastChar = Buffer$j.allocUnsafe(nb);
 	}
 
 	StringDecoder$2.prototype.write = function (buf) {
@@ -7634,11 +6789,8 @@
 	  throw new Error('Readable.from is not available in the browser')
 	};
 
-	var _stream_readable = Readable$1;
-	/*<replacement>*/
-
-	var Duplex$2;
-	/*</replacement>*/
+	const Registry$4 = _registry;
+	Registry$4.Readable = Readable$1;
 
 	Readable$1.ReadableState = ReadableState$1;
 	/*<replacement>*/
@@ -7653,25 +6805,25 @@
 	/*<replacement>*/
 
 
-	var Stream$1 = streamBrowser;
+	var Stream$2 = streamBrowser;
 	/*</replacement>*/
 
 
-	var Buffer$h = buffer.Buffer;
+	var Buffer$i = buffer.Buffer;
 
-	var OurUint8Array = commonjsGlobal.Uint8Array || function () {};
+	var OurUint8Array$1 = commonjsGlobal.Uint8Array || function () {};
 
-	function _uint8ArrayToBuffer(chunk) {
-	  return Buffer$h.from(chunk);
+	function _uint8ArrayToBuffer$1(chunk) {
+	  return Buffer$i.from(chunk);
 	}
 
-	function _isUint8Array(obj) {
-	  return Buffer$h.isBuffer(obj) || obj instanceof OurUint8Array;
+	function _isUint8Array$1(obj) {
+	  return Buffer$i.isBuffer(obj) || obj instanceof OurUint8Array$1;
 	}
 	/*<replacement>*/
 
 
-	var debugUtil = require$$3;
+	var debugUtil = require$$4;
 
 	var debug$5;
 
@@ -7685,25 +6837,25 @@
 
 	var BufferList$1 = buffer_list;
 
-	var destroyImpl = destroy_1;
+	var destroyImpl$1 = destroy_1;
 
-	var _require = state,
-	    getHighWaterMark = _require.getHighWaterMark;
+	var _require$1 = state,
+	    getHighWaterMark$1 = _require$1.getHighWaterMark;
 
-	var _require$codes$2 = errorsBrowser.codes,
-	    ERR_INVALID_ARG_TYPE = _require$codes$2.ERR_INVALID_ARG_TYPE,
-	    ERR_STREAM_PUSH_AFTER_EOF = _require$codes$2.ERR_STREAM_PUSH_AFTER_EOF,
-	    ERR_METHOD_NOT_IMPLEMENTED$1 = _require$codes$2.ERR_METHOD_NOT_IMPLEMENTED,
-	    ERR_STREAM_UNSHIFT_AFTER_END_EVENT = _require$codes$2.ERR_STREAM_UNSHIFT_AFTER_END_EVENT; // Lazy loaded to improve the startup performance.
+	var _require$codes$3 = errorsBrowser.codes,
+	    ERR_INVALID_ARG_TYPE$1 = _require$codes$3.ERR_INVALID_ARG_TYPE,
+	    ERR_STREAM_PUSH_AFTER_EOF = _require$codes$3.ERR_STREAM_PUSH_AFTER_EOF,
+	    ERR_METHOD_NOT_IMPLEMENTED$2 = _require$codes$3.ERR_METHOD_NOT_IMPLEMENTED,
+	    ERR_STREAM_UNSHIFT_AFTER_END_EVENT = _require$codes$3.ERR_STREAM_UNSHIFT_AFTER_END_EVENT; // Lazy loaded to improve the startup performance.
 
 
 	var StringDecoder$1;
 	var createReadableStreamAsyncIterator;
 	var from;
 
-	inherits_browser.exports(Readable$1, Stream$1);
+	inherits_browser.exports(Readable$1, Stream$2);
 
-	var errorOrDestroy = destroyImpl.errorOrDestroy;
+	var errorOrDestroy$1 = destroyImpl$1.errorOrDestroy;
 	var kProxyEvents = ['error', 'close', 'destroy', 'pause', 'resume'];
 
 	function prependListener$1(emitter, event, fn) {
@@ -7718,21 +6870,20 @@
 	}
 
 	function ReadableState$1(options, stream, isDuplex) {
-	  Duplex$2 = Duplex$2 || _stream_duplex;
 	  options = options || {}; // Duplex streams are both readable and writable, but share
 	  // the same options object.
 	  // However, some cases require setting options to different
 	  // values for the readable and the writable sides of the duplex stream.
 	  // These options can be provided separately as readableXXX and writableXXX.
 
-	  if (typeof isDuplex !== 'boolean') isDuplex = stream instanceof Duplex$2; // object stream flag. Used to make read(n) ignore n and to
+	  if (typeof isDuplex !== 'boolean') isDuplex = stream instanceof Registry$4.Duplex; // object stream flag. Used to make read(n) ignore n and to
 	  // make all the buffer merging and length checks go away
 
 	  this.objectMode = !!options.objectMode;
 	  if (isDuplex) this.objectMode = this.objectMode || !!options.readableObjectMode; // the point at which it stops calling _read() to fill the buffer
 	  // Note: 0 is a valid value, means "don't call _read preemptively ever"
 
-	  this.highWaterMark = getHighWaterMark(this, options, 'readableHighWaterMark', isDuplex); // A linked list is used to store data chunks instead of an array because the
+	  this.highWaterMark = getHighWaterMark$1(this, options, 'readableHighWaterMark', isDuplex); // A linked list is used to store data chunks instead of an array because the
 	  // linked list can remove elements from the beginning faster than
 	  // array.shift()
 
@@ -7781,11 +6932,10 @@
 	}
 
 	function Readable$1(options) {
-	  Duplex$2 = Duplex$2 || _stream_duplex;
 	  if (!(this instanceof Readable$1)) return new Readable$1(options); // Checking for a Stream.Duplex instance is faster here instead of inside
 	  // the ReadableState constructor, at least with V8 6.5
 
-	  var isDuplex = this instanceof Duplex$2;
+	  var isDuplex = this instanceof Registry$4.Duplex;
 	  this._readableState = new ReadableState$1(options, this, isDuplex); // legacy
 
 	  this.readable = true;
@@ -7795,7 +6945,7 @@
 	    if (typeof options.destroy === 'function') this._destroy = options.destroy;
 	  }
 
-	  Stream$1.call(this);
+	  Stream$2.call(this);
 	}
 
 	Object.defineProperty(Readable$1.prototype, 'destroyed', {
@@ -7822,8 +6972,8 @@
 	    this._readableState.destroyed = value;
 	  }
 	});
-	Readable$1.prototype.destroy = destroyImpl.destroy;
-	Readable$1.prototype._undestroy = destroyImpl.undestroy;
+	Readable$1.prototype.destroy = destroyImpl$1.destroy;
+	Readable$1.prototype._undestroy = destroyImpl$1.undestroy;
 
 	Readable$1.prototype._destroy = function (err, cb) {
 	  cb(err);
@@ -7842,7 +6992,7 @@
 	      encoding = encoding || state.defaultEncoding;
 
 	      if (encoding !== state.encoding) {
-	        chunk = Buffer$h.from(chunk, encoding);
+	        chunk = Buffer$i.from(chunk, encoding);
 	        encoding = '';
 	      }
 
@@ -7872,16 +7022,16 @@
 	    if (!skipChunkCheck) er = chunkInvalid$1(state, chunk);
 
 	    if (er) {
-	      errorOrDestroy(stream, er);
+	      errorOrDestroy$1(stream, er);
 	    } else if (state.objectMode || chunk && chunk.length > 0) {
-	      if (typeof chunk !== 'string' && !state.objectMode && Object.getPrototypeOf(chunk) !== Buffer$h.prototype) {
-	        chunk = _uint8ArrayToBuffer(chunk);
+	      if (typeof chunk !== 'string' && !state.objectMode && Object.getPrototypeOf(chunk) !== Buffer$i.prototype) {
+	        chunk = _uint8ArrayToBuffer$1(chunk);
 	      }
 
 	      if (addToFront) {
-	        if (state.endEmitted) errorOrDestroy(stream, new ERR_STREAM_UNSHIFT_AFTER_END_EVENT());else addChunk(stream, state, chunk, true);
+	        if (state.endEmitted) errorOrDestroy$1(stream, new ERR_STREAM_UNSHIFT_AFTER_END_EVENT());else addChunk(stream, state, chunk, true);
 	      } else if (state.ended) {
-	        errorOrDestroy(stream, new ERR_STREAM_PUSH_AFTER_EOF());
+	        errorOrDestroy$1(stream, new ERR_STREAM_PUSH_AFTER_EOF());
 	      } else if (state.destroyed) {
 	        return false;
 	      } else {
@@ -7923,8 +7073,8 @@
 	function chunkInvalid$1(state, chunk) {
 	  var er;
 
-	  if (!_isUint8Array(chunk) && typeof chunk !== 'string' && chunk !== undefined && !state.objectMode) {
-	    er = new ERR_INVALID_ARG_TYPE('chunk', ['string', 'Buffer', 'Uint8Array'], chunk);
+	  if (!_isUint8Array$1(chunk) && typeof chunk !== 'string' && chunk !== undefined && !state.objectMode) {
+	    er = new ERR_INVALID_ARG_TYPE$1('chunk', ['string', 'Buffer', 'Uint8Array'], chunk);
 	  }
 
 	  return er;
@@ -8216,7 +7366,7 @@
 
 
 	Readable$1.prototype._read = function (n) {
-	  errorOrDestroy(this, new ERR_METHOD_NOT_IMPLEMENTED$1('_read()'));
+	  errorOrDestroy$1(this, new ERR_METHOD_NOT_IMPLEMENTED$2('_read()'));
 	};
 
 	Readable$1.prototype.pipe = function (dest, pipeOpts) {
@@ -8315,7 +7465,7 @@
 	    debug$5('onerror', er);
 	    unpipe();
 	    dest.removeListener('error', onerror);
-	    if (EElistenerCount(dest, 'error') === 0) errorOrDestroy(dest, er);
+	    if (EElistenerCount(dest, 'error') === 0) errorOrDestroy$1(dest, er);
 	  } // Make sure our error handler is attached before userland ones.
 
 
@@ -8416,7 +7566,7 @@
 
 
 	Readable$1.prototype.on = function (ev, fn) {
-	  var res = Stream$1.prototype.on.call(this, ev, fn);
+	  var res = Stream$2.prototype.on.call(this, ev, fn);
 	  var state = this._readableState;
 
 	  if (ev === 'data') {
@@ -8446,7 +7596,7 @@
 	Readable$1.prototype.addListener = Readable$1.prototype.on;
 
 	Readable$1.prototype.removeListener = function (ev, fn) {
-	  var res = Stream$1.prototype.removeListener.call(this, ev, fn);
+	  var res = Stream$2.prototype.removeListener.call(this, ev, fn);
 
 	  if (ev === 'readable') {
 	    // We need to check if there is someone still listening to
@@ -8462,7 +7612,7 @@
 	};
 
 	Readable$1.prototype.removeAllListeners = function (ev) {
-	  var res = Stream$1.prototype.removeAllListeners.apply(this, arguments);
+	  var res = Stream$2.prototype.removeAllListeners.apply(this, arguments);
 
 	  if (ev === 'readable' || ev === undefined) {
 	    // We need to check if there is someone still listening to
@@ -8736,7 +7886,853 @@
 	  return -1;
 	}
 
-	var _stream_transform = Transform$4;
+	/**
+	 * Module exports.
+	 */
+
+	var browser$5 = deprecate$1;
+
+	/**
+	 * Mark that a method should not be used.
+	 * Returns a modified function which warns once by default.
+	 *
+	 * If `localStorage.noDeprecation = true` is set, then it is a no-op.
+	 *
+	 * If `localStorage.throwDeprecation = true` is set, then deprecated functions
+	 * will throw an Error when invoked.
+	 *
+	 * If `localStorage.traceDeprecation = true` is set, then deprecated functions
+	 * will invoke `console.trace()` instead of `console.error()`.
+	 *
+	 * @param {Function} fn - the function to deprecate
+	 * @param {String} msg - the string to print to the console when `fn` is invoked
+	 * @returns {Function} a new "deprecated" version of `fn`
+	 * @api public
+	 */
+
+	function deprecate$1 (fn, msg) {
+	  if (config('noDeprecation')) {
+	    return fn;
+	  }
+
+	  var warned = false;
+	  function deprecated() {
+	    if (!warned) {
+	      if (config('throwDeprecation')) {
+	        throw new Error(msg);
+	      } else if (config('traceDeprecation')) {
+	        console.trace(msg);
+	      } else {
+	        console.warn(msg);
+	      }
+	      warned = true;
+	    }
+	    return fn.apply(this, arguments);
+	  }
+
+	  return deprecated;
+	}
+
+	/**
+	 * Checks `localStorage` for boolean values for the given `name`.
+	 *
+	 * @param {String} name
+	 * @returns {Boolean}
+	 * @api private
+	 */
+
+	function config (name) {
+	  // accessing global.localStorage can trigger a DOMException in sandboxed iframes
+	  try {
+	    if (!commonjsGlobal.localStorage) return false;
+	  } catch (_) {
+	    return false;
+	  }
+	  var val = commonjsGlobal.localStorage[name];
+	  if (null == val) return false;
+	  return String(val).toLowerCase() === 'true';
+	}
+
+	const Registry$3 = _registry;
+
+	Registry$3.Writable = Writable$1;
+	// there will be only 2 of these for each stream
+
+
+	function CorkedRequest$1(state) {
+	  var _this = this;
+
+	  this.next = null;
+	  this.entry = null;
+
+	  this.finish = function () {
+	    onCorkedFinish(_this, state);
+	  };
+	}
+	/* </replacement> */
+
+	/*<replacement>*/
+
+
+	/*</replacement>*/
+
+	Writable$1.WritableState = WritableState$1;
+	/*<replacement>*/
+
+	var internalUtil = {
+	  deprecate: browser$5
+	};
+	/*</replacement>*/
+
+	/*<replacement>*/
+
+	var Stream$1 = streamBrowser;
+	/*</replacement>*/
+
+
+	var Buffer$h = buffer.Buffer;
+
+	var OurUint8Array = commonjsGlobal.Uint8Array || function () {};
+
+	function _uint8ArrayToBuffer(chunk) {
+	  return Buffer$h.from(chunk);
+	}
+
+	function _isUint8Array(obj) {
+	  return Buffer$h.isBuffer(obj) || obj instanceof OurUint8Array;
+	}
+
+	var destroyImpl = destroy_1;
+
+	var _require = state,
+	    getHighWaterMark = _require.getHighWaterMark;
+
+	var _require$codes$2 = errorsBrowser.codes,
+	    ERR_INVALID_ARG_TYPE = _require$codes$2.ERR_INVALID_ARG_TYPE,
+	    ERR_METHOD_NOT_IMPLEMENTED$1 = _require$codes$2.ERR_METHOD_NOT_IMPLEMENTED,
+	    ERR_MULTIPLE_CALLBACK$1 = _require$codes$2.ERR_MULTIPLE_CALLBACK,
+	    ERR_STREAM_CANNOT_PIPE = _require$codes$2.ERR_STREAM_CANNOT_PIPE,
+	    ERR_STREAM_DESTROYED$1 = _require$codes$2.ERR_STREAM_DESTROYED,
+	    ERR_STREAM_NULL_VALUES = _require$codes$2.ERR_STREAM_NULL_VALUES,
+	    ERR_STREAM_WRITE_AFTER_END = _require$codes$2.ERR_STREAM_WRITE_AFTER_END,
+	    ERR_UNKNOWN_ENCODING = _require$codes$2.ERR_UNKNOWN_ENCODING;
+
+	var errorOrDestroy = destroyImpl.errorOrDestroy;
+
+	inherits_browser.exports(Writable$1, Stream$1);
+
+	function nop$1() {}
+
+	function WritableState$1(options, stream, isDuplex) {
+	  options = options || {}; // Duplex streams are both readable and writable, but share
+	  // the same options object.
+	  // However, some cases require setting options to different
+	  // values for the readable and the writable sides of the duplex stream,
+	  // e.g. options.readableObjectMode vs. options.writableObjectMode, etc.
+
+	  if (typeof isDuplex !== 'boolean') isDuplex = stream instanceof Registry$3.Duplex; // object stream flag to indicate whether or not this stream
+	  // contains buffers or objects.
+
+	  this.objectMode = !!options.objectMode;
+	  if (isDuplex) this.objectMode = this.objectMode || !!options.writableObjectMode; // the point at which write() starts returning false
+	  // Note: 0 is a valid value, means that we always return false if
+	  // the entire buffer is not flushed immediately on write()
+
+	  this.highWaterMark = getHighWaterMark(this, options, 'writableHighWaterMark', isDuplex); // if _final has been called
+
+	  this.finalCalled = false; // drain event flag.
+
+	  this.needDrain = false; // at the start of calling end()
+
+	  this.ending = false; // when end() has been called, and returned
+
+	  this.ended = false; // when 'finish' is emitted
+
+	  this.finished = false; // has it been destroyed
+
+	  this.destroyed = false; // should we decode strings into buffers before passing to _write?
+	  // this is here so that some node-core streams can optimize string
+	  // handling at a lower level.
+
+	  var noDecode = options.decodeStrings === false;
+	  this.decodeStrings = !noDecode; // Crypto is kind of old and crusty.  Historically, its default string
+	  // encoding is 'binary' so we have to make this configurable.
+	  // Everything else in the universe uses 'utf8', though.
+
+	  this.defaultEncoding = options.defaultEncoding || 'utf8'; // not an actual buffer we keep track of, but a measurement
+	  // of how much we're waiting to get pushed to some underlying
+	  // socket or file.
+
+	  this.length = 0; // a flag to see when we're in the middle of a write.
+
+	  this.writing = false; // when true all writes will be buffered until .uncork() call
+
+	  this.corked = 0; // a flag to be able to tell if the onwrite cb is called immediately,
+	  // or on a later tick.  We set this to true at first, because any
+	  // actions that shouldn't happen until "later" should generally also
+	  // not happen before the first write call.
+
+	  this.sync = true; // a flag to know if we're processing previously buffered items, which
+	  // may call the _write() callback in the same tick, so that we don't
+	  // end up in an overlapped onwrite situation.
+
+	  this.bufferProcessing = false; // the callback that's passed to _write(chunk,cb)
+
+	  this.onwrite = function (er) {
+	    onwrite$1(stream, er);
+	  }; // the callback that the user supplies to write(chunk,encoding,cb)
+
+
+	  this.writecb = null; // the amount that is being written when _write is called.
+
+	  this.writelen = 0;
+	  this.bufferedRequest = null;
+	  this.lastBufferedRequest = null; // number of pending user-supplied write callbacks
+	  // this must be 0 before 'finish' can be emitted
+
+	  this.pendingcb = 0; // emit prefinish if the only thing we're waiting for is _write cbs
+	  // This is relevant for synchronous Transform streams
+
+	  this.prefinished = false; // True if the error was already emitted and should not be thrown again
+
+	  this.errorEmitted = false; // Should close be emitted on destroy. Defaults to true.
+
+	  this.emitClose = options.emitClose !== false; // Should .destroy() be called after 'finish' (and potentially 'end')
+
+	  this.autoDestroy = !!options.autoDestroy; // count buffered requests
+
+	  this.bufferedRequestCount = 0; // allocate the first CorkedRequest, there is always
+	  // one allocated and free to use, and we maintain at most two
+
+	  this.corkedRequestsFree = new CorkedRequest$1(this);
+	}
+
+	WritableState$1.prototype.getBuffer = function getBuffer() {
+	  var current = this.bufferedRequest;
+	  var out = [];
+
+	  while (current) {
+	    out.push(current);
+	    current = current.next;
+	  }
+
+	  return out;
+	};
+
+	(function () {
+	  try {
+	    Object.defineProperty(WritableState$1.prototype, 'buffer', {
+	      get: internalUtil.deprecate(function writableStateBufferGetter() {
+	        return this.getBuffer();
+	      }, '_writableState.buffer is deprecated. Use _writableState.getBuffer ' + 'instead.', 'DEP0003')
+	    });
+	  } catch (_) {}
+	})(); // Test _writableState for inheritance to account for Duplex streams,
+	// whose prototype chain only points to Readable.
+
+
+	var realHasInstance;
+
+	if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.prototype[Symbol.hasInstance] === 'function') {
+	  realHasInstance = Function.prototype[Symbol.hasInstance];
+	  Object.defineProperty(Writable$1, Symbol.hasInstance, {
+	    value: function value(object) {
+	      if (realHasInstance.call(this, object)) return true;
+	      if (this !== Writable$1) return false;
+	      return object && object._writableState instanceof WritableState$1;
+	    }
+	  });
+	} else {
+	  realHasInstance = function realHasInstance(object) {
+	    return object instanceof this;
+	  };
+	}
+
+	function Writable$1(options) {
+	  // Writable ctor is applied to Duplexes, too.
+	  // `realHasInstance` is necessary because using plain `instanceof`
+	  // would return false, as no `_writableState` property is attached.
+	  // Trying to use the custom `instanceof` for Writable here will also break the
+	  // Node.js LazyTransform implementation, which has a non-trivial getter for
+	  // `_writableState` that would lead to infinite recursion.
+	  // Checking for a Stream.Duplex instance is faster here instead of inside
+	  // the WritableState constructor, at least with V8 6.5
+
+	  var isDuplex = this instanceof Registry$3.Duplex;
+	  if (!isDuplex && !realHasInstance.call(Writable$1, this)) return new Writable$1(options);
+	  this._writableState = new WritableState$1(options, this, isDuplex); // legacy.
+
+	  this.writable = true;
+
+	  if (options) {
+	    if (typeof options.write === 'function') this._write = options.write;
+	    if (typeof options.writev === 'function') this._writev = options.writev;
+	    if (typeof options.destroy === 'function') this._destroy = options.destroy;
+	    if (typeof options.final === 'function') this._final = options.final;
+	  }
+
+	  Stream$1.call(this);
+	} // Otherwise people can pipe Writable streams, which is just wrong.
+
+
+	Writable$1.prototype.pipe = function () {
+	  errorOrDestroy(this, new ERR_STREAM_CANNOT_PIPE());
+	};
+
+	function writeAfterEnd$1(stream, cb) {
+	  var er = new ERR_STREAM_WRITE_AFTER_END(); // TODO: defer error events consistently everywhere, not just the cb
+
+	  errorOrDestroy(stream, er);
+	  nextTick(cb, er);
+	} // Checks that a user-supplied chunk is valid, especially for the particular
+	// mode the stream is in. Currently this means that `null` is never accepted
+	// and undefined/non-string values are only allowed in object mode.
+
+
+	function validChunk$1(stream, state, chunk, cb) {
+	  var er;
+
+	  if (chunk === null) {
+	    er = new ERR_STREAM_NULL_VALUES();
+	  } else if (typeof chunk !== 'string' && !state.objectMode) {
+	    er = new ERR_INVALID_ARG_TYPE('chunk', ['string', 'Buffer'], chunk);
+	  }
+
+	  if (er) {
+	    errorOrDestroy(stream, er);
+	    nextTick(cb, er);
+	    return false;
+	  }
+
+	  return true;
+	}
+
+	Writable$1.prototype.write = function (chunk, encoding, cb) {
+	  var state = this._writableState;
+	  var ret = false;
+
+	  var isBuf = !state.objectMode && _isUint8Array(chunk);
+
+	  if (isBuf && !Buffer$h.isBuffer(chunk)) {
+	    chunk = _uint8ArrayToBuffer(chunk);
+	  }
+
+	  if (typeof encoding === 'function') {
+	    cb = encoding;
+	    encoding = null;
+	  }
+
+	  if (isBuf) encoding = 'buffer';else if (!encoding) encoding = state.defaultEncoding;
+	  if (typeof cb !== 'function') cb = nop$1;
+	  if (state.ending) writeAfterEnd$1(this, cb);else if (isBuf || validChunk$1(this, state, chunk, cb)) {
+	    state.pendingcb++;
+	    ret = writeOrBuffer$1(this, state, isBuf, chunk, encoding, cb);
+	  }
+	  return ret;
+	};
+
+	Writable$1.prototype.cork = function () {
+	  this._writableState.corked++;
+	};
+
+	Writable$1.prototype.uncork = function () {
+	  var state = this._writableState;
+
+	  if (state.corked) {
+	    state.corked--;
+	    if (!state.writing && !state.corked && !state.bufferProcessing && state.bufferedRequest) clearBuffer$1(this, state);
+	  }
+	};
+
+	Writable$1.prototype.setDefaultEncoding = function setDefaultEncoding(encoding) {
+	  // node::ParseEncoding() requires lower case.
+	  if (typeof encoding === 'string') encoding = encoding.toLowerCase();
+	  if (!(['hex', 'utf8', 'utf-8', 'ascii', 'binary', 'base64', 'ucs2', 'ucs-2', 'utf16le', 'utf-16le', 'raw'].indexOf((encoding + '').toLowerCase()) > -1)) throw new ERR_UNKNOWN_ENCODING(encoding);
+	  this._writableState.defaultEncoding = encoding;
+	  return this;
+	};
+
+	Object.defineProperty(Writable$1.prototype, 'writableBuffer', {
+	  // making it explicit this property is not enumerable
+	  // because otherwise some prototype manipulation in
+	  // userland will fail
+	  enumerable: false,
+	  get: function get() {
+	    return this._writableState && this._writableState.getBuffer();
+	  }
+	});
+
+	function decodeChunk$1(state, chunk, encoding) {
+	  if (!state.objectMode && state.decodeStrings !== false && typeof chunk === 'string') {
+	    chunk = Buffer$h.from(chunk, encoding);
+	  }
+
+	  return chunk;
+	}
+
+	Object.defineProperty(Writable$1.prototype, 'writableHighWaterMark', {
+	  // making it explicit this property is not enumerable
+	  // because otherwise some prototype manipulation in
+	  // userland will fail
+	  enumerable: false,
+	  get: function get() {
+	    return this._writableState.highWaterMark;
+	  }
+	}); // if we're already writing something, then just put this
+	// in the queue, and wait our turn.  Otherwise, call _write
+	// If we return false, then we need a drain event, so set that flag.
+
+	function writeOrBuffer$1(stream, state, isBuf, chunk, encoding, cb) {
+	  if (!isBuf) {
+	    var newChunk = decodeChunk$1(state, chunk, encoding);
+
+	    if (chunk !== newChunk) {
+	      isBuf = true;
+	      encoding = 'buffer';
+	      chunk = newChunk;
+	    }
+	  }
+
+	  var len = state.objectMode ? 1 : chunk.length;
+	  state.length += len;
+	  var ret = state.length < state.highWaterMark; // we must ensure that previous needDrain will not be reset to false.
+
+	  if (!ret) state.needDrain = true;
+
+	  if (state.writing || state.corked) {
+	    var last = state.lastBufferedRequest;
+	    state.lastBufferedRequest = {
+	      chunk: chunk,
+	      encoding: encoding,
+	      isBuf: isBuf,
+	      callback: cb,
+	      next: null
+	    };
+
+	    if (last) {
+	      last.next = state.lastBufferedRequest;
+	    } else {
+	      state.bufferedRequest = state.lastBufferedRequest;
+	    }
+
+	    state.bufferedRequestCount += 1;
+	  } else {
+	    doWrite$1(stream, state, false, len, chunk, encoding, cb);
+	  }
+
+	  return ret;
+	}
+
+	function doWrite$1(stream, state, writev, len, chunk, encoding, cb) {
+	  state.writelen = len;
+	  state.writecb = cb;
+	  state.writing = true;
+	  state.sync = true;
+	  if (state.destroyed) state.onwrite(new ERR_STREAM_DESTROYED$1('write'));else if (writev) stream._writev(chunk, state.onwrite);else stream._write(chunk, encoding, state.onwrite);
+	  state.sync = false;
+	}
+
+	function onwriteError$1(stream, state, sync, er, cb) {
+	  --state.pendingcb;
+
+	  if (sync) {
+	    // defer the callback if we are being called synchronously
+	    // to avoid piling up things on the stack
+	    nextTick(cb, er); // this can emit finish, and it will always happen
+	    // after error
+
+	    nextTick(finishMaybe$1, stream, state);
+	    stream._writableState.errorEmitted = true;
+	    errorOrDestroy(stream, er);
+	  } else {
+	    // the caller expect this to happen before if
+	    // it is async
+	    cb(er);
+	    stream._writableState.errorEmitted = true;
+	    errorOrDestroy(stream, er); // this can emit finish, but finish must
+	    // always follow error
+
+	    finishMaybe$1(stream, state);
+	  }
+	}
+
+	function onwriteStateUpdate$1(state) {
+	  state.writing = false;
+	  state.writecb = null;
+	  state.length -= state.writelen;
+	  state.writelen = 0;
+	}
+
+	function onwrite$1(stream, er) {
+	  var state = stream._writableState;
+	  var sync = state.sync;
+	  var cb = state.writecb;
+	  if (typeof cb !== 'function') throw new ERR_MULTIPLE_CALLBACK$1();
+	  onwriteStateUpdate$1(state);
+	  if (er) onwriteError$1(stream, state, sync, er, cb);else {
+	    // Check if we're actually ready to finish, but don't emit yet
+	    var finished = needFinish$1(state) || stream.destroyed;
+
+	    if (!finished && !state.corked && !state.bufferProcessing && state.bufferedRequest) {
+	      clearBuffer$1(stream, state);
+	    }
+
+	    if (sync) {
+	      nextTick(afterWrite$1, stream, state, finished, cb);
+	    } else {
+	      afterWrite$1(stream, state, finished, cb);
+	    }
+	  }
+	}
+
+	function afterWrite$1(stream, state, finished, cb) {
+	  if (!finished) onwriteDrain$1(stream, state);
+	  state.pendingcb--;
+	  cb();
+	  finishMaybe$1(stream, state);
+	} // Must force callback to be called on nextTick, so that we don't
+	// emit 'drain' before the write() consumer gets the 'false' return
+	// value, and has a chance to attach a 'drain' listener.
+
+
+	function onwriteDrain$1(stream, state) {
+	  if (state.length === 0 && state.needDrain) {
+	    state.needDrain = false;
+	    stream.emit('drain');
+	  }
+	} // if there's something in the buffer waiting, then process it
+
+
+	function clearBuffer$1(stream, state) {
+	  state.bufferProcessing = true;
+	  var entry = state.bufferedRequest;
+
+	  if (stream._writev && entry && entry.next) {
+	    // Fast case, write everything using _writev()
+	    var l = state.bufferedRequestCount;
+	    var buffer = new Array(l);
+	    var holder = state.corkedRequestsFree;
+	    holder.entry = entry;
+	    var count = 0;
+	    var allBuffers = true;
+
+	    while (entry) {
+	      buffer[count] = entry;
+	      if (!entry.isBuf) allBuffers = false;
+	      entry = entry.next;
+	      count += 1;
+	    }
+
+	    buffer.allBuffers = allBuffers;
+	    doWrite$1(stream, state, true, state.length, buffer, '', holder.finish); // doWrite is almost always async, defer these to save a bit of time
+	    // as the hot path ends with doWrite
+
+	    state.pendingcb++;
+	    state.lastBufferedRequest = null;
+
+	    if (holder.next) {
+	      state.corkedRequestsFree = holder.next;
+	      holder.next = null;
+	    } else {
+	      state.corkedRequestsFree = new CorkedRequest$1(state);
+	    }
+
+	    state.bufferedRequestCount = 0;
+	  } else {
+	    // Slow case, write chunks one-by-one
+	    while (entry) {
+	      var chunk = entry.chunk;
+	      var encoding = entry.encoding;
+	      var cb = entry.callback;
+	      var len = state.objectMode ? 1 : chunk.length;
+	      doWrite$1(stream, state, false, len, chunk, encoding, cb);
+	      entry = entry.next;
+	      state.bufferedRequestCount--; // if we didn't call the onwrite immediately, then
+	      // it means that we need to wait until it does.
+	      // also, that means that the chunk and cb are currently
+	      // being processed, so move the buffer counter past them.
+
+	      if (state.writing) {
+	        break;
+	      }
+	    }
+
+	    if (entry === null) state.lastBufferedRequest = null;
+	  }
+
+	  state.bufferedRequest = entry;
+	  state.bufferProcessing = false;
+	}
+
+	Writable$1.prototype._write = function (chunk, encoding, cb) {
+	  cb(new ERR_METHOD_NOT_IMPLEMENTED$1('_write()'));
+	};
+
+	Writable$1.prototype._writev = null;
+
+	Writable$1.prototype.end = function (chunk, encoding, cb) {
+	  var state = this._writableState;
+
+	  if (typeof chunk === 'function') {
+	    cb = chunk;
+	    chunk = null;
+	    encoding = null;
+	  } else if (typeof encoding === 'function') {
+	    cb = encoding;
+	    encoding = null;
+	  }
+
+	  if (chunk !== null && chunk !== undefined) this.write(chunk, encoding); // .end() fully uncorks
+
+	  if (state.corked) {
+	    state.corked = 1;
+	    this.uncork();
+	  } // ignore unnecessary end() calls.
+
+
+	  if (!state.ending) endWritable$1(this, state, cb);
+	  return this;
+	};
+
+	Object.defineProperty(Writable$1.prototype, 'writableLength', {
+	  // making it explicit this property is not enumerable
+	  // because otherwise some prototype manipulation in
+	  // userland will fail
+	  enumerable: false,
+	  get: function get() {
+	    return this._writableState.length;
+	  }
+	});
+
+	function needFinish$1(state) {
+	  return state.ending && state.length === 0 && state.bufferedRequest === null && !state.finished && !state.writing;
+	}
+
+	function callFinal(stream, state) {
+	  stream._final(function (err) {
+	    state.pendingcb--;
+
+	    if (err) {
+	      errorOrDestroy(stream, err);
+	    }
+
+	    state.prefinished = true;
+	    stream.emit('prefinish');
+	    finishMaybe$1(stream, state);
+	  });
+	}
+
+	function prefinish$2(stream, state) {
+	  if (!state.prefinished && !state.finalCalled) {
+	    if (typeof stream._final === 'function' && !state.destroyed) {
+	      state.pendingcb++;
+	      state.finalCalled = true;
+	      nextTick(callFinal, stream, state);
+	    } else {
+	      state.prefinished = true;
+	      stream.emit('prefinish');
+	    }
+	  }
+	}
+
+	function finishMaybe$1(stream, state) {
+	  var need = needFinish$1(state);
+
+	  if (need) {
+	    prefinish$2(stream, state);
+
+	    if (state.pendingcb === 0) {
+	      state.finished = true;
+	      stream.emit('finish');
+
+	      if (state.autoDestroy) {
+	        // In case of duplex streams we need a way to detect
+	        // if the readable side is ready for autoDestroy as well
+	        var rState = stream._readableState;
+
+	        if (!rState || rState.autoDestroy && rState.endEmitted) {
+	          stream.destroy();
+	        }
+	      }
+	    }
+	  }
+
+	  return need;
+	}
+
+	function endWritable$1(stream, state, cb) {
+	  state.ending = true;
+	  finishMaybe$1(stream, state);
+
+	  if (cb) {
+	    if (state.finished) nextTick(cb);else stream.once('finish', cb);
+	  }
+
+	  state.ended = true;
+	  stream.writable = false;
+	}
+
+	function onCorkedFinish(corkReq, state, err) {
+	  var entry = corkReq.entry;
+	  corkReq.entry = null;
+
+	  while (entry) {
+	    var cb = entry.callback;
+	    state.pendingcb--;
+	    cb(err);
+	    entry = entry.next;
+	  } // reuse the free corkReq.
+
+
+	  state.corkedRequestsFree.next = corkReq;
+	}
+
+	Object.defineProperty(Writable$1.prototype, 'destroyed', {
+	  // making it explicit this property is not enumerable
+	  // because otherwise some prototype manipulation in
+	  // userland will fail
+	  enumerable: false,
+	  get: function get() {
+	    if (this._writableState === undefined) {
+	      return false;
+	    }
+
+	    return this._writableState.destroyed;
+	  },
+	  set: function set(value) {
+	    // we ignore the value if the stream
+	    // has not been initialized yet
+	    if (!this._writableState) {
+	      return;
+	    } // backward compatibility, the user is explicitly
+	    // managing destroyed
+
+
+	    this._writableState.destroyed = value;
+	  }
+	});
+	Writable$1.prototype.destroy = destroyImpl.destroy;
+	Writable$1.prototype._undestroy = destroyImpl.undestroy;
+
+	Writable$1.prototype._destroy = function (err, cb) {
+	  cb(err);
+	};
+
+	/*<replacement>*/
+
+	var objectKeys = Object.keys || function (obj) {
+	  var keys = [];
+
+	  for (var key in obj) {
+	    keys.push(key);
+	  }
+
+	  return keys;
+	};
+	/*</replacement>*/
+
+	const Registry$2 = _registry;
+
+	Registry$2.Duplex = Duplex$1;
+
+	inherits_browser.exports(Duplex$1, Registry$2.Readable);
+
+	{
+	  // Allow the keys array to be GC'ed.
+	  var keys$1 = objectKeys(Registry$2.Writable.prototype);
+
+	  for (var v$1 = 0; v$1 < keys$1.length; v$1++) {
+	    var method$1 = keys$1[v$1];
+	    if (!Duplex$1.prototype[method$1]) Duplex$1.prototype[method$1] = Registry$2.Writable.prototype[method$1];
+	  }
+	}
+
+	function Duplex$1(options) {
+	  if (!(this instanceof Duplex$1)) return new Duplex$1(options);
+	  Registry$2.Readable.call(this, options);
+	  Registry$2.Writable.call(this, options);
+	  this.allowHalfOpen = true;
+
+	  if (options) {
+	    if (options.readable === false) this.readable = false;
+	    if (options.writable === false) this.writable = false;
+
+	    if (options.allowHalfOpen === false) {
+	      this.allowHalfOpen = false;
+	      this.once('end', onend$1);
+	    }
+	  }
+	}
+
+	Object.defineProperty(Duplex$1.prototype, 'writableHighWaterMark', {
+	  // making it explicit this property is not enumerable
+	  // because otherwise some prototype manipulation in
+	  // userland will fail
+	  enumerable: false,
+	  get: function get() {
+	    return this._writableState.highWaterMark;
+	  }
+	});
+	Object.defineProperty(Duplex$1.prototype, 'writableBuffer', {
+	  // making it explicit this property is not enumerable
+	  // because otherwise some prototype manipulation in
+	  // userland will fail
+	  enumerable: false,
+	  get: function get() {
+	    return this._writableState && this._writableState.getBuffer();
+	  }
+	});
+	Object.defineProperty(Duplex$1.prototype, 'writableLength', {
+	  // making it explicit this property is not enumerable
+	  // because otherwise some prototype manipulation in
+	  // userland will fail
+	  enumerable: false,
+	  get: function get() {
+	    return this._writableState.length;
+	  }
+	}); // the no-half-open enforcer
+
+	function onend$1() {
+	  // If the writable side ended, then we're ok.
+	  if (this._writableState.ended) return; // no more data can be written.
+	  // But allow more writes to happen in this tick.
+
+	  nextTick(onEndNT$1, this);
+	}
+
+	function onEndNT$1(self) {
+	  self.end();
+	}
+
+	Object.defineProperty(Duplex$1.prototype, 'destroyed', {
+	  // making it explicit this property is not enumerable
+	  // because otherwise some prototype manipulation in
+	  // userland will fail
+	  enumerable: false,
+	  get: function get() {
+	    if (this._readableState === undefined || this._writableState === undefined) {
+	      return false;
+	    }
+
+	    return this._readableState.destroyed && this._writableState.destroyed;
+	  },
+	  set: function set(value) {
+	    // we ignore the value if the stream
+	    // has not been initialized yet
+	    if (this._readableState === undefined || this._writableState === undefined) {
+	      return;
+	    } // backward compatibility, the user is explicitly
+	    // managing destroyed
+
+
+	    this._readableState.destroyed = value;
+	    this._writableState.destroyed = value;
+	  }
+	});
+
+	const Registry$1 = _registry;
+
+	Registry$1.Transform = Transform$4;
 
 	var _require$codes$1 = errorsBrowser.codes,
 	    ERR_METHOD_NOT_IMPLEMENTED = _require$codes$1.ERR_METHOD_NOT_IMPLEMENTED,
@@ -8744,9 +8740,7 @@
 	    ERR_TRANSFORM_ALREADY_TRANSFORMING = _require$codes$1.ERR_TRANSFORM_ALREADY_TRANSFORMING,
 	    ERR_TRANSFORM_WITH_LENGTH_0 = _require$codes$1.ERR_TRANSFORM_WITH_LENGTH_0;
 
-	var Duplex$1 = _stream_duplex;
-
-	inherits_browser.exports(Transform$4, Duplex$1);
+	inherits_browser.exports(Transform$4, Registry$1.Duplex);
 
 	function afterTransform$1(er, data) {
 	  var ts = this._transformState;
@@ -8772,7 +8766,7 @@
 
 	function Transform$4(options) {
 	  if (!(this instanceof Transform$4)) return new Transform$4(options);
-	  Duplex$1.call(this, options);
+	  Registry$1.Duplex.call(this, options);
 	  this._transformState = {
 	    afterTransform: afterTransform$1.bind(this),
 	    needTransform: false,
@@ -8811,7 +8805,7 @@
 
 	Transform$4.prototype.push = function (chunk, encoding) {
 	  this._transformState.needTransform = false;
-	  return Duplex$1.prototype.push.call(this, chunk, encoding);
+	  return Registry$1.Duplex.prototype.push.call(this, chunk, encoding);
 	}; // This is the part where you do stuff!
 	// override this function in implementation classes.
 	// 'chunk' is an input chunk.
@@ -8858,7 +8852,7 @@
 	};
 
 	Transform$4.prototype._destroy = function (err, cb) {
-	  Duplex$1.prototype._destroy.call(this, err, function (err2) {
+	  Registry$1.Duplex.prototype._destroy.call(this, err, function (err2) {
 	    cb(err2);
 	  });
 	};
@@ -8875,15 +8869,14 @@
 	  return stream.push(null);
 	}
 
-	var _stream_passthrough = PassThrough$1;
+	const Registry = _registry;
+	Registry.PassThrough = PassThrough$1;
 
-	var Transform$3 = _stream_transform;
-
-	inherits_browser.exports(PassThrough$1, Transform$3);
+	inherits_browser.exports(PassThrough$1, Registry.Transform);
 
 	function PassThrough$1(options) {
 	  if (!(this instanceof PassThrough$1)) return new PassThrough$1(options);
-	  Transform$3.call(this, options);
+	  Transform.call(this, options);
 	}
 
 	PassThrough$1.prototype._transform = function (chunk, encoding, cb) {
@@ -8985,19 +8978,29 @@
 	var pipeline_1 = pipeline;
 
 	(function (module, exports) {
-	exports = module.exports = _stream_readable;
-	exports.Stream = exports;
-	exports.Readable = exports;
-	exports.Writable = _stream_writable;
-	exports.Duplex = _stream_duplex;
-	exports.Transform = _stream_transform;
-	exports.PassThrough = _stream_passthrough;
+	const Registry = _registry;
+
+
+
+
+
+
+
+
+	exports = module.exports = Registry.Readable;
+
+	exports.Stream = Registry.Readable;
+	exports.Readable = Registry.Readable;
+	exports.Writable = Registry.Writable;
+	exports.Duplex = Registry.Duplex;
+	exports.Transform = Registry.Transform;
+	exports.PassThrough = Registry.PassThrough;
 	exports.finished = endOfStream;
 	exports.pipeline = pipeline_1;
 	}(readableBrowser, readableBrowser.exports));
 
 	var Buffer$g = safeBuffer.exports.Buffer;
-	var Transform$2 = readableBrowser.exports.Transform;
+	var Transform$3 = readableBrowser.exports.Transform;
 	var inherits$i = inherits_browser.exports;
 
 	function throwIfNotStringOrBuffer (val, prefix) {
@@ -9007,7 +9010,7 @@
 	}
 
 	function HashBase$2 (blockSize) {
-	  Transform$2.call(this);
+	  Transform$3.call(this);
 
 	  this._block = Buffer$g.allocUnsafe(blockSize);
 	  this._blockSize = blockSize;
@@ -9017,7 +9020,7 @@
 	  this._finalized = false;
 	}
 
-	inherits$i(HashBase$2, Transform$2);
+	inherits$i(HashBase$2, Transform$3);
 
 	HashBase$2.prototype._transform = function (chunk, encoding, callback) {
 	  var error = null;
@@ -12163,7 +12166,7 @@
 	}
 
 	// a transform stream is a readable/writable stream where you do
-	inherits$9(Transform$1, Duplex);
+	inherits$9(Transform$2, Duplex);
 
 	function TransformState(stream) {
 	  this.afterTransform = function (er, data) {
@@ -12198,8 +12201,8 @@
 	    stream._read(rs.highWaterMark);
 	  }
 	}
-	function Transform$1(options) {
-	  if (!(this instanceof Transform$1)) return new Transform$1(options);
+	function Transform$2(options) {
+	  if (!(this instanceof Transform$2)) return new Transform$2(options);
 
 	  Duplex.call(this, options);
 
@@ -12229,7 +12232,7 @@
 	  });
 	}
 
-	Transform$1.prototype.push = function (chunk, encoding) {
+	Transform$2.prototype.push = function (chunk, encoding) {
 	  this._transformState.needTransform = false;
 	  return Duplex.prototype.push.call(this, chunk, encoding);
 	};
@@ -12244,11 +12247,11 @@
 	// Call `cb(err)` when you are done with this chunk.  If you pass
 	// an error, then that'll put the hurt on the whole operation.  If you
 	// never call cb(), then you'll never get another chunk.
-	Transform$1.prototype._transform = function (chunk, encoding, cb) {
+	Transform$2.prototype._transform = function (chunk, encoding, cb) {
 	  throw new Error('Not implemented');
 	};
 
-	Transform$1.prototype._write = function (chunk, encoding, cb) {
+	Transform$2.prototype._write = function (chunk, encoding, cb) {
 	  var ts = this._transformState;
 	  ts.writecb = cb;
 	  ts.writechunk = chunk;
@@ -12262,7 +12265,7 @@
 	// Doesn't matter what the args are here.
 	// _transform does all the work.
 	// That we got here means that the readable side wants more data.
-	Transform$1.prototype._read = function (n) {
+	Transform$2.prototype._read = function (n) {
 	  var ts = this._transformState;
 
 	  if (ts.writechunk !== null && ts.writecb && !ts.transforming) {
@@ -12290,11 +12293,11 @@
 	  return stream.push(null);
 	}
 
-	inherits$9(PassThrough, Transform$1);
+	inherits$9(PassThrough, Transform$2);
 	function PassThrough(options) {
 	  if (!(this instanceof PassThrough)) return new PassThrough(options);
 
-	  Transform$1.call(this, options);
+	  Transform$2.call(this, options);
 	}
 
 	PassThrough.prototype._transform = function (chunk, encoding, cb) {
@@ -12305,7 +12308,7 @@
 	Stream.Readable = Readable;
 	Stream.Writable = Writable;
 	Stream.Duplex = Duplex;
-	Stream.Transform = Transform$1;
+	Stream.Transform = Transform$2;
 	Stream.PassThrough = PassThrough;
 
 	// Backwards-compat with node 0.4.x
@@ -12407,7 +12410,7 @@
 		Readable: Readable,
 		Writable: Writable,
 		Duplex: Duplex,
-		Transform: Transform$1,
+		Transform: Transform$2,
 		PassThrough: PassThrough,
 		Stream: Stream
 	});
@@ -12415,12 +12418,12 @@
 	var require$$1 = /*@__PURE__*/getAugmentedNamespace(stream);
 
 	var Buffer$6 = safeBuffer.exports.Buffer;
-	var Transform = require$$1.Transform;
+	var Transform$1 = require$$1.Transform;
 	var StringDecoder = string_decoder.StringDecoder;
 	var inherits$7 = inherits_browser.exports;
 
 	function CipherBase (hashMode) {
-	  Transform.call(this);
+	  Transform$1.call(this);
 	  this.hashMode = typeof hashMode === 'string';
 	  if (this.hashMode) {
 	    this[hashMode] = this._finalOrDigest;
@@ -12434,7 +12437,7 @@
 	  this._decoder = null;
 	  this._encoding = null;
 	}
-	inherits$7(CipherBase, Transform);
+	inherits$7(CipherBase, Transform$1);
 
 	CipherBase.prototype.update = function (data, inputEnc, outputEnc) {
 	  if (typeof data === 'string') {
