@@ -676,8 +676,7 @@ $(document).ready(function() {
 
 	async function getLedgerAddress(format, callback) {
 		try {
-			//const transport = await window.TransportWebUSB.create();
-			const transport = await window.SpeculosTransport.open();
+			const transport = await window.TransportWebUSB.create();
 			const appBtc = new window.Btc(transport);
 			result = await appBtc.getWalletPublicKey(
 				coinjs.ledgerPath,
@@ -705,9 +704,7 @@ $(document).ready(function() {
 
 	async function getLedgerSignatures(currenttransaction, hashType, callback) {
 		try {
-			//const transport = await window.TransportWebUSB.create();
-			const apduPort = 40000;
-			const transport = await window.SpeculosTransport.open({ apduPort });
+			const transport = await window.TransportWebUSB.create();
 			const appBtc = new window.Btc(transport);
 
 			var isPeercoin = true;

@@ -997,10 +997,10 @@
 	  buffer[offset + i - d] |= s * 128;
 	}
 
-	var toString$1 = {}.toString;
+	var toString = {}.toString;
 
-	var isArray$2 = Array.isArray || function (arr) {
-	  return toString$1.call(arr) == '[object Array]';
+	var isArray$1 = Array.isArray || function (arr) {
+	  return toString.call(arr) == '[object Array]';
 	};
 
 	var INSPECT_MAX_BYTES = 50;
@@ -1267,7 +1267,7 @@
 	      return fromArrayLike(that, obj)
 	    }
 
-	    if (obj.type === 'Buffer' && isArray$2(obj.data)) {
+	    if (obj.type === 'Buffer' && isArray$1(obj.data)) {
 	      return fromArrayLike(that, obj.data)
 	    }
 	  }
@@ -1284,7 +1284,7 @@
 	  }
 	  return length | 0
 	}
-	Buffer$l.isBuffer = isBuffer$1;
+	Buffer$l.isBuffer = isBuffer;
 	function internalIsBuffer (b) {
 	  return !!(b != null && b._isBuffer)
 	}
@@ -1332,7 +1332,7 @@
 	};
 
 	Buffer$l.concat = function concat (list, length) {
-	  if (!isArray$2(list)) {
+	  if (!isArray$1(list)) {
 	    throw new TypeError('"list" argument must be an Array of Buffers')
 	  }
 
@@ -2750,7 +2750,7 @@
 	// the following is from is-buffer, also by Feross Aboukhadijeh and with same lisence
 	// The _isBuffer check is for Safari 5-7 support, because it's missing
 	// Object.prototype.constructor. Remove this eventually
-	function isBuffer$1(obj) {
+	function isBuffer(obj) {
 	  return obj != null && (!!obj._isBuffer || isFastBuffer(obj) || isSlowBuffer(obj))
 	}
 
@@ -10236,7 +10236,7 @@
 
 	var formatRegExp = /%[sdj%]/g;
 	function format(f) {
-	  if (!isString$1(f)) {
+	  if (!isString(f)) {
 	    var objects = [];
 	    for (var i = 0; i < arguments.length; i++) {
 	      objects.push(inspect(arguments[i]));
@@ -10264,7 +10264,7 @@
 	    }
 	  });
 	  for (var x = args[i]; i < len; x = args[++i]) {
-	    if (isNull(x) || !isObject$1(x)) {
+	    if (isNull(x) || !isObject(x)) {
 	      str += ' ' + x;
 	    } else {
 	      str += ' ' + inspect(x);
@@ -10278,24 +10278,16 @@
 	// If --no-deprecation is set, then it is a no-op.
 	function deprecate(fn, msg) {
 	  // Allow for deprecating things in the process of starting up.
-	  if (isUndefined$1(global$1.process)) {
+	  if (isUndefined(global$1.process)) {
 	    return function() {
 	      return deprecate(fn, msg).apply(this, arguments);
 	    };
 	  }
 
-	  if (process.noDeprecation === true) {
-	    return fn;
-	  }
-
 	  var warned = false;
 	  function deprecated() {
 	    if (!warned) {
-	      if (process.throwDeprecation) {
-	        throw new Error(msg);
-	      } else if (process.traceDeprecation) {
-	        console.trace(msg);
-	      } else {
+	      {
 	        console.error(msg);
 	      }
 	      warned = true;
@@ -10309,8 +10301,8 @@
 	var debugs = {};
 	var debugEnviron;
 	function debuglog(set) {
-	  if (isUndefined$1(debugEnviron))
-	    debugEnviron = process.env.NODE_DEBUG || '';
+	  if (isUndefined(debugEnviron))
+	    debugEnviron = '';
 	  set = set.toUpperCase();
 	  if (!debugs[set]) {
 	    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
@@ -10351,10 +10343,10 @@
 	    _extend(ctx, opts);
 	  }
 	  // set default options
-	  if (isUndefined$1(ctx.showHidden)) ctx.showHidden = false;
-	  if (isUndefined$1(ctx.depth)) ctx.depth = 2;
-	  if (isUndefined$1(ctx.colors)) ctx.colors = false;
-	  if (isUndefined$1(ctx.customInspect)) ctx.customInspect = true;
+	  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+	  if (isUndefined(ctx.depth)) ctx.depth = 2;
+	  if (isUndefined(ctx.colors)) ctx.colors = false;
+	  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
 	  if (ctx.colors) ctx.stylize = stylizeWithColor;
 	  return formatValue(ctx, obj, ctx.depth);
 	}
@@ -10423,13 +10415,13 @@
 	  // Check that value is an object with an inspect function on it
 	  if (ctx.customInspect &&
 	      value &&
-	      isFunction$1(value.inspect) &&
+	      isFunction(value.inspect) &&
 	      // Filter out the util module, it's inspect function is special
 	      value.inspect !== inspect &&
 	      // Also filter out any prototype objects using the circular check.
 	      !(value.constructor && value.constructor.prototype === value)) {
 	    var ret = value.inspect(recurseTimes, ctx);
-	    if (!isString$1(ret)) {
+	    if (!isString(ret)) {
 	      ret = formatValue(ctx, ret, recurseTimes);
 	    }
 	    return ret;
@@ -10458,14 +10450,14 @@
 
 	  // Some type of object without properties can be shortcutted.
 	  if (keys.length === 0) {
-	    if (isFunction$1(value)) {
+	    if (isFunction(value)) {
 	      var name = value.name ? ': ' + value.name : '';
 	      return ctx.stylize('[Function' + name + ']', 'special');
 	    }
 	    if (isRegExp(value)) {
 	      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
 	    }
-	    if (isDate$1(value)) {
+	    if (isDate(value)) {
 	      return ctx.stylize(Date.prototype.toString.call(value), 'date');
 	    }
 	    if (isError(value)) {
@@ -10476,13 +10468,13 @@
 	  var base = '', array = false, braces = ['{', '}'];
 
 	  // Make Array say that they are Array
-	  if (isArray$1(value)) {
+	  if (isArray(value)) {
 	    array = true;
 	    braces = ['[', ']'];
 	  }
 
 	  // Make functions say that they are functions
-	  if (isFunction$1(value)) {
+	  if (isFunction(value)) {
 	    var n = value.name ? ': ' + value.name : '';
 	    base = ' [Function' + n + ']';
 	  }
@@ -10493,7 +10485,7 @@
 	  }
 
 	  // Make dates with properties first say the date
-	  if (isDate$1(value)) {
+	  if (isDate(value)) {
 	    base = ' ' + Date.prototype.toUTCString.call(value);
 	  }
 
@@ -10532,15 +10524,15 @@
 
 
 	function formatPrimitive(ctx, value) {
-	  if (isUndefined$1(value))
+	  if (isUndefined(value))
 	    return ctx.stylize('undefined', 'undefined');
-	  if (isString$1(value)) {
+	  if (isString(value)) {
 	    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
 	                                             .replace(/'/g, "\\'")
 	                                             .replace(/\\"/g, '"') + '\'';
 	    return ctx.stylize(simple, 'string');
 	  }
-	  if (isNumber$1(value))
+	  if (isNumber(value))
 	    return ctx.stylize('' + value, 'number');
 	  if (isBoolean(value))
 	    return ctx.stylize('' + value, 'boolean');
@@ -10614,7 +10606,7 @@
 	      str = ctx.stylize('[Circular]', 'special');
 	    }
 	  }
-	  if (isUndefined$1(name)) {
+	  if (isUndefined(name)) {
 	    if (array && key.match(/^\d+$/)) {
 	      return str;
 	    }
@@ -10655,7 +10647,7 @@
 
 	// NOTE: These type checking functions intentionally don't use `instanceof`
 	// because it is fragile and can be easily faked with `Object.create()`.
-	function isArray$1(ar) {
+	function isArray(ar) {
 	  return Array.isArray(ar);
 	}
 
@@ -10667,36 +10659,36 @@
 	  return arg === null;
 	}
 
-	function isNumber$1(arg) {
+	function isNumber(arg) {
 	  return typeof arg === 'number';
 	}
 
-	function isString$1(arg) {
+	function isString(arg) {
 	  return typeof arg === 'string';
 	}
 
-	function isUndefined$1(arg) {
+	function isUndefined(arg) {
 	  return arg === void 0;
 	}
 
 	function isRegExp(re) {
-	  return isObject$1(re) && objectToString(re) === '[object RegExp]';
+	  return isObject(re) && objectToString(re) === '[object RegExp]';
 	}
 
-	function isObject$1(arg) {
+	function isObject(arg) {
 	  return typeof arg === 'object' && arg !== null;
 	}
 
-	function isDate$1(d) {
-	  return isObject$1(d) && objectToString(d) === '[object Date]';
+	function isDate(d) {
+	  return isObject(d) && objectToString(d) === '[object Date]';
 	}
 
 	function isError(e) {
-	  return isObject$1(e) &&
+	  return isObject(e) &&
 	      (objectToString(e) === '[object Error]' || e instanceof Error);
 	}
 
-	function isFunction$1(arg) {
+	function isFunction(arg) {
 	  return typeof arg === 'function';
 	}
 
@@ -10706,7 +10698,7 @@
 
 	function _extend(origin, add) {
 	  // Don't do anything if add isn't an object
-	  if (!add || !isObject$1(add)) return origin;
+	  if (!add || !isObject(add)) return origin;
 
 	  var keys = Object.keys(add);
 	  var i = keys.length;
@@ -11117,7 +11109,7 @@
 
 	function chunkInvalid(state, chunk) {
 	  var er = null;
-	  if (!isBuffer$1(chunk) && typeof chunk !== 'string' && chunk !== null && chunk !== undefined && !state.objectMode) {
+	  if (!isBuffer(chunk) && typeof chunk !== 'string' && chunk !== null && chunk !== undefined && !state.objectMode) {
 	    er = new TypeError('Invalid non-string/buffer chunk');
 	  }
 	  return er;
@@ -11507,7 +11499,7 @@
 
 	  // proxy certain important events.
 	  var events = ['error', 'close', 'destroy', 'pause', 'resume'];
-	  forEach$1(events, function (ev) {
+	  forEach(events, function (ev) {
 	    stream.on(ev, self.emit.bind(self, ev));
 	  });
 
@@ -11649,7 +11641,7 @@
 	  }
 	}
 
-	function forEach$1(xs, f) {
+	function forEach(xs, f) {
 	  for (var i = 0, l = xs.length; i < l; i++) {
 	    f(xs[i], i);
 	  }
@@ -16455,7 +16447,7 @@
 		dependencies: dependencies
 	};
 
-	var utils$B = {};
+	var utils$n = {};
 
 	var bn = {exports: {}};
 
@@ -19917,7 +19909,7 @@
 	    throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 	};
 
-	var utils$A = {};
+	var utils$m = {};
 
 	(function (exports) {
 
@@ -19977,14 +19969,14 @@
 	  else
 	    return arr;
 	};
-	}(utils$A));
+	}(utils$m));
 
 	(function (exports) {
 
 	var utils = exports;
 	var BN = bn.exports;
 	var minAssert = minimalisticAssert;
-	var minUtils = utils$A;
+	var minUtils = utils$m;
 
 	utils.assert = minAssert;
 	utils.toArray = minUtils.toArray;
@@ -20097,7 +20089,7 @@
 	  return new BN(bytes, 'hex', 'le');
 	}
 	utils.intFromLE = intFromLE;
-	}(utils$B));
+	}(utils$n));
 
 	var brorand = {exports: {}};
 
@@ -20170,10 +20162,10 @@
 	var curve = {};
 
 	var BN$8 = bn.exports;
-	var utils$z = utils$B;
-	var getNAF = utils$z.getNAF;
-	var getJSF = utils$z.getJSF;
-	var assert$e = utils$z.assert;
+	var utils$l = utils$n;
+	var getNAF = utils$l.getNAF;
+	var getJSF = utils$l.getJSF;
+	var assert$e = utils$l.assert;
 
 	function BaseCurve(type, conf) {
 	  this.type = type;
@@ -20436,7 +20428,7 @@
 	};
 
 	BaseCurve.prototype.decodePoint = function decodePoint(bytes, enc) {
-	  bytes = utils$z.toArray(bytes, enc);
+	  bytes = utils$l.toArray(bytes, enc);
 
 	  var len = this.p.byteLength();
 
@@ -20474,7 +20466,7 @@
 	};
 
 	BasePoint.prototype.encode = function encode(enc, compact) {
-	  return utils$z.encode(this._encode(compact), enc);
+	  return utils$l.encode(this._encode(compact), enc);
 	};
 
 	BasePoint.prototype.precompute = function precompute(power) {
@@ -20548,12 +20540,12 @@
 	  return r;
 	};
 
-	var utils$y = utils$B;
+	var utils$k = utils$n;
 	var BN$7 = bn.exports;
 	var inherits$3 = inherits_browser.exports;
 	var Base$2 = base;
 
-	var assert$d = utils$y.assert;
+	var assert$d = utils$k.assert;
 
 	function ShortCurve(conf) {
 	  Base$2.call(this, 'short', conf);
@@ -21489,7 +21481,7 @@
 	var inherits$2 = inherits_browser.exports;
 	var Base$1 = base;
 
-	var utils$x = utils$B;
+	var utils$j = utils$n;
 
 	function MontCurve(conf) {
 	  Base$1.call(this, 'mont', conf);
@@ -21529,7 +21521,7 @@
 	inherits$2(Point$1, Base$1.BasePoint);
 
 	MontCurve.prototype.decodePoint = function decodePoint(bytes, enc) {
-	  return this.point(utils$x.toArray(bytes, enc), 1);
+	  return this.point(utils$j.toArray(bytes, enc), 1);
 	};
 
 	MontCurve.prototype.point = function point(x, z) {
@@ -21662,12 +21654,12 @@
 	  return this.x.fromRed();
 	};
 
-	var utils$w = utils$B;
+	var utils$i = utils$n;
 	var BN$5 = bn.exports;
 	var inherits$1 = inherits_browser.exports;
 	var Base = base;
 
-	var assert$c = utils$w.assert;
+	var assert$c = utils$i.assert;
 
 	function EdwardsCurve(conf) {
 	  // NOTE: Important as we are creating point in Base.call()
@@ -22110,12 +22102,12 @@
 
 	var hash$2 = {};
 
-	var utils$v = {};
+	var utils$h = {};
 
 	var assert$b = minimalisticAssert;
 	var inherits = inherits_browser.exports;
 
-	utils$v.inherits = inherits;
+	utils$h.inherits = inherits;
 
 	function isSurrogatePair(msg, i) {
 	  if ((msg.charCodeAt(i) & 0xFC00) !== 0xD800) {
@@ -22172,7 +22164,7 @@
 	  }
 	  return res;
 	}
-	utils$v.toArray = toArray;
+	utils$h.toArray = toArray;
 
 	function toHex(msg) {
 	  var res = '';
@@ -22180,7 +22172,7 @@
 	    res += zero2(msg[i].toString(16));
 	  return res;
 	}
-	utils$v.toHex = toHex;
+	utils$h.toHex = toHex;
 
 	function htonl(w) {
 	  var res = (w >>> 24) |
@@ -22189,7 +22181,7 @@
 	            ((w & 0xff) << 24);
 	  return res >>> 0;
 	}
-	utils$v.htonl = htonl;
+	utils$h.htonl = htonl;
 
 	function toHex32(msg, endian) {
 	  var res = '';
@@ -22201,7 +22193,7 @@
 	  }
 	  return res;
 	}
-	utils$v.toHex32 = toHex32;
+	utils$h.toHex32 = toHex32;
 
 	function zero2(word) {
 	  if (word.length === 1)
@@ -22209,7 +22201,7 @@
 	  else
 	    return word;
 	}
-	utils$v.zero2 = zero2;
+	utils$h.zero2 = zero2;
 
 	function zero8(word) {
 	  if (word.length === 7)
@@ -22229,7 +22221,7 @@
 	  else
 	    return word;
 	}
-	utils$v.zero8 = zero8;
+	utils$h.zero8 = zero8;
 
 	function join32(msg, start, end, endian) {
 	  var len = end - start;
@@ -22245,7 +22237,7 @@
 	  }
 	  return res;
 	}
-	utils$v.join32 = join32;
+	utils$h.join32 = join32;
 
 	function split32(msg, endian) {
 	  var res = new Array(msg.length * 4);
@@ -22265,37 +22257,37 @@
 	  }
 	  return res;
 	}
-	utils$v.split32 = split32;
+	utils$h.split32 = split32;
 
 	function rotr32$1(w, b) {
 	  return (w >>> b) | (w << (32 - b));
 	}
-	utils$v.rotr32 = rotr32$1;
+	utils$h.rotr32 = rotr32$1;
 
 	function rotl32$2(w, b) {
 	  return (w << b) | (w >>> (32 - b));
 	}
-	utils$v.rotl32 = rotl32$2;
+	utils$h.rotl32 = rotl32$2;
 
 	function sum32$3(a, b) {
 	  return (a + b) >>> 0;
 	}
-	utils$v.sum32 = sum32$3;
+	utils$h.sum32 = sum32$3;
 
 	function sum32_3$1(a, b, c) {
 	  return (a + b + c) >>> 0;
 	}
-	utils$v.sum32_3 = sum32_3$1;
+	utils$h.sum32_3 = sum32_3$1;
 
 	function sum32_4$2(a, b, c, d) {
 	  return (a + b + c + d) >>> 0;
 	}
-	utils$v.sum32_4 = sum32_4$2;
+	utils$h.sum32_4 = sum32_4$2;
 
 	function sum32_5$2(a, b, c, d, e) {
 	  return (a + b + c + d + e) >>> 0;
 	}
-	utils$v.sum32_5 = sum32_5$2;
+	utils$h.sum32_5 = sum32_5$2;
 
 	function sum64$1(buf, pos, ah, al) {
 	  var bh = buf[pos];
@@ -22306,20 +22298,20 @@
 	  buf[pos] = hi >>> 0;
 	  buf[pos + 1] = lo;
 	}
-	utils$v.sum64 = sum64$1;
+	utils$h.sum64 = sum64$1;
 
 	function sum64_hi$1(ah, al, bh, bl) {
 	  var lo = (al + bl) >>> 0;
 	  var hi = (lo < al ? 1 : 0) + ah + bh;
 	  return hi >>> 0;
 	}
-	utils$v.sum64_hi = sum64_hi$1;
+	utils$h.sum64_hi = sum64_hi$1;
 
 	function sum64_lo$1(ah, al, bh, bl) {
 	  var lo = al + bl;
 	  return lo >>> 0;
 	}
-	utils$v.sum64_lo = sum64_lo$1;
+	utils$h.sum64_lo = sum64_lo$1;
 
 	function sum64_4_hi$1(ah, al, bh, bl, ch, cl, dh, dl) {
 	  var carry = 0;
@@ -22334,13 +22326,13 @@
 	  var hi = ah + bh + ch + dh + carry;
 	  return hi >>> 0;
 	}
-	utils$v.sum64_4_hi = sum64_4_hi$1;
+	utils$h.sum64_4_hi = sum64_4_hi$1;
 
 	function sum64_4_lo$1(ah, al, bh, bl, ch, cl, dh, dl) {
 	  var lo = al + bl + cl + dl;
 	  return lo >>> 0;
 	}
-	utils$v.sum64_4_lo = sum64_4_lo$1;
+	utils$h.sum64_4_lo = sum64_4_lo$1;
 
 	function sum64_5_hi$1(ah, al, bh, bl, ch, cl, dh, dl, eh, el) {
 	  var carry = 0;
@@ -22357,41 +22349,41 @@
 	  var hi = ah + bh + ch + dh + eh + carry;
 	  return hi >>> 0;
 	}
-	utils$v.sum64_5_hi = sum64_5_hi$1;
+	utils$h.sum64_5_hi = sum64_5_hi$1;
 
 	function sum64_5_lo$1(ah, al, bh, bl, ch, cl, dh, dl, eh, el) {
 	  var lo = al + bl + cl + dl + el;
 
 	  return lo >>> 0;
 	}
-	utils$v.sum64_5_lo = sum64_5_lo$1;
+	utils$h.sum64_5_lo = sum64_5_lo$1;
 
 	function rotr64_hi$1(ah, al, num) {
 	  var r = (al << (32 - num)) | (ah >>> num);
 	  return r >>> 0;
 	}
-	utils$v.rotr64_hi = rotr64_hi$1;
+	utils$h.rotr64_hi = rotr64_hi$1;
 
 	function rotr64_lo$1(ah, al, num) {
 	  var r = (ah << (32 - num)) | (al >>> num);
 	  return r >>> 0;
 	}
-	utils$v.rotr64_lo = rotr64_lo$1;
+	utils$h.rotr64_lo = rotr64_lo$1;
 
 	function shr64_hi$1(ah, al, num) {
 	  return ah >>> num;
 	}
-	utils$v.shr64_hi = shr64_hi$1;
+	utils$h.shr64_hi = shr64_hi$1;
 
 	function shr64_lo$1(ah, al, num) {
 	  var r = (ah << (32 - num)) | (al >>> num);
 	  return r >>> 0;
 	}
-	utils$v.shr64_lo = shr64_lo$1;
+	utils$h.shr64_lo = shr64_lo$1;
 
 	var common$5 = {};
 
-	var utils$u = utils$v;
+	var utils$g = utils$h;
 	var assert$a = minimalisticAssert;
 
 	function BlockHash$4() {
@@ -22410,7 +22402,7 @@
 
 	BlockHash$4.prototype.update = function update(msg, enc) {
 	  // Convert message to array, pad it, and join into 32bit blocks
-	  msg = utils$u.toArray(msg, enc);
+	  msg = utils$g.toArray(msg, enc);
 	  if (!this.pending)
 	    this.pending = msg;
 	  else
@@ -22427,7 +22419,7 @@
 	    if (this.pending.length === 0)
 	      this.pending = null;
 
-	    msg = utils$u.join32(msg, 0, msg.length - r, this.endian);
+	    msg = utils$g.join32(msg, 0, msg.length - r, this.endian);
 	    for (var i = 0; i < msg.length; i += this._delta32)
 	      this._update(msg, i, i + this._delta32);
 	  }
@@ -22486,8 +22478,8 @@
 
 	var common$4 = {};
 
-	var utils$t = utils$v;
-	var rotr32 = utils$t.rotr32;
+	var utils$f = utils$h;
+	var rotr32 = utils$f.rotr32;
 
 	function ft_1$1(s, x, y, z) {
 	  if (s === 0)
@@ -22534,13 +22526,13 @@
 	}
 	common$4.g1_256 = g1_256$1;
 
-	var utils$s = utils$v;
+	var utils$e = utils$h;
 	var common$3 = common$5;
 	var shaCommon$1 = common$4;
 
-	var rotl32$1 = utils$s.rotl32;
-	var sum32$2 = utils$s.sum32;
-	var sum32_5$1 = utils$s.sum32_5;
+	var rotl32$1 = utils$e.rotl32;
+	var sum32$2 = utils$e.sum32;
+	var sum32_5$1 = utils$e.sum32_5;
 	var ft_1 = shaCommon$1.ft_1;
 	var BlockHash$3 = common$3.BlockHash;
 
@@ -22560,7 +22552,7 @@
 	  this.W = new Array(80);
 	}
 
-	utils$s.inherits(SHA1, BlockHash$3);
+	utils$e.inherits(SHA1, BlockHash$3);
 	var _1 = SHA1;
 
 	SHA1.blockSize = 512;
@@ -22602,19 +22594,19 @@
 
 	SHA1.prototype._digest = function digest(enc) {
 	  if (enc === 'hex')
-	    return utils$s.toHex32(this.h, 'big');
+	    return utils$e.toHex32(this.h, 'big');
 	  else
-	    return utils$s.split32(this.h, 'big');
+	    return utils$e.split32(this.h, 'big');
 	};
 
-	var utils$r = utils$v;
+	var utils$d = utils$h;
 	var common$2 = common$5;
 	var shaCommon = common$4;
 	var assert$9 = minimalisticAssert;
 
-	var sum32$1 = utils$r.sum32;
-	var sum32_4$1 = utils$r.sum32_4;
-	var sum32_5 = utils$r.sum32_5;
+	var sum32$1 = utils$d.sum32;
+	var sum32_4$1 = utils$d.sum32_4;
+	var sum32_5 = utils$d.sum32_5;
 	var ch32 = shaCommon.ch32;
 	var maj32 = shaCommon.maj32;
 	var s0_256 = shaCommon.s0_256;
@@ -22655,7 +22647,7 @@
 	  this.k = sha256_K;
 	  this.W = new Array(64);
 	}
-	utils$r.inherits(SHA256$1, BlockHash$2);
+	utils$d.inherits(SHA256$1, BlockHash$2);
 	var _256 = SHA256$1;
 
 	SHA256$1.blockSize = 512;
@@ -22706,12 +22698,12 @@
 
 	SHA256$1.prototype._digest = function digest(enc) {
 	  if (enc === 'hex')
-	    return utils$r.toHex32(this.h, 'big');
+	    return utils$d.toHex32(this.h, 'big');
 	  else
-	    return utils$r.split32(this.h, 'big');
+	    return utils$d.split32(this.h, 'big');
 	};
 
-	var utils$q = utils$v;
+	var utils$c = utils$h;
 	var SHA256 = _256;
 
 	function SHA224() {
@@ -22723,7 +22715,7 @@
 	    0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939,
 	    0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4 ];
 	}
-	utils$q.inherits(SHA224, SHA256);
+	utils$c.inherits(SHA224, SHA256);
 	var _224 = SHA224;
 
 	SHA224.blockSize = 512;
@@ -22734,26 +22726,26 @@
 	SHA224.prototype._digest = function digest(enc) {
 	  // Just truncate output
 	  if (enc === 'hex')
-	    return utils$q.toHex32(this.h.slice(0, 7), 'big');
+	    return utils$c.toHex32(this.h.slice(0, 7), 'big');
 	  else
-	    return utils$q.split32(this.h.slice(0, 7), 'big');
+	    return utils$c.split32(this.h.slice(0, 7), 'big');
 	};
 
-	var utils$p = utils$v;
+	var utils$b = utils$h;
 	var common$1 = common$5;
 	var assert$8 = minimalisticAssert;
 
-	var rotr64_hi = utils$p.rotr64_hi;
-	var rotr64_lo = utils$p.rotr64_lo;
-	var shr64_hi = utils$p.shr64_hi;
-	var shr64_lo = utils$p.shr64_lo;
-	var sum64 = utils$p.sum64;
-	var sum64_hi = utils$p.sum64_hi;
-	var sum64_lo = utils$p.sum64_lo;
-	var sum64_4_hi = utils$p.sum64_4_hi;
-	var sum64_4_lo = utils$p.sum64_4_lo;
-	var sum64_5_hi = utils$p.sum64_5_hi;
-	var sum64_5_lo = utils$p.sum64_5_lo;
+	var rotr64_hi = utils$b.rotr64_hi;
+	var rotr64_lo = utils$b.rotr64_lo;
+	var shr64_hi = utils$b.shr64_hi;
+	var shr64_lo = utils$b.shr64_lo;
+	var sum64 = utils$b.sum64;
+	var sum64_hi = utils$b.sum64_hi;
+	var sum64_lo = utils$b.sum64_lo;
+	var sum64_4_hi = utils$b.sum64_4_hi;
+	var sum64_4_lo = utils$b.sum64_4_lo;
+	var sum64_5_hi = utils$b.sum64_5_hi;
+	var sum64_5_lo = utils$b.sum64_5_lo;
 
 	var BlockHash$1 = common$1.BlockHash;
 
@@ -22817,7 +22809,7 @@
 	  this.k = sha512_K;
 	  this.W = new Array(160);
 	}
-	utils$p.inherits(SHA512$1, BlockHash$1);
+	utils$b.inherits(SHA512$1, BlockHash$1);
 	var _512 = SHA512$1;
 
 	SHA512$1.blockSize = 1024;
@@ -22947,9 +22939,9 @@
 
 	SHA512$1.prototype._digest = function digest(enc) {
 	  if (enc === 'hex')
-	    return utils$p.toHex32(this.h, 'big');
+	    return utils$b.toHex32(this.h, 'big');
 	  else
-	    return utils$p.split32(this.h, 'big');
+	    return utils$b.split32(this.h, 'big');
 	};
 
 	function ch64_hi(xh, xl, yh, yl, zh) {
@@ -23068,7 +23060,7 @@
 	  return r;
 	}
 
-	var utils$o = utils$v;
+	var utils$a = utils$h;
 
 	var SHA512 = _512;
 
@@ -23087,7 +23079,7 @@
 	    0xdb0c2e0d, 0x64f98fa7,
 	    0x47b5481d, 0xbefa4fa4 ];
 	}
-	utils$o.inherits(SHA384, SHA512);
+	utils$a.inherits(SHA384, SHA512);
 	var _384 = SHA384;
 
 	SHA384.blockSize = 1024;
@@ -23097,9 +23089,9 @@
 
 	SHA384.prototype._digest = function digest(enc) {
 	  if (enc === 'hex')
-	    return utils$o.toHex32(this.h.slice(0, 12), 'big');
+	    return utils$a.toHex32(this.h.slice(0, 12), 'big');
 	  else
-	    return utils$o.split32(this.h.slice(0, 12), 'big');
+	    return utils$a.split32(this.h.slice(0, 12), 'big');
 	};
 
 	sha.sha1 = _1;
@@ -23110,13 +23102,13 @@
 
 	var ripemd = {};
 
-	var utils$n = utils$v;
+	var utils$9 = utils$h;
 	var common = common$5;
 
-	var rotl32 = utils$n.rotl32;
-	var sum32 = utils$n.sum32;
-	var sum32_3 = utils$n.sum32_3;
-	var sum32_4 = utils$n.sum32_4;
+	var rotl32 = utils$9.rotl32;
+	var sum32 = utils$9.sum32;
+	var sum32_3 = utils$9.sum32_3;
+	var sum32_4 = utils$9.sum32_4;
 	var BlockHash = common.BlockHash;
 
 	function RIPEMD160() {
@@ -23128,7 +23120,7 @@
 	  this.h = [ 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0 ];
 	  this.endian = 'little';
 	}
-	utils$n.inherits(RIPEMD160, BlockHash);
+	utils$9.inherits(RIPEMD160, BlockHash);
 	ripemd.ripemd160 = RIPEMD160;
 
 	RIPEMD160.blockSize = 512;
@@ -23179,9 +23171,9 @@
 
 	RIPEMD160.prototype._digest = function digest(enc) {
 	  if (enc === 'hex')
-	    return utils$n.toHex32(this.h, 'little');
+	    return utils$9.toHex32(this.h, 'little');
 	  else
-	    return utils$n.split32(this.h, 'little');
+	    return utils$9.split32(this.h, 'little');
 	};
 
 	function f(j, x, y, z) {
@@ -23255,7 +23247,7 @@
 	  8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 	];
 
-	var utils$m = utils$v;
+	var utils$8 = utils$h;
 	var assert$7 = minimalisticAssert;
 
 	function Hmac(hash, key, enc) {
@@ -23267,7 +23259,7 @@
 	  this.inner = null;
 	  this.outer = null;
 
-	  this._init(utils$m.toArray(key, enc));
+	  this._init(utils$8.toArray(key, enc));
 	}
 	var hmac = Hmac;
 
@@ -23304,7 +23296,7 @@
 	(function (exports) {
 	var hash = exports;
 
-	hash.utils = utils$v;
+	hash.utils = utils$h;
 	hash.common = common$5;
 	hash.sha = sha;
 	hash.ripemd = ripemd;
@@ -23325,7 +23317,7 @@
 
 	var hash = hash$2;
 	var curve$1 = curve;
-	var utils = utils$B;
+	var utils = utils$n;
 
 	var assert = utils.assert;
 
@@ -23528,7 +23520,7 @@
 	}(curves$2));
 
 	var hash$1 = hash$2;
-	var utils$l = utils$A;
+	var utils$7 = utils$m;
 	var assert$6 = minimalisticAssert;
 
 	function HmacDRBG$1(options) {
@@ -23545,9 +23537,9 @@
 	  this.K = null;
 	  this.V = null;
 
-	  var entropy = utils$l.toArray(options.entropy, options.entropyEnc || 'hex');
-	  var nonce = utils$l.toArray(options.nonce, options.nonceEnc || 'hex');
-	  var pers = utils$l.toArray(options.pers, options.persEnc || 'hex');
+	  var entropy = utils$7.toArray(options.entropy, options.entropyEnc || 'hex');
+	  var nonce = utils$7.toArray(options.nonce, options.nonceEnc || 'hex');
+	  var pers = utils$7.toArray(options.pers, options.persEnc || 'hex');
 	  assert$6(entropy.length >= (this.minEntropy / 8),
 	         'Not enough entropy. Minimum is: ' + this.minEntropy + ' bits');
 	  this._init(entropy, nonce, pers);
@@ -23600,8 +23592,8 @@
 	    entropyEnc = null;
 	  }
 
-	  entropy = utils$l.toArray(entropy, entropyEnc);
-	  add = utils$l.toArray(add, addEnc);
+	  entropy = utils$7.toArray(entropy, entropyEnc);
+	  add = utils$7.toArray(add, addEnc);
 
 	  assert$6(entropy.length >= (this.minEntropy / 8),
 	         'Not enough entropy. Minimum is: ' + this.minEntropy + ' bits');
@@ -23623,7 +23615,7 @@
 
 	  // Optional additional data
 	  if (add) {
-	    add = utils$l.toArray(add, addEnc || 'hex');
+	    add = utils$7.toArray(add, addEnc || 'hex');
 	    this._update(add);
 	  }
 
@@ -23636,12 +23628,12 @@
 	  var res = temp.slice(0, len);
 	  this._update(add);
 	  this._reseed++;
-	  return utils$l.encode(res, enc);
+	  return utils$7.encode(res, enc);
 	};
 
 	var BN$4 = bn.exports;
-	var utils$k = utils$B;
-	var assert$5 = utils$k.assert;
+	var utils$6 = utils$n;
+	var assert$5 = utils$6.assert;
 
 	function KeyPair$4(ec, options) {
 	  this.ec = ec;
@@ -23761,8 +23753,8 @@
 
 	var BN$3 = bn.exports;
 
-	var utils$j = utils$B;
-	var assert$4 = utils$j.assert;
+	var utils$5 = utils$n;
+	var assert$4 = utils$5.assert;
 
 	function Signature$3(options, enc) {
 	  if (options instanceof Signature$3)
@@ -23826,7 +23818,7 @@
 	}
 
 	Signature$3.prototype._importDER = function _importDER(data, enc) {
-	  data = utils$j.toArray(data, enc);
+	  data = utils$5.toArray(data, enc);
 	  var p = new Position();
 	  if (data[p.place++] !== 0x30) {
 	    return false;
@@ -23921,15 +23913,15 @@
 	  var res = [ 0x30 ];
 	  constructLength(res, backHalf.length);
 	  res = res.concat(backHalf);
-	  return utils$j.encode(res, enc);
+	  return utils$5.encode(res, enc);
 	};
 
 	var BN$2 = bn.exports;
 	var HmacDRBG = hmacDrbg;
-	var utils$i = utils$B;
+	var utils$4 = utils$n;
 	var curves$1 = curves$2;
 	var rand = brorand.exports;
-	var assert$3 = utils$i.assert;
+	var assert$3 = utils$4.assert;
 
 	var KeyPair$3 = key$1;
 	var Signature$2 = signature$1;
@@ -24166,10 +24158,10 @@
 	  throw new Error('Unable to find valid recovery factor');
 	};
 
-	var utils$h = utils$B;
-	var assert$2 = utils$h.assert;
-	var parseBytes$2 = utils$h.parseBytes;
-	var cachedProperty$1 = utils$h.cachedProperty;
+	var utils$3 = utils$n;
+	var assert$2 = utils$3.assert;
+	var parseBytes$2 = utils$3.parseBytes;
+	var cachedProperty$1 = utils$3.cachedProperty;
 
 	/**
 	* @param {EDDSA} eddsa - instance
@@ -24251,20 +24243,20 @@
 
 	KeyPair$2.prototype.getSecret = function getSecret(enc) {
 	  assert$2(this._secret, 'KeyPair is public only');
-	  return utils$h.encode(this.secret(), enc);
+	  return utils$3.encode(this.secret(), enc);
 	};
 
 	KeyPair$2.prototype.getPublic = function getPublic(enc) {
-	  return utils$h.encode(this.pubBytes(), enc);
+	  return utils$3.encode(this.pubBytes(), enc);
 	};
 
 	var key = KeyPair$2;
 
 	var BN$1 = bn.exports;
-	var utils$g = utils$B;
-	var assert$1 = utils$g.assert;
-	var cachedProperty = utils$g.cachedProperty;
-	var parseBytes$1 = utils$g.parseBytes;
+	var utils$2 = utils$n;
+	var assert$1 = utils$2.assert;
+	var cachedProperty = utils$2.cachedProperty;
+	var parseBytes$1 = utils$2.parseBytes;
 
 	/**
 	* @param {EDDSA} eddsa - eddsa instance
@@ -24319,16 +24311,16 @@
 	};
 
 	Signature$1.prototype.toHex = function toHex() {
-	  return utils$g.encode(this.toBytes(), 'hex').toUpperCase();
+	  return utils$2.encode(this.toBytes(), 'hex').toUpperCase();
 	};
 
 	var signature = Signature$1;
 
 	var hash = hash$2;
 	var curves = curves$2;
-	var utils$f = utils$B;
-	var assert = utils$f.assert;
-	var parseBytes = utils$f.parseBytes;
+	var utils$1 = utils$n;
+	var assert = utils$1.assert;
+	var parseBytes = utils$1.parseBytes;
 	var KeyPair$1 = key;
 	var Signature = signature;
 
@@ -24387,7 +24379,7 @@
 	  var hash = this.hash();
 	  for (var i = 0; i < arguments.length; i++)
 	    hash.update(arguments[i]);
-	  return utils$f.intFromLE(hash.digest()).umod(this.curve.n);
+	  return utils$1.intFromLE(hash.digest()).umod(this.curve.n);
 	};
 
 	EDDSA.prototype.keyFromPublic = function keyFromPublic(pub) {
@@ -24419,13 +24411,13 @@
 	};
 
 	EDDSA.prototype.decodePoint = function decodePoint(bytes) {
-	  bytes = utils$f.parseBytes(bytes);
+	  bytes = utils$1.parseBytes(bytes);
 
 	  var lastIx = bytes.length - 1;
 	  var normed = bytes.slice(0, lastIx).concat(bytes[lastIx] & ~0x80);
 	  var xIsOdd = (bytes[lastIx] & 0x80) !== 0;
 
-	  var y = utils$f.intFromLE(normed);
+	  var y = utils$1.intFromLE(normed);
 	  return this.curve.pointFromY(y, xIsOdd);
 	};
 
@@ -24434,7 +24426,7 @@
 	};
 
 	EDDSA.prototype.decodeInt = function decodeInt(bytes) {
-	  return utils$f.intFromLE(bytes);
+	  return utils$1.intFromLE(bytes);
 	};
 
 	EDDSA.prototype.isPoint = function isPoint(val) {
@@ -24446,7 +24438,7 @@
 	var elliptic = exports;
 
 	elliptic.version = require$$0$1.version;
-	elliptic.utils = utils$B;
+	elliptic.utils = utils$n;
 	elliptic.rand = brorand.exports;
 	elliptic.curve = curve;
 	elliptic.curves = curves$2;
@@ -24540,7 +24532,7 @@
 	const THROW_BAD_EXTRA_DATA = 'Expected Extra Data (32 bytes)';
 
 	function isScalar (x) {
-	  return isBuffer$1(x) && x.length === 32
+	  return isBuffer(x) && x.length === 32
 	}
 
 	function isOrderScalar (x) {
@@ -24549,7 +24541,7 @@
 	}
 
 	function isPoint (p) {
-	  if (!isBuffer$1(p)) return false
+	  if (!isBuffer(p)) return false
 	  if (p.length < 33) return false
 
 	  const t = p[0];
@@ -24586,7 +24578,7 @@
 	function isSignature (value) {
 	  const r = value.slice(0, 32);
 	  const s = value.slice(32, 64);
-	  return isBuffer$1(value) && value.length === 64 &&
+	  return isBuffer(value) && value.length === 64 &&
 	    r.compare(EC_GROUP_ORDER) < 0 &&
 	    s.compare(EC_GROUP_ORDER) < 0
 	}
@@ -24939,7 +24931,7 @@
 	var ERRORS$1 = errors;
 
 	function _Buffer (value) {
-	  return isBuffer$1(value)
+	  return isBuffer(value)
 	}
 
 	function Hex (value) {
@@ -25333,7 +25325,7 @@
 	  return decodeRaw(bs58check$4.decode(string), version)
 	}
 
-	function encode$i (version, privateKey, compressed) {
+	function encode$h (version, privateKey, compressed) {
 	  if (typeof version === 'number') return bs58check$4.encode(encodeRaw(version, privateKey, compressed))
 
 	  return bs58check$4.encode(
@@ -25348,7 +25340,7 @@
 	var wif$2 = {
 	  decode: decode$g,
 	  decodeRaw: decodeRaw,
-	  encode: encode$i,
+	  encode: encode$h,
 	  encodeRaw: encodeRaw
 	};
 
@@ -25746,7 +25738,7 @@
 	    ? 1
 	    : 0;
 	}
-	function encode$h(_number) {
+	function encode$g(_number) {
 	  let value = Math.abs(_number);
 	  const size = scriptNumSize(value);
 	  const buffer = Buffer$l.allocUnsafe(size);
@@ -25762,7 +25754,7 @@
 	  }
 	  return buffer;
 	}
-	script_number.encode = encode$h;
+	script_number.encode = encode$g;
 
 	var script_signature = {};
 
@@ -25907,7 +25899,7 @@
 	 *  62300 => 0x00f35c
 	 * -62300 => 0xff0ca4
 	*/
-	function encode$g (r, s) {
+	function encode$f (r, s) {
 	  var lenR = r.length;
 	  var lenS = s.length;
 	  if (lenR === 0) throw new Error('R length is zero')
@@ -25937,7 +25929,7 @@
 	var bip66$1 = {
 	  check: check$m,
 	  decode: decode$e,
-	  encode: encode$g
+	  encode: encode$f
 	};
 
 	Object.defineProperty(script_signature, '__esModule', { value: true });
@@ -25973,7 +25965,7 @@
 	  return { signature, hashType };
 	}
 	script_signature.decode = decode$d;
-	function encode$f(signature, hashType) {
+	function encode$e(signature, hashType) {
 	  typeforce$8(
 	    {
 	      signature: types$9.BufferN(64),
@@ -25990,7 +25982,7 @@
 	  const s = toDER(signature.slice(32, 64));
 	  return Buffer$l.concat([bip66.encode(r, s), hashTypeBuffer]);
 	}
-	script_signature.encode = encode$f;
+	script_signature.encode = encode$e;
 
 	var OP_FALSE = 0;
 	var OP_0 = 0;
@@ -26240,7 +26232,7 @@
 	  : 5
 	}
 
-	function encode$e (buffer, number, offset) {
+	function encode$d (buffer, number, offset) {
 	  var size = encodingLength$2(number);
 
 	  // ~6 bit
@@ -26305,7 +26297,7 @@
 
 	var pushdataBitcoin = {
 	  encodingLength: encodingLength$2,
-	  encode: encode$e,
+	  encode: encode$d,
 	  decode: decode$c
 	};
 
@@ -26353,13 +26345,13 @@
 	  if (buffer[0] === 0x81) return exports.OPS.OP_1NEGATE;
 	}
 	function chunksIsBuffer(buf) {
-	  return isBuffer$1(buf);
+	  return isBuffer(buf);
 	}
 	function chunksIsArray(buf) {
 	  return types.Array(buf);
 	}
 	function singleChunkIsBuffer(buf) {
-	  return isBuffer$1(buf);
+	  return isBuffer(buf);
 	}
 	function compile(chunks) {
 	  // TODO: remove me
@@ -26488,7 +26480,7 @@
 	}
 	exports.isDefinedHashType = isDefinedHashType;
 	function isCanonicalScriptSignature(buffer) {
-	  if (!isBuffer$1(buffer)) return false;
+	  if (!isBuffer(buffer)) return false;
 	  if (!isDefinedHashType(buffer[buffer.length - 1])) return false;
 	  return bip66.check(buffer.slice(0, -1));
 	}
@@ -27128,7 +27120,7 @@
 	    if (a.input) {
 	      const chunks = _chunks();
 	      if (!chunks || chunks.length < 1) throw new TypeError('Input too short');
-	      if (!isBuffer$1(_redeem().output))
+	      if (!isBuffer(_redeem().output))
 	        throw new TypeError('Input is invalid');
 	      checkRedeem(_redeem());
 	    }
@@ -27197,7 +27189,7 @@
 	  return chk
 	}
 
-	function encode$d (prefix, words, LIMIT) {
+	function encode$c (prefix, words, LIMIT) {
 	  LIMIT = LIMIT || 90;
 	  if ((prefix.length + 7 + words.length) > LIMIT) throw new TypeError('Exceeds length limit')
 
@@ -27334,7 +27326,7 @@
 	var bech32$3 = {
 	  decodeUnsafe: decodeUnsafe,
 	  decode: decode$b,
-	  encode: encode$d,
+	  encode: encode$c,
 	  toWordsUnsafe: toWordsUnsafe,
 	  toWords: toWords,
 	  fromWordsUnsafe: fromWordsUnsafe,
@@ -27491,7 +27483,7 @@
 	}
 	function chunkHasUncompressedPubkey(chunk) {
 	  if (
-	    isBuffer$1(chunk) &&
+	    isBuffer(chunk) &&
 	    chunk.length === 65 &&
 	    chunk[0] === 0x04 &&
 	    ecc$1.isPoint(chunk)
@@ -27960,7 +27952,7 @@
 	  if (n < 0 || n > MAX_SAFE_INTEGER$3 || n % 1 !== 0) throw new RangeError('value out of range')
 	}
 
-	function encode$c (number, buffer, offset) {
+	function encode$b (number, buffer, offset) {
 	  checkUInt53$1(number);
 
 	  if (!buffer) buffer = Buffer.allocUnsafe(encodingLength$1(number));
@@ -27970,26 +27962,26 @@
 	  // 8 bit
 	  if (number < 0xfd) {
 	    buffer.writeUInt8(number, offset);
-	    encode$c.bytes = 1;
+	    encode$b.bytes = 1;
 
 	  // 16 bit
 	  } else if (number <= 0xffff) {
 	    buffer.writeUInt8(0xfd, offset);
 	    buffer.writeUInt16LE(number, offset + 1);
-	    encode$c.bytes = 3;
+	    encode$b.bytes = 3;
 
 	  // 32 bit
 	  } else if (number <= 0xffffffff) {
 	    buffer.writeUInt8(0xfe, offset);
 	    buffer.writeUInt32LE(number, offset + 1);
-	    encode$c.bytes = 5;
+	    encode$b.bytes = 5;
 
 	  // 64 bit
 	  } else {
 	    buffer.writeUInt8(0xff, offset);
 	    buffer.writeUInt32LE(number >>> 0, offset + 1);
 	    buffer.writeUInt32LE((number / 0x100000000) | 0, offset + 5);
-	    encode$c.bytes = 9;
+	    encode$b.bytes = 9;
 	  }
 
 	  return buffer
@@ -28039,7 +28031,7 @@
 	  )
 	}
 
-	var varuintBitcoin = { encode: encode$c, decode: decode$a, encodingLength: encodingLength$1 };
+	var varuintBitcoin = { encode: encode$b, decode: decode$a, encodingLength: encodingLength$1 };
 
 	Object.defineProperty(bufferutils, '__esModule', { value: true });
 	const types$6 = types$a;
@@ -28924,7 +28916,7 @@
 	  return data;
 	}
 	globalXpub$1.decode = decode$9;
-	function encode$b(data) {
+	function encode$a(data) {
 	  const head = Buffer$l.from([typeFields_1$b.GlobalTypes.GLOBAL_XPUB]);
 	  const key = Buffer$l.concat([head, data.extendedPubkey]);
 	  const splitPath = data.path.split('/');
@@ -28943,7 +28935,7 @@
 	    value,
 	  };
 	}
-	globalXpub$1.encode = encode$b;
+	globalXpub$1.encode = encode$a;
 	globalXpub$1.expected =
 	  '{ masterFingerprint: Buffer; extendedPubkey: Buffer; path: string; }';
 	function check$l(data) {
@@ -28951,10 +28943,10 @@
 	  const mfp = data.masterFingerprint;
 	  const p = data.path;
 	  return (
-	    isBuffer$1(epk) &&
+	    isBuffer(epk) &&
 	    epk.length === 78 &&
 	    [2, 3].indexOf(epk[45]) > -1 &&
-	    isBuffer$1(mfp) &&
+	    isBuffer(mfp) &&
 	    mfp.length === 4 &&
 	    typeof p === 'string' &&
 	    !!p.match(/^m(\/\d+'?)+$/)
@@ -28975,13 +28967,13 @@
 
 	Object.defineProperty(unsignedTx$1, '__esModule', { value: true });
 	const typeFields_1$a = typeFields;
-	function encode$a(data) {
+	function encode$9(data) {
 	  return {
 	    key: Buffer$l.from([typeFields_1$a.GlobalTypes.UNSIGNED_TX]),
 	    value: data.toBuffer(),
 	  };
 	}
-	unsignedTx$1.encode = encode$a;
+	unsignedTx$1.encode = encode$9;
 
 	var finalScriptSig$1 = {};
 
@@ -28997,17 +28989,17 @@
 	  return keyVal.value;
 	}
 	finalScriptSig$1.decode = decode$8;
-	function encode$9(data) {
+	function encode$8(data) {
 	  const key = Buffer$l.from([typeFields_1$9.InputTypes.FINAL_SCRIPTSIG]);
 	  return {
 	    key,
 	    value: data,
 	  };
 	}
-	finalScriptSig$1.encode = encode$9;
+	finalScriptSig$1.encode = encode$8;
 	finalScriptSig$1.expected = 'Buffer';
 	function check$k(data) {
-	  return isBuffer$1(data);
+	  return isBuffer(data);
 	}
 	finalScriptSig$1.check = check$k;
 	function canAdd$5(currentData, newData) {
@@ -29029,17 +29021,17 @@
 	  return keyVal.value;
 	}
 	finalScriptWitness$1.decode = decode$7;
-	function encode$8(data) {
+	function encode$7(data) {
 	  const key = Buffer$l.from([typeFields_1$8.InputTypes.FINAL_SCRIPTWITNESS]);
 	  return {
 	    key,
 	    value: data,
 	  };
 	}
-	finalScriptWitness$1.encode = encode$8;
+	finalScriptWitness$1.encode = encode$7;
 	finalScriptWitness$1.expected = 'Buffer';
 	function check$j(data) {
-	  return isBuffer$1(data);
+	  return isBuffer(data);
 	}
 	finalScriptWitness$1.check = check$j;
 	function canAdd$4(currentData, newData) {
@@ -29063,16 +29055,16 @@
 	  return keyVal.value;
 	}
 	nonWitnessUtxo$1.decode = decode$6;
-	function encode$7(data) {
+	function encode$6(data) {
 	  return {
 	    key: Buffer$l.from([typeFields_1$7.InputTypes.NON_WITNESS_UTXO]),
 	    value: data,
 	  };
 	}
-	nonWitnessUtxo$1.encode = encode$7;
+	nonWitnessUtxo$1.encode = encode$6;
 	nonWitnessUtxo$1.expected = 'Buffer';
 	function check$i(data) {
-	  return isBuffer$1(data);
+	  return isBuffer(data);
 	}
 	nonWitnessUtxo$1.check = check$i;
 	function canAdd$3(currentData, newData) {
@@ -29107,19 +29099,19 @@
 	  };
 	}
 	partialSig$1.decode = decode$5;
-	function encode$6(pSig) {
+	function encode$5(pSig) {
 	  const head = Buffer$l.from([typeFields_1$6.InputTypes.PARTIAL_SIG]);
 	  return {
 	    key: Buffer$l.concat([head, pSig.pubkey]),
 	    value: pSig.signature,
 	  };
 	}
-	partialSig$1.encode = encode$6;
+	partialSig$1.encode = encode$5;
 	partialSig$1.expected = '{ pubkey: Buffer; signature: Buffer; }';
 	function check$h(data) {
 	  return (
-	    isBuffer$1(data.pubkey) &&
-	    isBuffer$1(data.signature) &&
+	    isBuffer(data.pubkey) &&
+	    isBuffer(data.signature) &&
 	    [33, 65].includes(data.pubkey.length) &&
 	    [2, 3, 4].includes(data.pubkey[0]) &&
 	    isDerSigWithSighash(data.signature)
@@ -29127,7 +29119,7 @@
 	}
 	partialSig$1.check = check$h;
 	function isDerSigWithSighash(buf) {
-	  if (!isBuffer$1(buf) || buf.length < 9) return false;
+	  if (!isBuffer(buf) || buf.length < 9) return false;
 	  if (buf[0] !== 0x30) return false;
 	  if (buf.length !== buf[1] + 3) return false;
 	  if (buf[2] !== 0x02) return false;
@@ -29161,14 +29153,14 @@
 	  return keyVal.value.toString('utf8');
 	}
 	porCommitment$1.decode = decode$4;
-	function encode$5(data) {
+	function encode$4(data) {
 	  const key = Buffer$l.from([typeFields_1$5.InputTypes.POR_COMMITMENT]);
 	  return {
 	    key,
 	    value: Buffer$l.from(data, 'utf8'),
 	  };
 	}
-	porCommitment$1.encode = encode$5;
+	porCommitment$1.encode = encode$4;
 	porCommitment$1.expected = 'string';
 	function check$g(data) {
 	  return typeof data === 'string';
@@ -29193,7 +29185,7 @@
 	  return keyVal.value.readUInt32LE(0);
 	}
 	sighashType$1.decode = decode$3;
-	function encode$4(data) {
+	function encode$3(data) {
 	  const key = Buffer$l.from([typeFields_1$4.InputTypes.SIGHASH_TYPE]);
 	  const value = Buffer$l.allocUnsafe(4);
 	  value.writeUInt32LE(data, 0);
@@ -29202,7 +29194,7 @@
 	    value,
 	  };
 	}
-	sighashType$1.encode = encode$4;
+	sighashType$1.encode = encode$3;
 	sighashType$1.expected = 'number';
 	function check$f(data) {
 	  return typeof data === 'number';
@@ -29226,38 +29218,38 @@
 	  if (n < 0 || n > MAX_SAFE_INTEGER$2 || n % 1 !== 0)
 	    throw new RangeError('value out of range');
 	}
-	function encode$3(_number, buffer, offset) {
+	function encode$2(_number, buffer, offset) {
 	  checkUInt53(_number);
 	  if (!buffer) buffer = Buffer$l.allocUnsafe(encodingLength(_number));
-	  if (!isBuffer$1(buffer))
+	  if (!isBuffer(buffer))
 	    throw new TypeError('buffer must be a Buffer instance');
 	  if (!offset) offset = 0;
 	  // 8 bit
 	  if (_number < 0xfd) {
 	    buffer.writeUInt8(_number, offset);
-	    Object.assign(encode$3, { bytes: 1 });
+	    Object.assign(encode$2, { bytes: 1 });
 	    // 16 bit
 	  } else if (_number <= 0xffff) {
 	    buffer.writeUInt8(0xfd, offset);
 	    buffer.writeUInt16LE(_number, offset + 1);
-	    Object.assign(encode$3, { bytes: 3 });
+	    Object.assign(encode$2, { bytes: 3 });
 	    // 32 bit
 	  } else if (_number <= 0xffffffff) {
 	    buffer.writeUInt8(0xfe, offset);
 	    buffer.writeUInt32LE(_number, offset + 1);
-	    Object.assign(encode$3, { bytes: 5 });
+	    Object.assign(encode$2, { bytes: 5 });
 	    // 64 bit
 	  } else {
 	    buffer.writeUInt8(0xff, offset);
 	    buffer.writeUInt32LE(_number >>> 0, offset + 1);
 	    buffer.writeUInt32LE((_number / 0x100000000) | 0, offset + 5);
-	    Object.assign(encode$3, { bytes: 9 });
+	    Object.assign(encode$2, { bytes: 9 });
 	  }
 	  return buffer;
 	}
-	varint$1.encode = encode$3;
+	varint$1.encode = encode$2;
 	function decode$2(buffer, offset) {
-	  if (!isBuffer$1(buffer))
+	  if (!isBuffer(buffer))
 	    throw new TypeError('buffer must be a Buffer instance');
 	  if (!offset) offset = 0;
 	  const first = buffer.readUInt8(offset);
@@ -29384,7 +29376,7 @@
 	  };
 	}
 	witnessUtxo$1.decode = decode$1;
-	function encode$2(data) {
+	function encode$1(data) {
 	  const { script, value } = data;
 	  const varintLen = varuint$2.encodingLength(script.length);
 	  const result = Buffer$l.allocUnsafe(8 + varintLen + script.length);
@@ -29396,10 +29388,10 @@
 	    value: result,
 	  };
 	}
-	witnessUtxo$1.encode = encode$2;
+	witnessUtxo$1.encode = encode$1;
 	witnessUtxo$1.expected = '{ script: Buffer; value: number; }';
 	function check$e(data) {
-	  return isBuffer$1(data.script) && typeof data.value === 'number';
+	  return isBuffer(data.script) && typeof data.value === 'number';
 	}
 	witnessUtxo$1.check = check$e;
 	function canAdd(currentData, newData) {
@@ -29470,8 +29462,8 @@
 	    '{ masterFingerprint: Buffer; pubkey: Buffer; path: string; }';
 	  function check(data) {
 	    return (
-	      isBuffer$1(data.pubkey) &&
-	      isBuffer$1(data.masterFingerprint) &&
+	      isBuffer(data.pubkey) &&
+	      isBuffer(data.masterFingerprint) &&
 	      typeof data.path === 'string' &&
 	      [33, 65].includes(data.pubkey.length) &&
 	      [2, 3, 4].includes(data.pubkey[0]) &&
@@ -29539,7 +29531,7 @@
 	  }
 	  const expected = 'Buffer';
 	  function check(data) {
-	    return isBuffer$1(data);
+	    return isBuffer(data);
 	  }
 	  function canAdd(currentData, newData) {
 	    return !!currentData && !!newData && currentData.redeemScript === undefined;
@@ -29576,7 +29568,7 @@
 	  }
 	  const expected = 'Buffer';
 	  function check(data) {
-	    return isBuffer$1(data);
+	    return isBuffer(data);
 	  }
 	  function canAdd(currentData, newData) {
 	    return (
@@ -30140,7 +30132,7 @@
 	  return set;
 	}
 
-	var utils$e = {};
+	var utils = {};
 
 	(function (exports) {
 	Object.defineProperty(exports, '__esModule', { value: true });
@@ -30265,7 +30257,7 @@
 	}
 	exports.addOutputAttributes = addOutputAttributes;
 	function defaultVersionSetter(version, txBuf) {
-	  if (!isBuffer$1(txBuf) || txBuf.length < 4) {
+	  if (!isBuffer(txBuf) || txBuf.length < 4) {
 	    throw new Error('Set Version: Invalid Transaction');
 	  }
 	  txBuf.writeUInt32LE(version, 0);
@@ -30273,20 +30265,20 @@
 	}
 	exports.defaultVersionSetter = defaultVersionSetter;
 	function defaultLocktimeSetter(locktime, txBuf) {
-	  if (!isBuffer$1(txBuf) || txBuf.length < 4) {
+	  if (!isBuffer(txBuf) || txBuf.length < 4) {
 	    throw new Error('Set Locktime: Invalid Transaction');
 	  }
 	  txBuf.writeUInt32LE(locktime, txBuf.length - 4);
 	  return txBuf;
 	}
 	exports.defaultLocktimeSetter = defaultLocktimeSetter;
-	}(utils$e));
+	}(utils));
 
 	Object.defineProperty(psbt, '__esModule', { value: true });
 	const combiner_1 = combiner;
 	const parser_1 = parser;
 	const typeFields_1 = typeFields;
-	const utils_1$1 = utils$e;
+	const utils_1$1 = utils;
 	class Psbt$1 {
 	  constructor(tx) {
 	    this.inputs = [];
@@ -30433,7 +30425,7 @@
 	Object.defineProperty(psbt$1, '__esModule', { value: true });
 	const bip174_1 = psbt;
 	const varuint = varint$1;
-	const utils_1 = utils$e;
+	const utils_1 = utils;
 	const address_1 = address$1;
 	const bufferutils_1$1 = bufferutils;
 	const crypto_1$1 = crypto$2;
@@ -31066,7 +31058,7 @@
 	    if (
 	      input.hash === undefined ||
 	      input.index === undefined ||
-	      (!isBuffer$1(input.hash) && typeof input.hash !== 'string') ||
+	      (!isBuffer(input.hash) && typeof input.hash !== 'string') ||
 	      typeof input.index !== 'number'
 	    ) {
 	      throw new Error('Error adding input.');
@@ -31081,7 +31073,7 @@
 	    if (
 	      output.script === undefined ||
 	      output.value === undefined ||
-	      !isBuffer$1(output.script) ||
+	      !isBuffer(output.script) ||
 	      typeof output.value !== 'number'
 	    ) {
 	      throw new Error('Error adding output.');
@@ -31490,7 +31482,7 @@
 	  return scriptItems
 	    .concat(witnessItems)
 	    .filter(item => {
-	      return isBuffer$1(item) && bscript$f.isCanonicalScriptSignature(item);
+	      return isBuffer(item) && bscript$f.isCanonicalScriptSignature(item);
 	    })
 	    .map(sig => ({ signature: sig }));
 	}
@@ -31736,7 +31728,7 @@
 	  if (!decomp) return;
 	  const lastItem = decomp[decomp.length - 1];
 	  if (
-	    !isBuffer$1(lastItem) ||
+	    !isBuffer(lastItem) ||
 	    isPubkeyLike(lastItem) ||
 	    isSigLike(lastItem)
 	  )
@@ -32054,7 +32046,7 @@
 	  const chunks = bscript$5.decompile(script);
 	  if (chunks.length < 1) return false;
 	  const lastChunk = chunks[chunks.length - 1];
-	  if (!isBuffer$1(lastChunk)) return false;
+	  if (!isBuffer(lastChunk)) return false;
 	  const scriptSigChunks = bscript$5.decompile(
 	    bscript$5.compile(chunks.slice(0, -1)),
 	  );
@@ -32142,14 +32134,14 @@
 	check$2.toJSON = () => {
 	  return 'Witness commitment output';
 	};
-	function encode$1(commitment) {
+	function encode(commitment) {
 	  typeforce$2(types$2.Hash256bit, commitment);
 	  const buffer = Buffer$l.allocUnsafe(36);
 	  HEADER.copy(buffer, 0);
 	  commitment.copy(buffer, 4);
 	  return bscript$3.compile([script_1$3.OPS.OP_RETURN, buffer]);
 	}
-	output$3.encode = encode$1;
+	output$3.encode = encode;
 	function decode(buffer) {
 	  typeforce$2(check$2, buffer);
 	  return bscript$3.decompile(buffer)[1].slice(4, 36);
@@ -32204,7 +32196,7 @@
 	  typeforce$1(typeforce$1.Array, chunks);
 	  if (chunks.length < 1) return false;
 	  const witnessScript = chunks[chunks.length - 1];
-	  if (!isBuffer$1(witnessScript)) return false;
+	  if (!isBuffer(witnessScript)) return false;
 	  const witnessScriptChunks = bscript$1.decompile(witnessScript);
 	  // is witnessScript a valid script?
 	  if (!witnessScriptChunks || witnessScriptChunks.length === 0) return false;
@@ -34670,7 +34662,7 @@
 	      throw new TypeError('max must be a non-negative number')
 
 	    this[MAX] = mL || Infinity;
-	    trim$1(this);
+	    trim(this);
 	  }
 	  get max () {
 	    return this[MAX]
@@ -34688,7 +34680,7 @@
 	      throw new TypeError('maxAge must be a non-negative number')
 
 	    this[MAX_AGE] = mA;
-	    trim$1(this);
+	    trim(this);
 	  }
 	  get maxAge () {
 	    return this[MAX_AGE]
@@ -34707,7 +34699,7 @@
 	        this[LENGTH] += hit.length;
 	      });
 	    }
-	    trim$1(this);
+	    trim(this);
 	  }
 	  get lengthCalculator () { return this[LENGTH_CALCULATOR] }
 
@@ -34796,7 +34788,7 @@
 	      this[LENGTH] += len - item.length;
 	      item.length = len;
 	      this.get(key);
-	      trim$1(this);
+	      trim(this);
 	      return true
 	    }
 
@@ -34813,7 +34805,7 @@
 	    this[LENGTH] += hit.length;
 	    this[LRU_LIST].unshift(hit);
 	    this[CACHE].set(key, this[LRU_LIST].head);
-	    trim$1(this);
+	    trim(this);
 	    return true
 	  }
 
@@ -34899,7 +34891,7 @@
 	    : self[MAX_AGE] && (diff > self[MAX_AGE])
 	};
 
-	const trim$1 = self => {
+	const trim = self => {
 	  if (self[LENGTH] > self[MAX]) {
 	    for (let walker = self[LRU_LIST].tail;
 	      self[LENGTH] > self[MAX] && walker !== null;) {
@@ -36293,7 +36285,7 @@
 	    return new ripemd160$2().update(sha$3("sha256").update(buffer).digest()).digest();
 	}
 
-	var __extends$5 = (undefined && undefined.__extends) || (function () {
+	var __extends$4 = (undefined && undefined.__extends) || (function () {
 	    var extendStatics = function (d, b) {
 	        extendStatics = Object.setPrototypeOf ||
 	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -36321,7 +36313,7 @@
 	 * and calls an abstract method to do the actual work.
 	 */
 	var SingleKeyAccount = /** @class */ (function (_super) {
-	    __extends$5(SingleKeyAccount, _super);
+	    __extends$4(SingleKeyAccount, _super);
 	    function SingleKeyAccount() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -36352,7 +36344,7 @@
 	    return SingleKeyAccount;
 	}(BaseAccount));
 	var p2pkh = /** @class */ (function (_super) {
-	    __extends$5(p2pkh, _super);
+	    __extends$4(p2pkh, _super);
 	    function p2pkh() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -36380,7 +36372,7 @@
 	    return p2pkh;
 	}(SingleKeyAccount));
 	var p2tr = /** @class */ (function (_super) {
-	    __extends$5(p2tr, _super);
+	    __extends$4(p2tr, _super);
 	    function p2tr() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -36446,7 +36438,7 @@
 	    return p2tr;
 	}(SingleKeyAccount));
 	var p2wpkhWrapped = /** @class */ (function (_super) {
-	    __extends$5(p2wpkhWrapped, _super);
+	    __extends$4(p2wpkhWrapped, _super);
 	    function p2wpkhWrapped() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -36489,7 +36481,7 @@
 	    return p2wpkhWrapped;
 	}(SingleKeyAccount));
 	var p2wpkh = /** @class */ (function (_super) {
-	    __extends$5(p2wpkh, _super);
+	    __extends$4(p2wpkh, _super);
 	    function p2wpkh() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -36725,7 +36717,7 @@
 	    return tx.buffer();
 	}
 
-	var __extends$4 = (undefined && undefined.__extends) || (function () {
+	var __extends$3 = (undefined && undefined.__extends) || (function () {
 	    var extendStatics = function (d, b) {
 	        extendStatics = Object.setPrototypeOf ||
 	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -36786,7 +36778,7 @@
 	})(psbtOut || (psbtOut = {}));
 	var PSBT_MAGIC_BYTES = Buffer$l.from([0x70, 0x73, 0x62, 0x74, 0xff]);
 	var NoSuchEntry = /** @class */ (function (_super) {
-	    __extends$4(NoSuchEntry, _super);
+	    __extends$3(NoSuchEntry, _super);
 	    function NoSuchEntry() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
@@ -37458,7 +37450,7 @@
 	    ]);
 	}
 
-	var __awaiter$f = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$e = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -37467,7 +37459,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$f = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$e = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -37548,9 +37540,9 @@
 	     */
 	    BtcNew.prototype.getWalletXpub = function (_a) {
 	        var path = _a.path, xpubVersion = _a.xpubVersion;
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var pathElements, xpub, xpubComponents;
-	            return __generator$f(this, function (_b) {
+	            return __generator$e(this, function (_b) {
 	                switch (_b.label) {
 	                    case 0:
 	                        pathElements = pathStringToArray(path);
@@ -37575,9 +37567,9 @@
 	     */
 	    BtcNew.prototype.getWalletPublicKey = function (path, opts) {
 	        var _a, _b;
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var pathElements, xpub, display, address, components, uncompressedPubkey;
-	            return __generator$f(this, function (_c) {
+	            return __generator$e(this, function (_c) {
 	                switch (_c.label) {
 	                    case 0:
 	                        pathElements = pathStringToArray(path);
@@ -37615,9 +37607,9 @@
 	     * ourselves, but we don't at this time, and instead return an empty ("") address.
 	     */
 	    BtcNew.prototype.getWalletAddress = function (pathElements, descrTempl, display) {
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var accountPath, accountXpub, masterFingerprint, policy, changeAndIndex;
-	            return __generator$f(this, function (_a) {
+	            return __generator$e(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        accountPath = hardenedPathOf(pathElements);
@@ -37646,9 +37638,9 @@
 	     * transaction is returned.
 	     */
 	    BtcNew.prototype.createPaymentTransactionNew = function (arg) {
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var inputCount, psbt, masterFp, accountType, notifyCount, progress, accountXpub, accountPath, i, pathElems, outputsConcat, outputsBufferReader, outputCount, changeData, changeFound, i, amount, outputScript, isChange, changePath, pubkey, key, p, firstSigned, progressCallback, serializedTx;
-	            return __generator$f(this, function (_a) {
+	            return __generator$e(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        inputCount = arg.inputs.length;
@@ -37759,9 +37751,9 @@
 	     * properties depend on the accountType used.
 	     */
 	    BtcNew.prototype.outputScriptAt = function (accountPath, accountType, path) {
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var pathElems, i, xpub, pubkey, cond;
-	            return __generator$f(this, function (_a) {
+	            return __generator$e(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        if (!path)
@@ -37790,9 +37782,9 @@
 	     * public key and its derivation path.
 	     */
 	    BtcNew.prototype.setInput = function (psbt, i, input, pathElements, accountType, masterFP, sigHashType) {
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var inputTx, spentOutputIndex, redeemScript, sequence, inputTxBuffer, inputTxid, xpubBase58, pubkey, spentTxOutput, spendCondition, spentOutput;
-	            return __generator$f(this, function (_a) {
+	            return __generator$e(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        inputTx = input[0];
@@ -37837,9 +37829,9 @@
 	     * to the appropriate input fields of the PSBT.
 	     */
 	    BtcNew.prototype.signPsbt = function (psbt, walletPolicy, progressCallback) {
-	        return __awaiter$f(this, void 0, void 0, function () {
+	        return __awaiter$e(this, void 0, void 0, function () {
 	            var sigs;
-	            return __generator$f(this, function (_a) {
+	            return __generator$e(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, this.client.signPsbt(psbt, walletPolicy, Buffer$l.alloc(32, 0), progressCallback)];
 	                    case 1:
@@ -37956,7 +37948,7 @@
 	    };
 	    return __assign$4.apply(this, arguments);
 	};
-	var __awaiter$e = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$d = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -37965,7 +37957,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$e = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$d = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -37999,9 +37991,9 @@
 	    cashaddr: 3
 	};
 	function getWalletPublicKey(transport, options) {
-	    return __awaiter$e(this, void 0, void 0, function () {
+	    return __awaiter$d(this, void 0, void 0, function () {
 	        var _a, path, verify, format, buffer, p1, p2, response, publicKeyLength, addressLength, publicKey, bitcoinAddress, chainCode;
-	        return __generator$e(this, function (_b) {
+	        return __generator$d(this, function (_b) {
 	            switch (_b.label) {
 	                case 0:
 	                    _a = __assign$4({ verify: false, format: "legacy" }, options), path = _a.path, verify = _a.verify, format = _a.format;
@@ -38045,7 +38037,7 @@
 	 */
 
 	var invariant = function(condition, format, a, b, c, d, e, f) {
-	  if (process.env.NODE_ENV !== 'production') {
+	  {
 	    if (format === undefined) {
 	      throw new Error('invariant requires an error message argument');
 	    }
@@ -38074,7 +38066,7 @@
 
 	var browser = invariant;
 
-	var __awaiter$d = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$c = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -38083,7 +38075,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$d = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$c = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -38122,9 +38114,9 @@
 	    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 	};
 	function getTrustedInputRaw(transport, transactionData, indexLookup) {
-	    return __awaiter$d(this, void 0, void 0, function () {
+	    return __awaiter$c(this, void 0, void 0, function () {
 	        var data, firstRound, prefix, trustedInput, res;
-	        return __generator$d(this, function (_a) {
+	        return __generator$c(this, function (_a) {
 	            switch (_a.label) {
 	                case 0:
 	                    firstRound = false;
@@ -38148,11 +38140,11 @@
 	}
 	function getTrustedInput(transport, indexLookup, transaction, additionals) {
 	    if (additionals === void 0) { additionals = []; }
-	    return __awaiter$d(this, void 0, void 0, function () {
+	    return __awaiter$c(this, void 0, void 0, function () {
 	        var version, inputs, outputs, locktime, nExpiryHeight, extraData, isDecred, isXST, processScriptBlocks, processWholeScriptBlock, inputs_1, inputs_1_1, input, isXSTV2, treeField, data, e_1_1, outputs_1, outputs_1_1, output, data, e_2_1, endData, extraPart, data, res;
 	        var e_1, _a, e_2, _b;
 	        var _this = this;
-	        return __generator$d(this, function (_c) {
+	        return __generator$c(this, function (_c) {
 	            switch (_c.label) {
 	                case 0:
 	                    version = transaction.version, inputs = transaction.inputs, outputs = transaction.outputs, locktime = transaction.locktime, nExpiryHeight = transaction.nExpiryHeight, extraData = transaction.extraData;
@@ -38161,10 +38153,10 @@
 	                    }
 	                    isDecred = additionals.includes("decred");
 	                    isXST = additionals.includes("stealthcoin");
-	                    processScriptBlocks = function (script, sequence) { return __awaiter$d(_this, void 0, void 0, function () {
+	                    processScriptBlocks = function (script, sequence) { return __awaiter$c(_this, void 0, void 0, function () {
 	                        var seq, scriptBlocks, offset, blockSize, res, scriptBlocks_1, scriptBlocks_1_1, scriptBlock, e_3_1;
 	                        var e_3, _a;
-	                        return __generator$d(this, function (_b) {
+	                        return __generator$c(this, function (_b) {
 	                            switch (_b.label) {
 	                                case 0:
 	                                    seq = sequence || Buffer$l.alloc(0);
@@ -38338,7 +38330,7 @@
 	    });
 	}
 
-	var __awaiter$c = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$b = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -38347,7 +38339,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$c = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$b = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -38405,10 +38397,10 @@
 	    if (overwinter === void 0) { overwinter = false; }
 	    if (additionals === void 0) { additionals = []; }
 	    if (useTrustedInputForSegwit === void 0) { useTrustedInputForSegwit = false; }
-	    return __awaiter$c(this, void 0, void 0, function () {
+	    return __awaiter$b(this, void 0, void 0, function () {
 	        var data, i, isDecred, _a, _b, input, prefix, inputValue, scriptBlocks, offset, blockSize, scriptBlocks_1, scriptBlocks_1_1, scriptBlock, e_1_1, e_2_1;
 	        var e_2, _c, e_1, _d;
-	        return __generator$c(this, function (_e) {
+	        return __generator$b(this, function (_e) {
 	            switch (_e.label) {
 	                case 0:
 	                    data = Buffer$l.concat([
@@ -38591,80 +38583,6 @@
 	    });
 	}
 
-	var __awaiter$b = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-	    return new (P || (P = Promise))(function (resolve, reject) {
-	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-	        step((generator = generator.apply(thisArg, _arguments || [])).next());
-	    });
-	};
-	var __generator$b = (undefined && undefined.__generator) || function (thisArg, body) {
-	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-	    function verb(n) { return function (v) { return step([n, v]); }; }
-	    function step(op) {
-	        if (f) throw new TypeError("Generator is already executing.");
-	        while (_) try {
-	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [op[0] & 2, t.value];
-	            switch (op[0]) {
-	                case 0: case 1: t = op; break;
-	                case 4: _.label++; return { value: op[1], done: false };
-	                case 5: _.label++; y = op[1]; op = [0]; continue;
-	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-	                default:
-	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-	                    if (t[2]) _.ops.pop();
-	                    _.trys.pop(); continue;
-	            }
-	            op = body.call(thisArg, _);
-	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-	    }
-	};
-	function provideOutputFullChangePath(transport, path) {
-	    var buffer = bip32asBuffer(path);
-	    return transport.send(0xe0, 0x4a, 0xff, 0x00, buffer);
-	}
-	function hashOutputFull(transport, outputScript, additionals) {
-	    if (additionals === void 0) { additionals = []; }
-	    return __awaiter$b(this, void 0, void 0, function () {
-	        var offset, p1, isDecred, blockSize, p1_1, data;
-	        return __generator$b(this, function (_a) {
-	            switch (_a.label) {
-	                case 0:
-	                    offset = 0;
-	                    p1 = Number(0x80);
-	                    isDecred = additionals.includes("decred");
-	                    ///WARNING: Decred works only with one call (without chunking)
-	                    //TODO: test without this for Decred
-	                    if (isDecred) {
-	                        return [2 /*return*/, transport.send(0xe0, 0x4a, p1, 0x00, outputScript)];
-	                    }
-	                    _a.label = 1;
-	                case 1:
-	                    if (!(offset < outputScript.length)) return [3 /*break*/, 3];
-	                    blockSize = offset + MAX_SCRIPT_BLOCK >= outputScript.length
-	                        ? outputScript.length - offset
-	                        : MAX_SCRIPT_BLOCK;
-	                    p1_1 = offset + blockSize === outputScript.length ? 0x80 : 0x00;
-	                    data = outputScript.slice(offset, offset + blockSize);
-	                    return [4 /*yield*/, transport.send(0xe0, 0x4a, p1_1, 0x00, data)];
-	                case 2:
-	                    _a.sent();
-	                    offset += blockSize;
-	                    return [3 /*break*/, 1];
-	                case 3: return [2 /*return*/];
-	            }
-	        });
-	    });
-	}
-
 	var __awaiter$a = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
@@ -38701,9 +38619,83 @@
 	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
 	    }
 	};
-	var getAppAndVersion = function (transport) { return __awaiter$a(void 0, void 0, void 0, function () {
+	function provideOutputFullChangePath(transport, path) {
+	    var buffer = bip32asBuffer(path);
+	    return transport.send(0xe0, 0x4a, 0xff, 0x00, buffer);
+	}
+	function hashOutputFull(transport, outputScript, additionals) {
+	    if (additionals === void 0) { additionals = []; }
+	    return __awaiter$a(this, void 0, void 0, function () {
+	        var offset, p1, isDecred, blockSize, p1_1, data;
+	        return __generator$a(this, function (_a) {
+	            switch (_a.label) {
+	                case 0:
+	                    offset = 0;
+	                    p1 = Number(0x80);
+	                    isDecred = additionals.includes("decred");
+	                    ///WARNING: Decred works only with one call (without chunking)
+	                    //TODO: test without this for Decred
+	                    if (isDecred) {
+	                        return [2 /*return*/, transport.send(0xe0, 0x4a, p1, 0x00, outputScript)];
+	                    }
+	                    _a.label = 1;
+	                case 1:
+	                    if (!(offset < outputScript.length)) return [3 /*break*/, 3];
+	                    blockSize = offset + MAX_SCRIPT_BLOCK >= outputScript.length
+	                        ? outputScript.length - offset
+	                        : MAX_SCRIPT_BLOCK;
+	                    p1_1 = offset + blockSize === outputScript.length ? 0x80 : 0x00;
+	                    data = outputScript.slice(offset, offset + blockSize);
+	                    return [4 /*yield*/, transport.send(0xe0, 0x4a, p1_1, 0x00, data)];
+	                case 2:
+	                    _a.sent();
+	                    offset += blockSize;
+	                    return [3 /*break*/, 1];
+	                case 3: return [2 /*return*/];
+	            }
+	        });
+	    });
+	}
+
+	var __awaiter$9 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	var __generator$9 = (undefined && undefined.__generator) || function (thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	};
+	var getAppAndVersion = function (transport) { return __awaiter$9(void 0, void 0, void 0, function () {
 	    var r, i, format, nameLength, name, versionLength, version, flagLength, flags;
-	    return __generator$a(this, function (_a) {
+	    return __generator$9(this, function (_a) {
 	        switch (_a.label) {
 	            case 0: return [4 /*yield*/, transport.send(0xb0, 0x01, 0x00, 0x00)];
 	            case 1:
@@ -38746,7 +38738,7 @@
 	    };
 	    return __assign$3.apply(this, arguments);
 	};
-	var __awaiter$9 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$8 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -38755,7 +38747,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$9 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$8 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -38803,10 +38795,10 @@
 	    onDeviceSignatureRequested: function () { }
 	};
 	function createTransaction(transport, arg) {
-	    return __awaiter$9(this, void 0, void 0, function () {
+	    return __awaiter$8(this, void 0, void 0, function () {
 	        var signTx, inputs, associatedKeysets, changePath, outputScriptHex, lockTime, sigHashType, segwit, initialTimestamp, additionals, expiryHeight, onDeviceStreaming, onDeviceSignatureGranted, onDeviceSignatureRequested, useTrustedInputForSegwit, a, e_1, notify, isDecred, isXST, startTime, sapling, bech32, useBip143, nullScript, nullPrevout, defaultVersion, trustedInputs, regularOutputs, signatures, publicKeys, firstRun, resuming, targetTransaction, getTrustedInputCall, outputScript, inputs_1, inputs_1_1, input, trustedInput, sequence, outputs, index, e_2_1, result_1, i, r, i, i, input, script, pseudoTX, pseudoTrustedInputs, signature, i, signatureSize, keySize, offset, lockTimeBuffer, result, witness, i, tmpScriptData, decredWitness_1;
 	        var e_2, _a;
-	        return __generator$9(this, function (_b) {
+	        return __generator$8(this, function (_b) {
 	            switch (_b.label) {
 	                case 0:
 	                    signTx = __assign$3(__assign$3({}, defaultsSignTransaction), arg);
@@ -39129,7 +39121,7 @@
 	    });
 	}
 
-	var __awaiter$8 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$7 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -39138,7 +39130,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$8 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$7 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -39167,9 +39159,9 @@
 	};
 	function signMessage(transport, _a) {
 	    var path = _a.path, messageHex = _a.messageHex;
-	    return __awaiter$8(this, void 0, void 0, function () {
+	    return __awaiter$7(this, void 0, void 0, function () {
 	        var paths, message, offset, _loop_1, res, v, r, s;
-	        return __generator$8(this, function (_b) {
+	        return __generator$7(this, function (_b) {
 	            switch (_b.label) {
 	                case 0:
 	                    paths = bip32Path.fromString(path).toPathArray();
@@ -39177,7 +39169,7 @@
 	                    offset = 0;
 	                    _loop_1 = function () {
 	                        var maxChunkSize, chunkSize, buffer;
-	                        return __generator$8(this, function (_c) {
+	                        return __generator$7(this, function (_c) {
 	                            switch (_c.label) {
 	                                case 0:
 	                                    maxChunkSize = offset === 0
@@ -39249,7 +39241,7 @@
 	    };
 	    return __assign$2.apply(this, arguments);
 	};
-	var __awaiter$7 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$6 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -39258,7 +39250,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$7 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$6 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -39303,10 +39295,10 @@
 	    transactionVersion: DEFAULT_VERSION
 	};
 	function signP2SHTransaction(transport, arg) {
-	    return __awaiter$7(this, void 0, void 0, function () {
+	    return __awaiter$6(this, void 0, void 0, function () {
 	        var _a, inputs, associatedKeysets, outputScriptHex, lockTime, sigHashType, segwit, transactionVersion, initialTimestamp, nullScript, nullPrevout, defaultVersion, trustedInputs, regularOutputs, signatures, firstRun, resuming, startTime, targetTransaction, getTrustedInputCall, outputScript, inputs_1, inputs_1_1, input, trustedInput, sequence, outputs, index, e_1_1, i, sequence, i, input, script, pseudoTX, pseudoTrustedInputs, signature;
 	        var e_1, _b;
-	        return __generator$7(this, function (_c) {
+	        return __generator$6(this, function (_c) {
 	            switch (_c.label) {
 	                case 0:
 	                    _a = __assign$2(__assign$2({}, defaultArg), arg), inputs = _a.inputs, associatedKeysets = _a.associatedKeysets, outputScriptHex = _a.outputScriptHex, lockTime = _a.lockTime, sigHashType = _a.sigHashType, segwit = _a.segwit, transactionVersion = _a.transactionVersion, initialTimestamp = _a.initialTimestamp;
@@ -39453,7 +39445,7 @@
 	    };
 	    return __assign$1.apply(this, arguments);
 	};
-	var __awaiter$6 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$5 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -39462,7 +39454,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$6 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$5 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -39502,9 +39494,9 @@
 	        this.derivationsCache = {};
 	    }
 	    BtcOld.prototype.derivatePath = function (path) {
-	        return __awaiter$6(this, void 0, void 0, function () {
+	        return __awaiter$5(this, void 0, void 0, function () {
 	            var res;
-	            return __generator$6(this, function (_a) {
+	            return __generator$5(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        if (this.derivationsCache[path])
@@ -39522,9 +39514,9 @@
 	    };
 	    BtcOld.prototype.getWalletXpub = function (_a) {
 	        var path = _a.path, xpubVersion = _a.xpubVersion;
-	        return __awaiter$6(this, void 0, void 0, function () {
+	        return __awaiter$5(this, void 0, void 0, function () {
 	            var pathElements, parentPath, parentDerivation, accountDerivation, fingerprint, xpub;
-	            return __generator$6(this, function (_b) {
+	            return __generator$5(this, function (_b) {
 	                switch (_b.label) {
 	                    case 0:
 	                        pathElements = pathStringToArray(path);
@@ -39732,7 +39724,7 @@
 	    return MerkleMap;
 	}());
 
-	var __extends$3 = (undefined && undefined.__extends) || (function () {
+	var __extends$2 = (undefined && undefined.__extends) || (function () {
 	    var extendStatics = function (d, b) {
 	        extendStatics = Object.setPrototypeOf ||
 	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -39784,7 +39776,7 @@
 	 * https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md#sign_psbt
 	 */
 	var MerkelizedPsbt = /** @class */ (function (_super) {
-	    __extends$3(MerkelizedPsbt, _super);
+	    __extends$2(MerkelizedPsbt, _super);
 	    function MerkelizedPsbt(psbt) {
 	        var _this = _super.call(this) || this;
 	        _this.inputMerkleMaps = [];
@@ -39828,7 +39820,7 @@
 	    return MerkelizedPsbt;
 	}(PsbtV2));
 
-	var __extends$2 = (undefined && undefined.__extends) || (function () {
+	var __extends$1 = (undefined && undefined.__extends) || (function () {
 	    var extendStatics = function (d, b) {
 	        extendStatics = Object.setPrototypeOf ||
 	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -39893,7 +39885,7 @@
 	    return ClientCommand;
 	}());
 	var YieldCommand = /** @class */ (function (_super) {
-	    __extends$2(YieldCommand, _super);
+	    __extends$1(YieldCommand, _super);
 	    function YieldCommand(results, progressCallback) {
 	        var _this = _super.call(this) || this;
 	        _this.progressCallback = progressCallback;
@@ -39909,7 +39901,7 @@
 	    return YieldCommand;
 	}(ClientCommand));
 	var GetPreimageCommand = /** @class */ (function (_super) {
-	    __extends$2(GetPreimageCommand, _super);
+	    __extends$1(GetPreimageCommand, _super);
 	    function GetPreimageCommand(known_preimages, queue) {
 	        var _this = _super.call(this) || this;
 	        _this.code = ClientCommandCode.GET_PREIMAGE;
@@ -39955,7 +39947,7 @@
 	    return GetPreimageCommand;
 	}(ClientCommand));
 	var GetMerkleLeafProofCommand = /** @class */ (function (_super) {
-	    __extends$2(GetMerkleLeafProofCommand, _super);
+	    __extends$1(GetMerkleLeafProofCommand, _super);
 	    function GetMerkleLeafProofCommand(known_trees, queue) {
 	        var _this = _super.call(this) || this;
 	        _this.code = ClientCommandCode.GET_MERKLE_LEAF_PROOF;
@@ -40007,7 +39999,7 @@
 	    return GetMerkleLeafProofCommand;
 	}(ClientCommand));
 	var GetMerkleLeafIndexCommand = /** @class */ (function (_super) {
-	    __extends$2(GetMerkleLeafIndexCommand, _super);
+	    __extends$1(GetMerkleLeafIndexCommand, _super);
 	    function GetMerkleLeafIndexCommand(known_trees) {
 	        var _this = _super.call(this) || this;
 	        _this.code = ClientCommandCode.GET_MERKLE_LEAF_INDEX;
@@ -40049,7 +40041,7 @@
 	    return GetMerkleLeafIndexCommand;
 	}(ClientCommand));
 	var GetMoreElementsCommand = /** @class */ (function (_super) {
-	    __extends$2(GetMoreElementsCommand, _super);
+	    __extends$1(GetMoreElementsCommand, _super);
 	    function GetMoreElementsCommand(queue) {
 	        var _this = _super.call(this) || this;
 	        _this.code = ClientCommandCode.GET_MORE_ELEMENTS;
@@ -40168,7 +40160,7 @@
 	    return ClientCommandInterpreter;
 	}());
 
-	var __awaiter$5 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -40177,7 +40169,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$5 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$4 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -40239,9 +40231,9 @@
 	        this.transport = transport;
 	    }
 	    AppClient.prototype.makeRequest = function (ins, data, cci) {
-	        return __awaiter$5(this, void 0, void 0, function () {
+	        return __awaiter$4(this, void 0, void 0, function () {
 	            var response, hwRequest, commandResponse;
-	            return __generator$5(this, function (_a) {
+	            return __generator$4(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, this.transport.send(CLA_BTC, ins, 0, 0, data, [
 	                            0x9000,
@@ -40267,9 +40259,9 @@
 	        });
 	    };
 	    AppClient.prototype.getExtendedPubkey = function (display, pathElements) {
-	        return __awaiter$5(this, void 0, void 0, function () {
+	        return __awaiter$4(this, void 0, void 0, function () {
 	            var response;
-	            return __generator$5(this, function (_a) {
+	            return __generator$4(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        if (pathElements.length > 6) {
@@ -40287,9 +40279,9 @@
 	        });
 	    };
 	    AppClient.prototype.getWalletAddress = function (walletPolicy, walletHMAC, change, addressIndex, display) {
-	        return __awaiter$5(this, void 0, void 0, function () {
+	        return __awaiter$4(this, void 0, void 0, function () {
 	            var clientInterpreter, addressIndexBuffer, response;
-	            return __generator$5(this, function (_a) {
+	            return __generator$4(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        if (change !== 0 && change !== 1)
@@ -40319,10 +40311,10 @@
 	        });
 	    };
 	    AppClient.prototype.signPsbt = function (psbt, walletPolicy, walletHMAC, progressCallback) {
-	        return __awaiter$5(this, void 0, void 0, function () {
+	        return __awaiter$4(this, void 0, void 0, function () {
 	            var merkelizedPsbt, clientInterpreter, _a, _b, map, _c, _d, map, inputMapsRoot, outputMapsRoot, yielded, ret, yielded_1, yielded_1_1, inputAndSig;
 	            var e_1, _e, e_2, _f, e_3, _g;
-	            return __generator$5(this, function (_h) {
+	            return __generator$4(this, function (_h) {
 	                switch (_h.label) {
 	                    case 0:
 	                        merkelizedPsbt = new MerkelizedPsbt(psbt);
@@ -40396,8 +40388,8 @@
 	        });
 	    };
 	    AppClient.prototype.getMasterFingerprint = function () {
-	        return __awaiter$5(this, void 0, void 0, function () {
-	            return __generator$5(this, function (_a) {
+	        return __awaiter$4(this, void 0, void 0, function () {
+	            return __generator$4(this, function (_a) {
 	                return [2 /*return*/, this.makeRequest(BitcoinIns.GET_MASTER_FINGERPRINT, Buffer$l.from([]))];
 	            });
 	        });
@@ -40577,7 +40569,7 @@
 	    return t;
 	}
 
-	var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -40586,7 +40578,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$4 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$3 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -40822,9 +40814,9 @@
 	        return getTrustedInputBIP143(this.transport, indexLookup, transaction, additionals);
 	    };
 	    Btc.prototype.getCorrectImpl = function () {
-	        return __awaiter$4(this, void 0, void 0, function () {
+	        return __awaiter$3(this, void 0, void 0, function () {
 	            var _lazyImpl, impl;
-	            return __generator$4(this, function (_a) {
+	            return __generator$3(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        _lazyImpl = this._lazyImpl;
@@ -40840,9 +40832,9 @@
 	        });
 	    };
 	    Btc.prototype.inferCorrectImpl = function () {
-	        return __awaiter$4(this, void 0, void 0, function () {
+	        return __awaiter$3(this, void 0, void 0, function () {
 	            var appAndVersion, canUseNewImplementation;
-	            return __generator$4(this, function (_a) {
+	            return __generator$3(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, getAppAndVersion(this.transport)];
 	                    case 1:
@@ -41318,7 +41310,7 @@
 		TransportStatusError: TransportStatusError
 	});
 
-	var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -41327,7 +41319,7 @@
 	        step((generator = generator.apply(thisArg, _arguments || [])).next());
 	    });
 	};
-	var __generator$3 = (undefined && undefined.__generator) || function (thisArg, body) {
+	var __generator$2 = (undefined && undefined.__generator) || function (thisArg, body) {
 	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
 	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
 	    function verb(n) { return function (v) { return step([n, v]); }; }
@@ -41415,9 +41407,9 @@
 	        this.send = function (cla, ins, p1, p2, data, statusList) {
 	            if (data === void 0) { data = Buffer$l.alloc(0); }
 	            if (statusList === void 0) { statusList = [StatusCodes.OK]; }
-	            return __awaiter$3(_this, void 0, void 0, function () {
+	            return __awaiter$2(_this, void 0, void 0, function () {
 	                var response, sw;
-	                return __generator$3(this, function (_a) {
+	                return __generator$2(this, function (_a) {
 	                    switch (_a.label) {
 	                        case 0:
 	                            if (data.length >= 256) {
@@ -41439,10 +41431,10 @@
 	                });
 	            });
 	        };
-	        this.exchangeAtomicImpl = function (f) { return __awaiter$3(_this, void 0, void 0, function () {
+	        this.exchangeAtomicImpl = function (f) { return __awaiter$2(_this, void 0, void 0, function () {
 	            var resolveBusy, busyPromise, unresponsiveReached, timeout, res;
 	            var _this = this;
-	            return __generator$3(this, function (_a) {
+	            return __generator$2(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0:
 	                        if (this.exchangeBusyPromise) {
@@ -41607,9 +41599,9 @@
 	            for (var _i = 0; _i < arguments.length; _i++) {
 	                args[_i] = arguments[_i];
 	            }
-	            return __awaiter$3(_this, void 0, void 0, function () {
+	            return __awaiter$2(_this, void 0, void 0, function () {
 	                var _appAPIlock;
-	                return __generator$3(this, function (_a) {
+	                return __generator$2(this, function (_a) {
 	                    switch (_a.label) {
 	                        case 0:
 	                            _appAPIlock = this._appAPIlock;
@@ -41834,111 +41826,6 @@
 	    }
 	}
 
-	var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-	    return new (P || (P = Promise))(function (resolve, reject) {
-	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-	        step((generator = generator.apply(thisArg, _arguments || [])).next());
-	    });
-	};
-	var __generator$2 = (undefined && undefined.__generator) || function (thisArg, body) {
-	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-	    function verb(n) { return function (v) { return step([n, v]); }; }
-	    function step(op) {
-	        if (f) throw new TypeError("Generator is already executing.");
-	        while (_) try {
-	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [op[0] & 2, t.value];
-	            switch (op[0]) {
-	                case 0: case 1: t = op; break;
-	                case 4: _.label++; return { value: op[1], done: false };
-	                case 5: _.label++; y = op[1]; op = [0]; continue;
-	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-	                default:
-	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-	                    if (t[2]) _.ops.pop();
-	                    _.trys.pop(); continue;
-	            }
-	            op = body.call(thisArg, _);
-	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-	    }
-	};
-	var ledgerDevices = [
-	    {
-	        vendorId: ledgerUSBVendorId
-	    },
-	];
-	function requestLedgerDevice() {
-	    return __awaiter$2(this, void 0, void 0, function () {
-	        var device;
-	        return __generator$2(this, function (_a) {
-	            switch (_a.label) {
-	                case 0: return [4 /*yield*/, navigator.usb.requestDevice({
-	                        filters: ledgerDevices
-	                    })];
-	                case 1:
-	                    device = _a.sent();
-	                    return [2 /*return*/, device];
-	            }
-	        });
-	    });
-	}
-	function getLedgerDevices() {
-	    return __awaiter$2(this, void 0, void 0, function () {
-	        var devices;
-	        return __generator$2(this, function (_a) {
-	            switch (_a.label) {
-	                case 0: return [4 /*yield*/, navigator.usb.getDevices()];
-	                case 1:
-	                    devices = _a.sent();
-	                    return [2 /*return*/, devices.filter(function (d) { return d.vendorId === ledgerUSBVendorId; })];
-	            }
-	        });
-	    });
-	}
-	function getFirstLedgerDevice() {
-	    return __awaiter$2(this, void 0, void 0, function () {
-	        var existingDevices;
-	        return __generator$2(this, function (_a) {
-	            switch (_a.label) {
-	                case 0: return [4 /*yield*/, getLedgerDevices()];
-	                case 1:
-	                    existingDevices = _a.sent();
-	                    if (existingDevices.length > 0)
-	                        return [2 /*return*/, existingDevices[0]];
-	                    return [2 /*return*/, requestLedgerDevice()];
-	            }
-	        });
-	    });
-	}
-	var isSupported = function () {
-	    return Promise.resolve(!!navigator &&
-	        !!navigator.usb &&
-	        typeof navigator.usb.getDevices === "function");
-	};
-
-	var __extends$1 = (undefined && undefined.__extends) || (function () {
-	    var extendStatics = function (d, b) {
-	        extendStatics = Object.setPrototypeOf ||
-	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-	            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-	        return extendStatics(d, b);
-	    };
-	    return function (d, b) {
-	        if (typeof b !== "function" && b !== null)
-	            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-	        extendStatics(d, b);
-	        function __() { this.constructor = d; }
-	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	    };
-	})();
 	var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
@@ -41975,6 +41862,111 @@
 	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
 	    }
 	};
+	var ledgerDevices = [
+	    {
+	        vendorId: ledgerUSBVendorId
+	    },
+	];
+	function requestLedgerDevice() {
+	    return __awaiter$1(this, void 0, void 0, function () {
+	        var device;
+	        return __generator$1(this, function (_a) {
+	            switch (_a.label) {
+	                case 0: return [4 /*yield*/, navigator.usb.requestDevice({
+	                        filters: ledgerDevices
+	                    })];
+	                case 1:
+	                    device = _a.sent();
+	                    return [2 /*return*/, device];
+	            }
+	        });
+	    });
+	}
+	function getLedgerDevices() {
+	    return __awaiter$1(this, void 0, void 0, function () {
+	        var devices;
+	        return __generator$1(this, function (_a) {
+	            switch (_a.label) {
+	                case 0: return [4 /*yield*/, navigator.usb.getDevices()];
+	                case 1:
+	                    devices = _a.sent();
+	                    return [2 /*return*/, devices.filter(function (d) { return d.vendorId === ledgerUSBVendorId; })];
+	            }
+	        });
+	    });
+	}
+	function getFirstLedgerDevice() {
+	    return __awaiter$1(this, void 0, void 0, function () {
+	        var existingDevices;
+	        return __generator$1(this, function (_a) {
+	            switch (_a.label) {
+	                case 0: return [4 /*yield*/, getLedgerDevices()];
+	                case 1:
+	                    existingDevices = _a.sent();
+	                    if (existingDevices.length > 0)
+	                        return [2 /*return*/, existingDevices[0]];
+	                    return [2 /*return*/, requestLedgerDevice()];
+	            }
+	        });
+	    });
+	}
+	var isSupported = function () {
+	    return Promise.resolve(!!navigator &&
+	        !!navigator.usb &&
+	        typeof navigator.usb.getDevices === "function");
+	};
+
+	var __extends = (undefined && undefined.__extends) || (function () {
+	    var extendStatics = function (d, b) {
+	        extendStatics = Object.setPrototypeOf ||
+	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+	        return extendStatics(d, b);
+	    };
+	    return function (d, b) {
+	        if (typeof b !== "function" && b !== null)
+	            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
+	var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	};
 	var configurationValue = 1;
 	var endpointNumber = 3;
 	/**
@@ -41985,7 +41977,7 @@
 	 * TransportWebUSB.create().then(transport => ...)
 	 */
 	var TransportWebUSB = /** @class */ (function (_super) {
-	    __extends$1(TransportWebUSB, _super);
+	    __extends(TransportWebUSB, _super);
 	    function TransportWebUSB(device, interfaceNumber) {
 	        var _this = _super.call(this) || this;
 	        _this.channel = Math.floor(Math.random() * 0xffff);
@@ -42006,9 +41998,9 @@
 	     * Similar to create() except it will always display the device permission (even if some devices are already accepted).
 	     */
 	    TransportWebUSB.request = function () {
-	        return __awaiter$1(this, void 0, void 0, function () {
+	        return __awaiter(this, void 0, void 0, function () {
 	            var device;
-	            return __generator$1(this, function (_a) {
+	            return __generator(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, requestLedgerDevice()];
 	                    case 1:
@@ -42022,9 +42014,9 @@
 	     * Similar to create() except it will never display the device permission (it returns a Promise<?Transport>, null if it fails to find a device).
 	     */
 	    TransportWebUSB.openConnected = function () {
-	        return __awaiter$1(this, void 0, void 0, function () {
+	        return __awaiter(this, void 0, void 0, function () {
 	            var devices;
-	            return __generator$1(this, function (_a) {
+	            return __generator(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, getLedgerDevices()];
 	                    case 1:
@@ -42040,9 +42032,9 @@
 	     * Create a Ledger transport with a USBDevice
 	     */
 	    TransportWebUSB.open = function (device) {
-	        return __awaiter$1(this, void 0, void 0, function () {
+	        return __awaiter(this, void 0, void 0, function () {
 	            var iface, interfaceNumber, e_1, transport, onDisconnect;
-	            return __generator$1(this, function (_a) {
+	            return __generator(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, device.open()];
 	                    case 1:
@@ -42096,8 +42088,8 @@
 	     * Release the transport device
 	     */
 	    TransportWebUSB.prototype.close = function () {
-	        return __awaiter$1(this, void 0, void 0, function () {
-	            return __generator$1(this, function (_a) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
 	                switch (_a.label) {
 	                    case 0: return [4 /*yield*/, this.exchangeBusyPromise];
 	                    case 1:
@@ -42122,14 +42114,14 @@
 	     * @returns a promise of apdu response
 	     */
 	    TransportWebUSB.prototype.exchange = function (apdu) {
-	        return __awaiter$1(this, void 0, void 0, function () {
+	        return __awaiter(this, void 0, void 0, function () {
 	            var b;
 	            var _this = this;
-	            return __generator$1(this, function (_a) {
+	            return __generator(this, function (_a) {
 	                switch (_a.label) {
-	                    case 0: return [4 /*yield*/, this.exchangeAtomicImpl(function () { return __awaiter$1(_this, void 0, void 0, function () {
+	                    case 0: return [4 /*yield*/, this.exchangeAtomicImpl(function () { return __awaiter(_this, void 0, void 0, function () {
 	                            var _a, channel, packetSize, framing, blocks, i, result, acc, r, buffer;
-	                            return __generator$1(this, function (_b) {
+	                            return __generator(this, function (_b) {
 	                                switch (_b.label) {
 	                                    case 0:
 	                                        _a = this, channel = _a.channel, packetSize = _a.packetSize;
@@ -42221,9 +42213,9 @@
 	    return TransportWebUSB;
 	}(Transport));
 	function gracefullyResetDevice(device) {
-	    return __awaiter$1(this, void 0, void 0, function () {
+	    return __awaiter(this, void 0, void 0, function () {
 	        var err_1;
-	        return __generator$1(this, function (_a) {
+	        return __generator(this, function (_a) {
 	            switch (_a.label) {
 	                case 0:
 	                    _a.trys.push([0, 2, , 3]);
@@ -42246,1966 +42238,8 @@
 		'default': TransportWebUSB
 	});
 
-	var axios$2 = {exports: {}};
-
-	var bind$2 = function bind(fn, thisArg) {
-	  return function wrap() {
-	    var args = new Array(arguments.length);
-	    for (var i = 0; i < args.length; i++) {
-	      args[i] = arguments[i];
-	    }
-	    return fn.apply(thisArg, args);
-	  };
-	};
-
-	var bind$1 = bind$2;
-
-	// utils is a library of generic helper functions non-specific to axios
-
-	var toString = Object.prototype.toString;
-
-	/**
-	 * Determine if a value is an Array
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is an Array, otherwise false
-	 */
-	function isArray(val) {
-	  return toString.call(val) === '[object Array]';
-	}
-
-	/**
-	 * Determine if a value is undefined
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if the value is undefined, otherwise false
-	 */
-	function isUndefined(val) {
-	  return typeof val === 'undefined';
-	}
-
-	/**
-	 * Determine if a value is a Buffer
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a Buffer, otherwise false
-	 */
-	function isBuffer(val) {
-	  return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor)
-	    && typeof val.constructor.isBuffer === 'function' && val.constructor.isBuffer(val);
-	}
-
-	/**
-	 * Determine if a value is an ArrayBuffer
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is an ArrayBuffer, otherwise false
-	 */
-	function isArrayBuffer(val) {
-	  return toString.call(val) === '[object ArrayBuffer]';
-	}
-
-	/**
-	 * Determine if a value is a FormData
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is an FormData, otherwise false
-	 */
-	function isFormData(val) {
-	  return (typeof FormData !== 'undefined') && (val instanceof FormData);
-	}
-
-	/**
-	 * Determine if a value is a view on an ArrayBuffer
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
-	 */
-	function isArrayBufferView(val) {
-	  var result;
-	  if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
-	    result = ArrayBuffer.isView(val);
-	  } else {
-	    result = (val) && (val.buffer) && (val.buffer instanceof ArrayBuffer);
-	  }
-	  return result;
-	}
-
-	/**
-	 * Determine if a value is a String
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a String, otherwise false
-	 */
-	function isString(val) {
-	  return typeof val === 'string';
-	}
-
-	/**
-	 * Determine if a value is a Number
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a Number, otherwise false
-	 */
-	function isNumber(val) {
-	  return typeof val === 'number';
-	}
-
-	/**
-	 * Determine if a value is an Object
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is an Object, otherwise false
-	 */
-	function isObject(val) {
-	  return val !== null && typeof val === 'object';
-	}
-
-	/**
-	 * Determine if a value is a plain Object
-	 *
-	 * @param {Object} val The value to test
-	 * @return {boolean} True if value is a plain Object, otherwise false
-	 */
-	function isPlainObject(val) {
-	  if (toString.call(val) !== '[object Object]') {
-	    return false;
-	  }
-
-	  var prototype = Object.getPrototypeOf(val);
-	  return prototype === null || prototype === Object.prototype;
-	}
-
-	/**
-	 * Determine if a value is a Date
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a Date, otherwise false
-	 */
-	function isDate(val) {
-	  return toString.call(val) === '[object Date]';
-	}
-
-	/**
-	 * Determine if a value is a File
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a File, otherwise false
-	 */
-	function isFile(val) {
-	  return toString.call(val) === '[object File]';
-	}
-
-	/**
-	 * Determine if a value is a Blob
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a Blob, otherwise false
-	 */
-	function isBlob(val) {
-	  return toString.call(val) === '[object Blob]';
-	}
-
-	/**
-	 * Determine if a value is a Function
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a Function, otherwise false
-	 */
-	function isFunction(val) {
-	  return toString.call(val) === '[object Function]';
-	}
-
-	/**
-	 * Determine if a value is a Stream
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a Stream, otherwise false
-	 */
-	function isStream(val) {
-	  return isObject(val) && isFunction(val.pipe);
-	}
-
-	/**
-	 * Determine if a value is a URLSearchParams object
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a URLSearchParams object, otherwise false
-	 */
-	function isURLSearchParams(val) {
-	  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
-	}
-
-	/**
-	 * Trim excess whitespace off the beginning and end of a string
-	 *
-	 * @param {String} str The String to trim
-	 * @returns {String} The String freed of excess whitespace
-	 */
-	function trim(str) {
-	  return str.trim ? str.trim() : str.replace(/^\s+|\s+$/g, '');
-	}
-
-	/**
-	 * Determine if we're running in a standard browser environment
-	 *
-	 * This allows axios to run in a web worker, and react-native.
-	 * Both environments support XMLHttpRequest, but not fully standard globals.
-	 *
-	 * web workers:
-	 *  typeof window -> undefined
-	 *  typeof document -> undefined
-	 *
-	 * react-native:
-	 *  navigator.product -> 'ReactNative'
-	 * nativescript
-	 *  navigator.product -> 'NativeScript' or 'NS'
-	 */
-	function isStandardBrowserEnv() {
-	  if (typeof navigator !== 'undefined' && (navigator.product === 'ReactNative' ||
-	                                           navigator.product === 'NativeScript' ||
-	                                           navigator.product === 'NS')) {
-	    return false;
-	  }
-	  return (
-	    typeof window !== 'undefined' &&
-	    typeof document !== 'undefined'
-	  );
-	}
-
-	/**
-	 * Iterate over an Array or an Object invoking a function for each item.
-	 *
-	 * If `obj` is an Array callback will be called passing
-	 * the value, index, and complete array for each item.
-	 *
-	 * If 'obj' is an Object callback will be called passing
-	 * the value, key, and complete object for each property.
-	 *
-	 * @param {Object|Array} obj The object to iterate
-	 * @param {Function} fn The callback to invoke for each item
-	 */
-	function forEach(obj, fn) {
-	  // Don't bother if no value provided
-	  if (obj === null || typeof obj === 'undefined') {
-	    return;
-	  }
-
-	  // Force an array if not already something iterable
-	  if (typeof obj !== 'object') {
-	    /*eslint no-param-reassign:0*/
-	    obj = [obj];
-	  }
-
-	  if (isArray(obj)) {
-	    // Iterate over array values
-	    for (var i = 0, l = obj.length; i < l; i++) {
-	      fn.call(null, obj[i], i, obj);
-	    }
-	  } else {
-	    // Iterate over object keys
-	    for (var key in obj) {
-	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-	        fn.call(null, obj[key], key, obj);
-	      }
-	    }
-	  }
-	}
-
-	/**
-	 * Accepts varargs expecting each argument to be an object, then
-	 * immutably merges the properties of each object and returns result.
-	 *
-	 * When multiple objects contain the same key the later object in
-	 * the arguments list will take precedence.
-	 *
-	 * Example:
-	 *
-	 * ```js
-	 * var result = merge({foo: 123}, {foo: 456});
-	 * console.log(result.foo); // outputs 456
-	 * ```
-	 *
-	 * @param {Object} obj1 Object to merge
-	 * @returns {Object} Result of all merge properties
-	 */
-	function merge(/* obj1, obj2, obj3, ... */) {
-	  var result = {};
-	  function assignValue(val, key) {
-	    if (isPlainObject(result[key]) && isPlainObject(val)) {
-	      result[key] = merge(result[key], val);
-	    } else if (isPlainObject(val)) {
-	      result[key] = merge({}, val);
-	    } else if (isArray(val)) {
-	      result[key] = val.slice();
-	    } else {
-	      result[key] = val;
-	    }
-	  }
-
-	  for (var i = 0, l = arguments.length; i < l; i++) {
-	    forEach(arguments[i], assignValue);
-	  }
-	  return result;
-	}
-
-	/**
-	 * Extends object a by mutably adding to it the properties of object b.
-	 *
-	 * @param {Object} a The object to be extended
-	 * @param {Object} b The object to copy properties from
-	 * @param {Object} thisArg The object to bind function to
-	 * @return {Object} The resulting value of object a
-	 */
-	function extend(a, b, thisArg) {
-	  forEach(b, function assignValue(val, key) {
-	    if (thisArg && typeof val === 'function') {
-	      a[key] = bind$1(val, thisArg);
-	    } else {
-	      a[key] = val;
-	    }
-	  });
-	  return a;
-	}
-
-	/**
-	 * Remove byte order marker. This catches EF BB BF (the UTF-8 BOM)
-	 *
-	 * @param {string} content with BOM
-	 * @return {string} content value without BOM
-	 */
-	function stripBOM(content) {
-	  if (content.charCodeAt(0) === 0xFEFF) {
-	    content = content.slice(1);
-	  }
-	  return content;
-	}
-
-	var utils$d = {
-	  isArray: isArray,
-	  isArrayBuffer: isArrayBuffer,
-	  isBuffer: isBuffer,
-	  isFormData: isFormData,
-	  isArrayBufferView: isArrayBufferView,
-	  isString: isString,
-	  isNumber: isNumber,
-	  isObject: isObject,
-	  isPlainObject: isPlainObject,
-	  isUndefined: isUndefined,
-	  isDate: isDate,
-	  isFile: isFile,
-	  isBlob: isBlob,
-	  isFunction: isFunction,
-	  isStream: isStream,
-	  isURLSearchParams: isURLSearchParams,
-	  isStandardBrowserEnv: isStandardBrowserEnv,
-	  forEach: forEach,
-	  merge: merge,
-	  extend: extend,
-	  trim: trim,
-	  stripBOM: stripBOM
-	};
-
-	var utils$c = utils$d;
-
-	function encode(val) {
-	  return encodeURIComponent(val).
-	    replace(/%3A/gi, ':').
-	    replace(/%24/g, '$').
-	    replace(/%2C/gi, ',').
-	    replace(/%20/g, '+').
-	    replace(/%5B/gi, '[').
-	    replace(/%5D/gi, ']');
-	}
-
-	/**
-	 * Build a URL by appending params to the end
-	 *
-	 * @param {string} url The base of the url (e.g., http://www.google.com)
-	 * @param {object} [params] The params to be appended
-	 * @returns {string} The formatted url
-	 */
-	var buildURL$2 = function buildURL(url, params, paramsSerializer) {
-	  /*eslint no-param-reassign:0*/
-	  if (!params) {
-	    return url;
-	  }
-
-	  var serializedParams;
-	  if (paramsSerializer) {
-	    serializedParams = paramsSerializer(params);
-	  } else if (utils$c.isURLSearchParams(params)) {
-	    serializedParams = params.toString();
-	  } else {
-	    var parts = [];
-
-	    utils$c.forEach(params, function serialize(val, key) {
-	      if (val === null || typeof val === 'undefined') {
-	        return;
-	      }
-
-	      if (utils$c.isArray(val)) {
-	        key = key + '[]';
-	      } else {
-	        val = [val];
-	      }
-
-	      utils$c.forEach(val, function parseValue(v) {
-	        if (utils$c.isDate(v)) {
-	          v = v.toISOString();
-	        } else if (utils$c.isObject(v)) {
-	          v = JSON.stringify(v);
-	        }
-	        parts.push(encode(key) + '=' + encode(v));
-	      });
-	    });
-
-	    serializedParams = parts.join('&');
-	  }
-
-	  if (serializedParams) {
-	    var hashmarkIndex = url.indexOf('#');
-	    if (hashmarkIndex !== -1) {
-	      url = url.slice(0, hashmarkIndex);
-	    }
-
-	    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
-	  }
-
-	  return url;
-	};
-
-	var utils$b = utils$d;
-
-	function InterceptorManager$1() {
-	  this.handlers = [];
-	}
-
-	/**
-	 * Add a new interceptor to the stack
-	 *
-	 * @param {Function} fulfilled The function to handle `then` for a `Promise`
-	 * @param {Function} rejected The function to handle `reject` for a `Promise`
-	 *
-	 * @return {Number} An ID used to remove interceptor later
-	 */
-	InterceptorManager$1.prototype.use = function use(fulfilled, rejected, options) {
-	  this.handlers.push({
-	    fulfilled: fulfilled,
-	    rejected: rejected,
-	    synchronous: options ? options.synchronous : false,
-	    runWhen: options ? options.runWhen : null
-	  });
-	  return this.handlers.length - 1;
-	};
-
-	/**
-	 * Remove an interceptor from the stack
-	 *
-	 * @param {Number} id The ID that was returned by `use`
-	 */
-	InterceptorManager$1.prototype.eject = function eject(id) {
-	  if (this.handlers[id]) {
-	    this.handlers[id] = null;
-	  }
-	};
-
-	/**
-	 * Iterate over all the registered interceptors
-	 *
-	 * This method is particularly useful for skipping over any
-	 * interceptors that may have become `null` calling `eject`.
-	 *
-	 * @param {Function} fn The function to call for each interceptor
-	 */
-	InterceptorManager$1.prototype.forEach = function forEach(fn) {
-	  utils$b.forEach(this.handlers, function forEachHandler(h) {
-	    if (h !== null) {
-	      fn(h);
-	    }
-	  });
-	};
-
-	var InterceptorManager_1 = InterceptorManager$1;
-
-	var utils$a = utils$d;
-
-	var normalizeHeaderName$1 = function normalizeHeaderName(headers, normalizedName) {
-	  utils$a.forEach(headers, function processHeader(value, name) {
-	    if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
-	      headers[normalizedName] = value;
-	      delete headers[name];
-	    }
-	  });
-	};
-
-	/**
-	 * Update an Error with the specified config, error code, and response.
-	 *
-	 * @param {Error} error The error to update.
-	 * @param {Object} config The config.
-	 * @param {string} [code] The error code (for example, 'ECONNABORTED').
-	 * @param {Object} [request] The request.
-	 * @param {Object} [response] The response.
-	 * @returns {Error} The error.
-	 */
-	var enhanceError$2 = function enhanceError(error, config, code, request, response) {
-	  error.config = config;
-	  if (code) {
-	    error.code = code;
-	  }
-
-	  error.request = request;
-	  error.response = response;
-	  error.isAxiosError = true;
-
-	  error.toJSON = function toJSON() {
-	    return {
-	      // Standard
-	      message: this.message,
-	      name: this.name,
-	      // Microsoft
-	      description: this.description,
-	      number: this.number,
-	      // Mozilla
-	      fileName: this.fileName,
-	      lineNumber: this.lineNumber,
-	      columnNumber: this.columnNumber,
-	      stack: this.stack,
-	      // Axios
-	      config: this.config,
-	      code: this.code,
-	      status: this.response && this.response.status ? this.response.status : null
-	    };
-	  };
-	  return error;
-	};
-
-	var enhanceError$1 = enhanceError$2;
-
-	/**
-	 * Create an Error with the specified message, config, error code, request and response.
-	 *
-	 * @param {string} message The error message.
-	 * @param {Object} config The config.
-	 * @param {string} [code] The error code (for example, 'ECONNABORTED').
-	 * @param {Object} [request] The request.
-	 * @param {Object} [response] The response.
-	 * @returns {Error} The created error.
-	 */
-	var createError$2 = function createError(message, config, code, request, response) {
-	  var error = new Error(message);
-	  return enhanceError$1(error, config, code, request, response);
-	};
-
-	var createError$1 = createError$2;
-
-	/**
-	 * Resolve or reject a Promise based on response status.
-	 *
-	 * @param {Function} resolve A function that resolves the promise.
-	 * @param {Function} reject A function that rejects the promise.
-	 * @param {object} response The response.
-	 */
-	var settle$1 = function settle(resolve, reject, response) {
-	  var validateStatus = response.config.validateStatus;
-	  if (!response.status || !validateStatus || validateStatus(response.status)) {
-	    resolve(response);
-	  } else {
-	    reject(createError$1(
-	      'Request failed with status code ' + response.status,
-	      response.config,
-	      null,
-	      response.request,
-	      response
-	    ));
-	  }
-	};
-
-	var utils$9 = utils$d;
-
-	var cookies$1 = (
-	  utils$9.isStandardBrowserEnv() ?
-
-	  // Standard browser envs support document.cookie
-	    (function standardBrowserEnv() {
-	      return {
-	        write: function write(name, value, expires, path, domain, secure) {
-	          var cookie = [];
-	          cookie.push(name + '=' + encodeURIComponent(value));
-
-	          if (utils$9.isNumber(expires)) {
-	            cookie.push('expires=' + new Date(expires).toGMTString());
-	          }
-
-	          if (utils$9.isString(path)) {
-	            cookie.push('path=' + path);
-	          }
-
-	          if (utils$9.isString(domain)) {
-	            cookie.push('domain=' + domain);
-	          }
-
-	          if (secure === true) {
-	            cookie.push('secure');
-	          }
-
-	          document.cookie = cookie.join('; ');
-	        },
-
-	        read: function read(name) {
-	          var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
-	          return (match ? decodeURIComponent(match[3]) : null);
-	        },
-
-	        remove: function remove(name) {
-	          this.write(name, '', Date.now() - 86400000);
-	        }
-	      };
-	    })() :
-
-	  // Non standard browser env (web workers, react-native) lack needed support.
-	    (function nonStandardBrowserEnv() {
-	      return {
-	        write: function write() {},
-	        read: function read() { return null; },
-	        remove: function remove() {}
-	      };
-	    })()
-	);
-
-	/**
-	 * Determines whether the specified URL is absolute
-	 *
-	 * @param {string} url The URL to test
-	 * @returns {boolean} True if the specified URL is absolute, otherwise false
-	 */
-	var isAbsoluteURL$1 = function isAbsoluteURL(url) {
-	  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
-	  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
-	  // by any combination of letters, digits, plus, period, or hyphen.
-	  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
-	};
-
-	/**
-	 * Creates a new URL by combining the specified URLs
-	 *
-	 * @param {string} baseURL The base URL
-	 * @param {string} relativeURL The relative URL
-	 * @returns {string} The combined URL
-	 */
-	var combineURLs$1 = function combineURLs(baseURL, relativeURL) {
-	  return relativeURL
-	    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
-	    : baseURL;
-	};
-
-	var isAbsoluteURL = isAbsoluteURL$1;
-	var combineURLs = combineURLs$1;
-
-	/**
-	 * Creates a new URL by combining the baseURL with the requestedURL,
-	 * only when the requestedURL is not already an absolute URL.
-	 * If the requestURL is absolute, this function returns the requestedURL untouched.
-	 *
-	 * @param {string} baseURL The base URL
-	 * @param {string} requestedURL Absolute or relative URL to combine
-	 * @returns {string} The combined full path
-	 */
-	var buildFullPath$1 = function buildFullPath(baseURL, requestedURL) {
-	  if (baseURL && !isAbsoluteURL(requestedURL)) {
-	    return combineURLs(baseURL, requestedURL);
-	  }
-	  return requestedURL;
-	};
-
-	var utils$8 = utils$d;
-
-	// Headers whose duplicates are ignored by node
-	// c.f. https://nodejs.org/api/http.html#http_message_headers
-	var ignoreDuplicateOf = [
-	  'age', 'authorization', 'content-length', 'content-type', 'etag',
-	  'expires', 'from', 'host', 'if-modified-since', 'if-unmodified-since',
-	  'last-modified', 'location', 'max-forwards', 'proxy-authorization',
-	  'referer', 'retry-after', 'user-agent'
-	];
-
-	/**
-	 * Parse headers into an object
-	 *
-	 * ```
-	 * Date: Wed, 27 Aug 2014 08:58:49 GMT
-	 * Content-Type: application/json
-	 * Connection: keep-alive
-	 * Transfer-Encoding: chunked
-	 * ```
-	 *
-	 * @param {String} headers Headers needing to be parsed
-	 * @returns {Object} Headers parsed into an object
-	 */
-	var parseHeaders$1 = function parseHeaders(headers) {
-	  var parsed = {};
-	  var key;
-	  var val;
-	  var i;
-
-	  if (!headers) { return parsed; }
-
-	  utils$8.forEach(headers.split('\n'), function parser(line) {
-	    i = line.indexOf(':');
-	    key = utils$8.trim(line.substr(0, i)).toLowerCase();
-	    val = utils$8.trim(line.substr(i + 1));
-
-	    if (key) {
-	      if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
-	        return;
-	      }
-	      if (key === 'set-cookie') {
-	        parsed[key] = (parsed[key] ? parsed[key] : []).concat([val]);
-	      } else {
-	        parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
-	      }
-	    }
-	  });
-
-	  return parsed;
-	};
-
-	var utils$7 = utils$d;
-
-	var isURLSameOrigin$1 = (
-	  utils$7.isStandardBrowserEnv() ?
-
-	  // Standard browser envs have full support of the APIs needed to test
-	  // whether the request URL is of the same origin as current location.
-	    (function standardBrowserEnv() {
-	      var msie = /(msie|trident)/i.test(navigator.userAgent);
-	      var urlParsingNode = document.createElement('a');
-	      var originURL;
-
-	      /**
-	    * Parse a URL to discover it's components
-	    *
-	    * @param {String} url The URL to be parsed
-	    * @returns {Object}
-	    */
-	      function resolveURL(url) {
-	        var href = url;
-
-	        if (msie) {
-	        // IE needs attribute set twice to normalize properties
-	          urlParsingNode.setAttribute('href', href);
-	          href = urlParsingNode.href;
-	        }
-
-	        urlParsingNode.setAttribute('href', href);
-
-	        // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
-	        return {
-	          href: urlParsingNode.href,
-	          protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
-	          host: urlParsingNode.host,
-	          search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
-	          hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
-	          hostname: urlParsingNode.hostname,
-	          port: urlParsingNode.port,
-	          pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
-	            urlParsingNode.pathname :
-	            '/' + urlParsingNode.pathname
-	        };
-	      }
-
-	      originURL = resolveURL(window.location.href);
-
-	      /**
-	    * Determine if a URL shares the same origin as the current location
-	    *
-	    * @param {String} requestURL The URL to test
-	    * @returns {boolean} True if URL shares the same origin, otherwise false
-	    */
-	      return function isURLSameOrigin(requestURL) {
-	        var parsed = (utils$7.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
-	        return (parsed.protocol === originURL.protocol &&
-	            parsed.host === originURL.host);
-	      };
-	    })() :
-
-	  // Non standard browser envs (web workers, react-native) lack needed support.
-	    (function nonStandardBrowserEnv() {
-	      return function isURLSameOrigin() {
-	        return true;
-	      };
-	    })()
-	);
-
-	/**
-	 * A `Cancel` is an object that is thrown when an operation is canceled.
-	 *
-	 * @class
-	 * @param {string=} message The message.
-	 */
-	function Cancel$3(message) {
-	  this.message = message;
-	}
-
-	Cancel$3.prototype.toString = function toString() {
-	  return 'Cancel' + (this.message ? ': ' + this.message : '');
-	};
-
-	Cancel$3.prototype.__CANCEL__ = true;
-
-	var Cancel_1 = Cancel$3;
-
-	var utils$6 = utils$d;
-	var settle = settle$1;
-	var cookies = cookies$1;
-	var buildURL$1 = buildURL$2;
-	var buildFullPath = buildFullPath$1;
-	var parseHeaders = parseHeaders$1;
-	var isURLSameOrigin = isURLSameOrigin$1;
-	var createError = createError$2;
-	var defaults$4 = defaults_1;
-	var Cancel$2 = Cancel_1;
-
-	var xhr = function xhrAdapter(config) {
-	  return new Promise(function dispatchXhrRequest(resolve, reject) {
-	    var requestData = config.data;
-	    var requestHeaders = config.headers;
-	    var responseType = config.responseType;
-	    var onCanceled;
-	    function done() {
-	      if (config.cancelToken) {
-	        config.cancelToken.unsubscribe(onCanceled);
-	      }
-
-	      if (config.signal) {
-	        config.signal.removeEventListener('abort', onCanceled);
-	      }
-	    }
-
-	    if (utils$6.isFormData(requestData)) {
-	      delete requestHeaders['Content-Type']; // Let the browser set it
-	    }
-
-	    var request = new XMLHttpRequest();
-
-	    // HTTP basic authentication
-	    if (config.auth) {
-	      var username = config.auth.username || '';
-	      var password = config.auth.password ? unescape(encodeURIComponent(config.auth.password)) : '';
-	      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
-	    }
-
-	    var fullPath = buildFullPath(config.baseURL, config.url);
-	    request.open(config.method.toUpperCase(), buildURL$1(fullPath, config.params, config.paramsSerializer), true);
-
-	    // Set the request timeout in MS
-	    request.timeout = config.timeout;
-
-	    function onloadend() {
-	      if (!request) {
-	        return;
-	      }
-	      // Prepare the response
-	      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
-	      var responseData = !responseType || responseType === 'text' ||  responseType === 'json' ?
-	        request.responseText : request.response;
-	      var response = {
-	        data: responseData,
-	        status: request.status,
-	        statusText: request.statusText,
-	        headers: responseHeaders,
-	        config: config,
-	        request: request
-	      };
-
-	      settle(function _resolve(value) {
-	        resolve(value);
-	        done();
-	      }, function _reject(err) {
-	        reject(err);
-	        done();
-	      }, response);
-
-	      // Clean up request
-	      request = null;
-	    }
-
-	    if ('onloadend' in request) {
-	      // Use onloadend if available
-	      request.onloadend = onloadend;
-	    } else {
-	      // Listen for ready state to emulate onloadend
-	      request.onreadystatechange = function handleLoad() {
-	        if (!request || request.readyState !== 4) {
-	          return;
-	        }
-
-	        // The request errored out and we didn't get a response, this will be
-	        // handled by onerror instead
-	        // With one exception: request that using file: protocol, most browsers
-	        // will return status as 0 even though it's a successful request
-	        if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
-	          return;
-	        }
-	        // readystate handler is calling before onerror or ontimeout handlers,
-	        // so we should call onloadend on the next 'tick'
-	        setTimeout(onloadend);
-	      };
-	    }
-
-	    // Handle browser request cancellation (as opposed to a manual cancellation)
-	    request.onabort = function handleAbort() {
-	      if (!request) {
-	        return;
-	      }
-
-	      reject(createError('Request aborted', config, 'ECONNABORTED', request));
-
-	      // Clean up request
-	      request = null;
-	    };
-
-	    // Handle low level network errors
-	    request.onerror = function handleError() {
-	      // Real errors are hidden from us by the browser
-	      // onerror should only fire if it's a network error
-	      reject(createError('Network Error', config, null, request));
-
-	      // Clean up request
-	      request = null;
-	    };
-
-	    // Handle timeout
-	    request.ontimeout = function handleTimeout() {
-	      var timeoutErrorMessage = config.timeout ? 'timeout of ' + config.timeout + 'ms exceeded' : 'timeout exceeded';
-	      var transitional = config.transitional || defaults$4.transitional;
-	      if (config.timeoutErrorMessage) {
-	        timeoutErrorMessage = config.timeoutErrorMessage;
-	      }
-	      reject(createError(
-	        timeoutErrorMessage,
-	        config,
-	        transitional.clarifyTimeoutError ? 'ETIMEDOUT' : 'ECONNABORTED',
-	        request));
-
-	      // Clean up request
-	      request = null;
-	    };
-
-	    // Add xsrf header
-	    // This is only done if running in a standard browser environment.
-	    // Specifically not if we're in a web worker, or react-native.
-	    if (utils$6.isStandardBrowserEnv()) {
-	      // Add xsrf header
-	      var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
-	        cookies.read(config.xsrfCookieName) :
-	        undefined;
-
-	      if (xsrfValue) {
-	        requestHeaders[config.xsrfHeaderName] = xsrfValue;
-	      }
-	    }
-
-	    // Add headers to the request
-	    if ('setRequestHeader' in request) {
-	      utils$6.forEach(requestHeaders, function setRequestHeader(val, key) {
-	        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
-	          // Remove Content-Type if data is undefined
-	          delete requestHeaders[key];
-	        } else {
-	          // Otherwise add header to the request
-	          request.setRequestHeader(key, val);
-	        }
-	      });
-	    }
-
-	    // Add withCredentials to request if needed
-	    if (!utils$6.isUndefined(config.withCredentials)) {
-	      request.withCredentials = !!config.withCredentials;
-	    }
-
-	    // Add responseType to request if needed
-	    if (responseType && responseType !== 'json') {
-	      request.responseType = config.responseType;
-	    }
-
-	    // Handle progress if needed
-	    if (typeof config.onDownloadProgress === 'function') {
-	      request.addEventListener('progress', config.onDownloadProgress);
-	    }
-
-	    // Not all browsers support upload events
-	    if (typeof config.onUploadProgress === 'function' && request.upload) {
-	      request.upload.addEventListener('progress', config.onUploadProgress);
-	    }
-
-	    if (config.cancelToken || config.signal) {
-	      // Handle cancellation
-	      // eslint-disable-next-line func-names
-	      onCanceled = function(cancel) {
-	        if (!request) {
-	          return;
-	        }
-	        reject(!cancel || (cancel && cancel.type) ? new Cancel$2('canceled') : cancel);
-	        request.abort();
-	        request = null;
-	      };
-
-	      config.cancelToken && config.cancelToken.subscribe(onCanceled);
-	      if (config.signal) {
-	        config.signal.aborted ? onCanceled() : config.signal.addEventListener('abort', onCanceled);
-	      }
-	    }
-
-	    if (!requestData) {
-	      requestData = null;
-	    }
-
-	    // Send the request
-	    request.send(requestData);
-	  });
-	};
-
-	var utils$5 = utils$d;
-	var normalizeHeaderName = normalizeHeaderName$1;
-	var enhanceError = enhanceError$2;
-
-	var DEFAULT_CONTENT_TYPE = {
-	  'Content-Type': 'application/x-www-form-urlencoded'
-	};
-
-	function setContentTypeIfUnset(headers, value) {
-	  if (!utils$5.isUndefined(headers) && utils$5.isUndefined(headers['Content-Type'])) {
-	    headers['Content-Type'] = value;
-	  }
-	}
-
-	function getDefaultAdapter() {
-	  var adapter;
-	  if (typeof XMLHttpRequest !== 'undefined') {
-	    // For browsers use XHR adapter
-	    adapter = xhr;
-	  } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
-	    // For node use HTTP adapter
-	    adapter = xhr;
-	  }
-	  return adapter;
-	}
-
-	function stringifySafely(rawValue, parser, encoder) {
-	  if (utils$5.isString(rawValue)) {
-	    try {
-	      (parser || JSON.parse)(rawValue);
-	      return utils$5.trim(rawValue);
-	    } catch (e) {
-	      if (e.name !== 'SyntaxError') {
-	        throw e;
-	      }
-	    }
-	  }
-
-	  return (encoder || JSON.stringify)(rawValue);
-	}
-
-	var defaults$3 = {
-
-	  transitional: {
-	    silentJSONParsing: true,
-	    forcedJSONParsing: true,
-	    clarifyTimeoutError: false
-	  },
-
-	  adapter: getDefaultAdapter(),
-
-	  transformRequest: [function transformRequest(data, headers) {
-	    normalizeHeaderName(headers, 'Accept');
-	    normalizeHeaderName(headers, 'Content-Type');
-
-	    if (utils$5.isFormData(data) ||
-	      utils$5.isArrayBuffer(data) ||
-	      utils$5.isBuffer(data) ||
-	      utils$5.isStream(data) ||
-	      utils$5.isFile(data) ||
-	      utils$5.isBlob(data)
-	    ) {
-	      return data;
-	    }
-	    if (utils$5.isArrayBufferView(data)) {
-	      return data.buffer;
-	    }
-	    if (utils$5.isURLSearchParams(data)) {
-	      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
-	      return data.toString();
-	    }
-	    if (utils$5.isObject(data) || (headers && headers['Content-Type'] === 'application/json')) {
-	      setContentTypeIfUnset(headers, 'application/json');
-	      return stringifySafely(data);
-	    }
-	    return data;
-	  }],
-
-	  transformResponse: [function transformResponse(data) {
-	    var transitional = this.transitional || defaults$3.transitional;
-	    var silentJSONParsing = transitional && transitional.silentJSONParsing;
-	    var forcedJSONParsing = transitional && transitional.forcedJSONParsing;
-	    var strictJSONParsing = !silentJSONParsing && this.responseType === 'json';
-
-	    if (strictJSONParsing || (forcedJSONParsing && utils$5.isString(data) && data.length)) {
-	      try {
-	        return JSON.parse(data);
-	      } catch (e) {
-	        if (strictJSONParsing) {
-	          if (e.name === 'SyntaxError') {
-	            throw enhanceError(e, this, 'E_JSON_PARSE');
-	          }
-	          throw e;
-	        }
-	      }
-	    }
-
-	    return data;
-	  }],
-
-	  /**
-	   * A timeout in milliseconds to abort a request. If set to 0 (default) a
-	   * timeout is not created.
-	   */
-	  timeout: 0,
-
-	  xsrfCookieName: 'XSRF-TOKEN',
-	  xsrfHeaderName: 'X-XSRF-TOKEN',
-
-	  maxContentLength: -1,
-	  maxBodyLength: -1,
-
-	  validateStatus: function validateStatus(status) {
-	    return status >= 200 && status < 300;
-	  },
-
-	  headers: {
-	    common: {
-	      'Accept': 'application/json, text/plain, */*'
-	    }
-	  }
-	};
-
-	utils$5.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-	  defaults$3.headers[method] = {};
-	});
-
-	utils$5.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-	  defaults$3.headers[method] = utils$5.merge(DEFAULT_CONTENT_TYPE);
-	});
-
-	var defaults_1 = defaults$3;
-
-	var utils$4 = utils$d;
-	var defaults$2 = defaults_1;
-
-	/**
-	 * Transform the data for a request or a response
-	 *
-	 * @param {Object|String} data The data to be transformed
-	 * @param {Array} headers The headers for the request or response
-	 * @param {Array|Function} fns A single function or Array of functions
-	 * @returns {*} The resulting transformed data
-	 */
-	var transformData$1 = function transformData(data, headers, fns) {
-	  var context = this || defaults$2;
-	  /*eslint no-param-reassign:0*/
-	  utils$4.forEach(fns, function transform(fn) {
-	    data = fn.call(context, data, headers);
-	  });
-
-	  return data;
-	};
-
-	var isCancel$1 = function isCancel(value) {
-	  return !!(value && value.__CANCEL__);
-	};
-
-	var utils$3 = utils$d;
-	var transformData = transformData$1;
-	var isCancel = isCancel$1;
-	var defaults$1 = defaults_1;
-	var Cancel$1 = Cancel_1;
-
-	/**
-	 * Throws a `Cancel` if cancellation has been requested.
-	 */
-	function throwIfCancellationRequested(config) {
-	  if (config.cancelToken) {
-	    config.cancelToken.throwIfRequested();
-	  }
-
-	  if (config.signal && config.signal.aborted) {
-	    throw new Cancel$1('canceled');
-	  }
-	}
-
-	/**
-	 * Dispatch a request to the server using the configured adapter.
-	 *
-	 * @param {object} config The config that is to be used for the request
-	 * @returns {Promise} The Promise to be fulfilled
-	 */
-	var dispatchRequest$1 = function dispatchRequest(config) {
-	  throwIfCancellationRequested(config);
-
-	  // Ensure headers exist
-	  config.headers = config.headers || {};
-
-	  // Transform request data
-	  config.data = transformData.call(
-	    config,
-	    config.data,
-	    config.headers,
-	    config.transformRequest
-	  );
-
-	  // Flatten headers
-	  config.headers = utils$3.merge(
-	    config.headers.common || {},
-	    config.headers[config.method] || {},
-	    config.headers
-	  );
-
-	  utils$3.forEach(
-	    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
-	    function cleanHeaderConfig(method) {
-	      delete config.headers[method];
-	    }
-	  );
-
-	  var adapter = config.adapter || defaults$1.adapter;
-
-	  return adapter(config).then(function onAdapterResolution(response) {
-	    throwIfCancellationRequested(config);
-
-	    // Transform response data
-	    response.data = transformData.call(
-	      config,
-	      response.data,
-	      response.headers,
-	      config.transformResponse
-	    );
-
-	    return response;
-	  }, function onAdapterRejection(reason) {
-	    if (!isCancel(reason)) {
-	      throwIfCancellationRequested(config);
-
-	      // Transform response data
-	      if (reason && reason.response) {
-	        reason.response.data = transformData.call(
-	          config,
-	          reason.response.data,
-	          reason.response.headers,
-	          config.transformResponse
-	        );
-	      }
-	    }
-
-	    return Promise.reject(reason);
-	  });
-	};
-
-	var utils$2 = utils$d;
-
-	/**
-	 * Config-specific merge-function which creates a new config-object
-	 * by merging two configuration objects together.
-	 *
-	 * @param {Object} config1
-	 * @param {Object} config2
-	 * @returns {Object} New object resulting from merging config2 to config1
-	 */
-	var mergeConfig$2 = function mergeConfig(config1, config2) {
-	  // eslint-disable-next-line no-param-reassign
-	  config2 = config2 || {};
-	  var config = {};
-
-	  function getMergedValue(target, source) {
-	    if (utils$2.isPlainObject(target) && utils$2.isPlainObject(source)) {
-	      return utils$2.merge(target, source);
-	    } else if (utils$2.isPlainObject(source)) {
-	      return utils$2.merge({}, source);
-	    } else if (utils$2.isArray(source)) {
-	      return source.slice();
-	    }
-	    return source;
-	  }
-
-	  // eslint-disable-next-line consistent-return
-	  function mergeDeepProperties(prop) {
-	    if (!utils$2.isUndefined(config2[prop])) {
-	      return getMergedValue(config1[prop], config2[prop]);
-	    } else if (!utils$2.isUndefined(config1[prop])) {
-	      return getMergedValue(undefined, config1[prop]);
-	    }
-	  }
-
-	  // eslint-disable-next-line consistent-return
-	  function valueFromConfig2(prop) {
-	    if (!utils$2.isUndefined(config2[prop])) {
-	      return getMergedValue(undefined, config2[prop]);
-	    }
-	  }
-
-	  // eslint-disable-next-line consistent-return
-	  function defaultToConfig2(prop) {
-	    if (!utils$2.isUndefined(config2[prop])) {
-	      return getMergedValue(undefined, config2[prop]);
-	    } else if (!utils$2.isUndefined(config1[prop])) {
-	      return getMergedValue(undefined, config1[prop]);
-	    }
-	  }
-
-	  // eslint-disable-next-line consistent-return
-	  function mergeDirectKeys(prop) {
-	    if (prop in config2) {
-	      return getMergedValue(config1[prop], config2[prop]);
-	    } else if (prop in config1) {
-	      return getMergedValue(undefined, config1[prop]);
-	    }
-	  }
-
-	  var mergeMap = {
-	    'url': valueFromConfig2,
-	    'method': valueFromConfig2,
-	    'data': valueFromConfig2,
-	    'baseURL': defaultToConfig2,
-	    'transformRequest': defaultToConfig2,
-	    'transformResponse': defaultToConfig2,
-	    'paramsSerializer': defaultToConfig2,
-	    'timeout': defaultToConfig2,
-	    'timeoutMessage': defaultToConfig2,
-	    'withCredentials': defaultToConfig2,
-	    'adapter': defaultToConfig2,
-	    'responseType': defaultToConfig2,
-	    'xsrfCookieName': defaultToConfig2,
-	    'xsrfHeaderName': defaultToConfig2,
-	    'onUploadProgress': defaultToConfig2,
-	    'onDownloadProgress': defaultToConfig2,
-	    'decompress': defaultToConfig2,
-	    'maxContentLength': defaultToConfig2,
-	    'maxBodyLength': defaultToConfig2,
-	    'transport': defaultToConfig2,
-	    'httpAgent': defaultToConfig2,
-	    'httpsAgent': defaultToConfig2,
-	    'cancelToken': defaultToConfig2,
-	    'socketPath': defaultToConfig2,
-	    'responseEncoding': defaultToConfig2,
-	    'validateStatus': mergeDirectKeys
-	  };
-
-	  utils$2.forEach(Object.keys(config1).concat(Object.keys(config2)), function computeConfigValue(prop) {
-	    var merge = mergeMap[prop] || mergeDeepProperties;
-	    var configValue = merge(prop);
-	    (utils$2.isUndefined(configValue) && merge !== mergeDirectKeys) || (config[prop] = configValue);
-	  });
-
-	  return config;
-	};
-
-	var data = {
-	  "version": "0.24.0"
-	};
-
-	var VERSION = data.version;
-
-	var validators$1 = {};
-
-	// eslint-disable-next-line func-names
-	['object', 'boolean', 'number', 'function', 'string', 'symbol'].forEach(function(type, i) {
-	  validators$1[type] = function validator(thing) {
-	    return typeof thing === type || 'a' + (i < 1 ? 'n ' : ' ') + type;
-	  };
-	});
-
-	var deprecatedWarnings = {};
-
-	/**
-	 * Transitional option validator
-	 * @param {function|boolean?} validator - set to false if the transitional option has been removed
-	 * @param {string?} version - deprecated version / removed since version
-	 * @param {string?} message - some message with additional info
-	 * @returns {function}
-	 */
-	validators$1.transitional = function transitional(validator, version, message) {
-	  function formatMessage(opt, desc) {
-	    return '[Axios v' + VERSION + '] Transitional option \'' + opt + '\'' + desc + (message ? '. ' + message : '');
-	  }
-
-	  // eslint-disable-next-line func-names
-	  return function(value, opt, opts) {
-	    if (validator === false) {
-	      throw new Error(formatMessage(opt, ' has been removed' + (version ? ' in ' + version : '')));
-	    }
-
-	    if (version && !deprecatedWarnings[opt]) {
-	      deprecatedWarnings[opt] = true;
-	      // eslint-disable-next-line no-console
-	      console.warn(
-	        formatMessage(
-	          opt,
-	          ' has been deprecated since v' + version + ' and will be removed in the near future'
-	        )
-	      );
-	    }
-
-	    return validator ? validator(value, opt, opts) : true;
-	  };
-	};
-
-	/**
-	 * Assert object's properties type
-	 * @param {object} options
-	 * @param {object} schema
-	 * @param {boolean?} allowUnknown
-	 */
-
-	function assertOptions(options, schema, allowUnknown) {
-	  if (typeof options !== 'object') {
-	    throw new TypeError('options must be an object');
-	  }
-	  var keys = Object.keys(options);
-	  var i = keys.length;
-	  while (i-- > 0) {
-	    var opt = keys[i];
-	    var validator = schema[opt];
-	    if (validator) {
-	      var value = options[opt];
-	      var result = value === undefined || validator(value, opt, options);
-	      if (result !== true) {
-	        throw new TypeError('option ' + opt + ' must be ' + result);
-	      }
-	      continue;
-	    }
-	    if (allowUnknown !== true) {
-	      throw Error('Unknown option ' + opt);
-	    }
-	  }
-	}
-
-	var validator$1 = {
-	  assertOptions: assertOptions,
-	  validators: validators$1
-	};
-
-	var utils$1 = utils$d;
-	var buildURL = buildURL$2;
-	var InterceptorManager = InterceptorManager_1;
-	var dispatchRequest = dispatchRequest$1;
-	var mergeConfig$1 = mergeConfig$2;
-	var validator = validator$1;
-
-	var validators = validator.validators;
-	/**
-	 * Create a new instance of Axios
-	 *
-	 * @param {Object} instanceConfig The default config for the instance
-	 */
-	function Axios$1(instanceConfig) {
-	  this.defaults = instanceConfig;
-	  this.interceptors = {
-	    request: new InterceptorManager(),
-	    response: new InterceptorManager()
-	  };
-	}
-
-	/**
-	 * Dispatch a request
-	 *
-	 * @param {Object} config The config specific for this request (merged with this.defaults)
-	 */
-	Axios$1.prototype.request = function request(config) {
-	  /*eslint no-param-reassign:0*/
-	  // Allow for axios('example/url'[, config]) a la fetch API
-	  if (typeof config === 'string') {
-	    config = arguments[1] || {};
-	    config.url = arguments[0];
-	  } else {
-	    config = config || {};
-	  }
-
-	  config = mergeConfig$1(this.defaults, config);
-
-	  // Set config.method
-	  if (config.method) {
-	    config.method = config.method.toLowerCase();
-	  } else if (this.defaults.method) {
-	    config.method = this.defaults.method.toLowerCase();
-	  } else {
-	    config.method = 'get';
-	  }
-
-	  var transitional = config.transitional;
-
-	  if (transitional !== undefined) {
-	    validator.assertOptions(transitional, {
-	      silentJSONParsing: validators.transitional(validators.boolean),
-	      forcedJSONParsing: validators.transitional(validators.boolean),
-	      clarifyTimeoutError: validators.transitional(validators.boolean)
-	    }, false);
-	  }
-
-	  // filter out skipped interceptors
-	  var requestInterceptorChain = [];
-	  var synchronousRequestInterceptors = true;
-	  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
-	    if (typeof interceptor.runWhen === 'function' && interceptor.runWhen(config) === false) {
-	      return;
-	    }
-
-	    synchronousRequestInterceptors = synchronousRequestInterceptors && interceptor.synchronous;
-
-	    requestInterceptorChain.unshift(interceptor.fulfilled, interceptor.rejected);
-	  });
-
-	  var responseInterceptorChain = [];
-	  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
-	    responseInterceptorChain.push(interceptor.fulfilled, interceptor.rejected);
-	  });
-
-	  var promise;
-
-	  if (!synchronousRequestInterceptors) {
-	    var chain = [dispatchRequest, undefined];
-
-	    Array.prototype.unshift.apply(chain, requestInterceptorChain);
-	    chain = chain.concat(responseInterceptorChain);
-
-	    promise = Promise.resolve(config);
-	    while (chain.length) {
-	      promise = promise.then(chain.shift(), chain.shift());
-	    }
-
-	    return promise;
-	  }
-
-
-	  var newConfig = config;
-	  while (requestInterceptorChain.length) {
-	    var onFulfilled = requestInterceptorChain.shift();
-	    var onRejected = requestInterceptorChain.shift();
-	    try {
-	      newConfig = onFulfilled(newConfig);
-	    } catch (error) {
-	      onRejected(error);
-	      break;
-	    }
-	  }
-
-	  try {
-	    promise = dispatchRequest(newConfig);
-	  } catch (error) {
-	    return Promise.reject(error);
-	  }
-
-	  while (responseInterceptorChain.length) {
-	    promise = promise.then(responseInterceptorChain.shift(), responseInterceptorChain.shift());
-	  }
-
-	  return promise;
-	};
-
-	Axios$1.prototype.getUri = function getUri(config) {
-	  config = mergeConfig$1(this.defaults, config);
-	  return buildURL(config.url, config.params, config.paramsSerializer).replace(/^\?/, '');
-	};
-
-	// Provide aliases for supported request methods
-	utils$1.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
-	  /*eslint func-names:0*/
-	  Axios$1.prototype[method] = function(url, config) {
-	    return this.request(mergeConfig$1(config || {}, {
-	      method: method,
-	      url: url,
-	      data: (config || {}).data
-	    }));
-	  };
-	});
-
-	utils$1.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-	  /*eslint func-names:0*/
-	  Axios$1.prototype[method] = function(url, data, config) {
-	    return this.request(mergeConfig$1(config || {}, {
-	      method: method,
-	      url: url,
-	      data: data
-	    }));
-	  };
-	});
-
-	var Axios_1 = Axios$1;
-
-	var Cancel = Cancel_1;
-
-	/**
-	 * A `CancelToken` is an object that can be used to request cancellation of an operation.
-	 *
-	 * @class
-	 * @param {Function} executor The executor function.
-	 */
-	function CancelToken(executor) {
-	  if (typeof executor !== 'function') {
-	    throw new TypeError('executor must be a function.');
-	  }
-
-	  var resolvePromise;
-
-	  this.promise = new Promise(function promiseExecutor(resolve) {
-	    resolvePromise = resolve;
-	  });
-
-	  var token = this;
-
-	  // eslint-disable-next-line func-names
-	  this.promise.then(function(cancel) {
-	    if (!token._listeners) return;
-
-	    var i;
-	    var l = token._listeners.length;
-
-	    for (i = 0; i < l; i++) {
-	      token._listeners[i](cancel);
-	    }
-	    token._listeners = null;
-	  });
-
-	  // eslint-disable-next-line func-names
-	  this.promise.then = function(onfulfilled) {
-	    var _resolve;
-	    // eslint-disable-next-line func-names
-	    var promise = new Promise(function(resolve) {
-	      token.subscribe(resolve);
-	      _resolve = resolve;
-	    }).then(onfulfilled);
-
-	    promise.cancel = function reject() {
-	      token.unsubscribe(_resolve);
-	    };
-
-	    return promise;
-	  };
-
-	  executor(function cancel(message) {
-	    if (token.reason) {
-	      // Cancellation has already been requested
-	      return;
-	    }
-
-	    token.reason = new Cancel(message);
-	    resolvePromise(token.reason);
-	  });
-	}
-
-	/**
-	 * Throws a `Cancel` if cancellation has been requested.
-	 */
-	CancelToken.prototype.throwIfRequested = function throwIfRequested() {
-	  if (this.reason) {
-	    throw this.reason;
-	  }
-	};
-
-	/**
-	 * Subscribe to the cancel signal
-	 */
-
-	CancelToken.prototype.subscribe = function subscribe(listener) {
-	  if (this.reason) {
-	    listener(this.reason);
-	    return;
-	  }
-
-	  if (this._listeners) {
-	    this._listeners.push(listener);
-	  } else {
-	    this._listeners = [listener];
-	  }
-	};
-
-	/**
-	 * Unsubscribe from the cancel signal
-	 */
-
-	CancelToken.prototype.unsubscribe = function unsubscribe(listener) {
-	  if (!this._listeners) {
-	    return;
-	  }
-	  var index = this._listeners.indexOf(listener);
-	  if (index !== -1) {
-	    this._listeners.splice(index, 1);
-	  }
-	};
-
-	/**
-	 * Returns an object that contains a new `CancelToken` and a function that, when called,
-	 * cancels the `CancelToken`.
-	 */
-	CancelToken.source = function source() {
-	  var cancel;
-	  var token = new CancelToken(function executor(c) {
-	    cancel = c;
-	  });
-	  return {
-	    token: token,
-	    cancel: cancel
-	  };
-	};
-
-	var CancelToken_1 = CancelToken;
-
-	/**
-	 * Syntactic sugar for invoking a function and expanding an array for arguments.
-	 *
-	 * Common use case would be to use `Function.prototype.apply`.
-	 *
-	 *  ```js
-	 *  function f(x, y, z) {}
-	 *  var args = [1, 2, 3];
-	 *  f.apply(null, args);
-	 *  ```
-	 *
-	 * With `spread` this example can be re-written.
-	 *
-	 *  ```js
-	 *  spread(function(x, y, z) {})([1, 2, 3]);
-	 *  ```
-	 *
-	 * @param {Function} callback
-	 * @returns {Function}
-	 */
-	var spread = function spread(callback) {
-	  return function wrap(arr) {
-	    return callback.apply(null, arr);
-	  };
-	};
-
-	/**
-	 * Determines whether the payload is an error thrown by Axios
-	 *
-	 * @param {*} payload The value to test
-	 * @returns {boolean} True if the payload is an error thrown by Axios, otherwise false
-	 */
-	var isAxiosError = function isAxiosError(payload) {
-	  return (typeof payload === 'object') && (payload.isAxiosError === true);
-	};
-
-	var utils = utils$d;
-	var bind = bind$2;
-	var Axios = Axios_1;
-	var mergeConfig = mergeConfig$2;
-	var defaults = defaults_1;
-
-	/**
-	 * Create an instance of Axios
-	 *
-	 * @param {Object} defaultConfig The default config for the instance
-	 * @return {Axios} A new instance of Axios
-	 */
-	function createInstance(defaultConfig) {
-	  var context = new Axios(defaultConfig);
-	  var instance = bind(Axios.prototype.request, context);
-
-	  // Copy axios.prototype to instance
-	  utils.extend(instance, Axios.prototype, context);
-
-	  // Copy context to instance
-	  utils.extend(instance, context);
-
-	  // Factory for creating new instances
-	  instance.create = function create(instanceConfig) {
-	    return createInstance(mergeConfig(defaultConfig, instanceConfig));
-	  };
-
-	  return instance;
-	}
-
-	// Create the default instance to be exported
-	var axios$1 = createInstance(defaults);
-
-	// Expose Axios class to allow class inheritance
-	axios$1.Axios = Axios;
-
-	// Expose Cancel & CancelToken
-	axios$1.Cancel = Cancel_1;
-	axios$1.CancelToken = CancelToken_1;
-	axios$1.isCancel = isCancel$1;
-	axios$1.VERSION = data.version;
-
-	// Expose all/spread
-	axios$1.all = function all(promises) {
-	  return Promise.all(promises);
-	};
-	axios$1.spread = spread;
-
-	// Expose isAxiosError
-	axios$1.isAxiosError = isAxiosError;
-
-	axios$2.exports = axios$1;
-
-	// Allow use of default import syntax in TypeScript
-	axios$2.exports.default = axios$1;
-
-	var axios = axios$2.exports;
-
-	var __extends = (undefined && undefined.__extends) || (function () {
-	    var extendStatics = function (d, b) {
-	        extendStatics = Object.setPrototypeOf ||
-	            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-	            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-	        return extendStatics(d, b);
-	    };
-	    return function (d, b) {
-	        if (typeof b !== "function" && b !== null)
-	            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-	        extendStatics(d, b);
-	        function __() { this.constructor = d; }
-	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	    };
-	})();
-	var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-	    return new (P || (P = Promise))(function (resolve, reject) {
-	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-	        step((generator = generator.apply(thisArg, _arguments || [])).next());
-	    });
-	};
-	var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
-	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-	    function verb(n) { return function (v) { return step([n, v]); }; }
-	    function step(op) {
-	        if (f) throw new TypeError("Generator is already executing.");
-	        while (_) try {
-	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [op[0] & 2, t.value];
-	            switch (op[0]) {
-	                case 0: case 1: t = op; break;
-	                case 4: _.label++; return { value: op[1], done: false };
-	                case 5: _.label++; y = op[1]; op = [0]; continue;
-	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-	                default:
-	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-	                    if (t[2]) _.ops.pop();
-	                    _.trys.pop(); continue;
-	            }
-	            op = body.call(thisArg, _);
-	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-	    }
-	};
-	/**
-	 * Speculos TCP transport implementation
-	 *
-	 * @example
-	 * import SpeculosHttpTransport from "@ledgerhq/hw-transport-node-speculos-http";
-	 * const transport = await SpeculosHttpTransport.open();
-	 * const res = await transport.send(0xE0, 0x01, 0, 0);
-	 */
-	var SpeculosHttpTransport = /** @class */ (function (_super) {
-	    __extends(SpeculosHttpTransport, _super);
-	    function SpeculosHttpTransport(instance, opts) {
-	        var _this = _super.call(this) || this;
-	        /**
-	         * Press and release button
-	         * buttons available: left, right, both
-	         * @param {*} but
-	         */
-	        _this.button = function (but) {
-	            return new Promise(function (resolve, reject) {
-	                var action = { action: "press-and-release" };
-	                log("speculos-button", "press-and-release", but);
-	                _this.instance
-	                    .post("/button/".concat(but), action)
-	                    .then(function (response) {
-	                    resolve(response.data);
-	                })["catch"](function (e) {
-	                    reject(e);
-	                });
-	            });
-	        };
-	        _this.instance = instance;
-	        _this.opts = opts;
-	        return _this;
-	    }
-	    SpeculosHttpTransport.prototype.exchange = function (apdu) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            var hex;
-	            return __generator(this, function (_a) {
-	                hex = apdu.toString("hex");
-	                log("apdu", "=> " + hex);
-	                return [2 /*return*/, this.instance.post("/apdu", { data: hex }).then(function (r) {
-	                        // r.data is {"data": "hex value of response"}
-	                        var data = r.data.data;
-	                        log("apdu", "<= " + data);
-	                        return Buffer$l.from(data, "hex");
-	                    })];
-	            });
-	        });
-	    };
-	    SpeculosHttpTransport.prototype.close = function () {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                // close event stream
-	                this.eventStream.destroy();
-	                return [2 /*return*/, Promise.resolve()];
-	            });
-	        });
-	    };
-	    SpeculosHttpTransport.isSupported = function () { return Promise.resolve(true); };
-	    // this transport is not discoverable
-	    SpeculosHttpTransport.list = function () { return Promise.resolve([]); };
-	    SpeculosHttpTransport.listen = function (_observer) { return ({
-	        unsubscribe: function () { }
-	    }); };
-	    SpeculosHttpTransport.open = function (opts) {
-	        return new Promise(function (resolve, reject) {
-	            var instance = axios.create(opts);
-	            instance.defaults.baseURL = "http://localhost:5000";
-	            var transport = new SpeculosHttpTransport(instance, opts);
-	            instance({
-	                url: "/events?stream=true",
-	                responseType: "stream"
-	            })
-	                .then(function (response) {
-	                response.data.on("data", function (chunk) {
-	                    log("speculos-event", chunk.toString());
-	                    // XXX: we could process display events here
-	                    // client side automation or UI tests/checks
-	                });
-	                response.data.on("close", function () {
-	                    log("speculos-event", "close");
-	                    transport.emit("disconnect", new DisconnectedDevice("Speculos exited!"));
-	                });
-	                transport.eventStream = response.data;
-	                // we are connected to speculos
-	                resolve(transport);
-	            })["catch"](function (error) {
-	                reject(error);
-	            });
-	        });
-	    };
-	    return SpeculosHttpTransport;
-	}(Transport));
-
-	var SpeculosHttpTransport$1 = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		'default': SpeculosHttpTransport
-	});
-
 	exports.Btc = Btc$1;
 	exports.Log = index;
-	exports.SpeculosTransport = SpeculosHttpTransport$1;
 	exports.TransportWebUSB = TransportWebUSB$1;
 	exports.createHash = browser$4;
 
@@ -44215,6 +42249,5 @@
 
 window.Btc = NewLedger.Btc.default;
 window.TransportWebUSB = NewLedger.TransportWebUSB.default;
-window.SpeculosTransport = NewLedger.SpeculosTransport.default;
 window.Log = NewLedger.Log.default;
 window.createHash = NewLedger.createHash.default;
