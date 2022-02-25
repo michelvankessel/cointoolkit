@@ -38796,7 +38796,7 @@
 	};
 	function createTransaction(transport, arg) {
 	    return __awaiter$8(this, void 0, void 0, function () {
-	        var signTx, inputs, associatedKeysets, changePath, outputScriptHex, lockTime, sigHashType, segwit, initialTimestamp, additionals, expiryHeight, onDeviceStreaming, onDeviceSignatureGranted, onDeviceSignatureRequested, useTrustedInputForSegwit, a, e_1, notify, isDecred, isXST, startTime, sapling, bech32, useBip143, nullScript, nullPrevout, defaultVersion, trustedInputs, regularOutputs, signatures, publicKeys, firstRun, resuming, targetTransaction, getTrustedInputCall, outputScript, inputs_1, inputs_1_1, input, trustedInput, sequence, outputs, index, e_2_1, result_1, i, r, i, i, input, script, pseudoTX, pseudoTrustedInputs, signature, i, signatureSize, keySize, offset, lockTimeBuffer, result, witness, i, tmpScriptData, decredWitness_1;
+	        var signTx, inputs, associatedKeysets, changePath, outputScriptHex, lockTime, sigHashType, segwit, initialTimestamp, additionals, expiryHeight, onDeviceStreaming, onDeviceSignatureGranted, onDeviceSignatureRequested, useTrustedInputForSegwit, a, e_1, notify, isDecred, isXST, sapling, bech32, useBip143, nullScript, nullPrevout, defaultVersion, trustedInputs, regularOutputs, signatures, publicKeys, firstRun, resuming, targetTransaction, getTrustedInputCall, outputScript, inputs_1, inputs_1_1, input, trustedInput, sequence, outputs, index, e_2_1, result_1, i, r, i, i, input, script, pseudoTX, pseudoTrustedInputs, signature, i, signatureSize, keySize, offset, lockTimeBuffer, result, witness, i, tmpScriptData, decredWitness_1;
 	        var e_2, _a;
 	        return __generator$8(this, function (_b) {
 	            switch (_b.label) {
@@ -38838,7 +38838,6 @@
 	                    };
 	                    isDecred = additionals.includes("decred");
 	                    isXST = additionals.includes("stealthcoin");
-	                    startTime = Date.now();
 	                    sapling = additionals.includes("sapling");
 	                    bech32 = segwit && additionals.includes("bech32");
 	                    useBip143 = segwit ||
@@ -38964,7 +38963,7 @@
 	                case 18:
 	                    if (initialTimestamp !== undefined) {
 	                        targetTransaction.timestamp = Buffer$l.alloc(4);
-	                        targetTransaction.timestamp.writeUInt32LE(Math.floor(initialTimestamp + (Date.now() - startTime) / 1000), 0);
+	                        targetTransaction.timestamp.writeUInt32LE(initialTimestamp, 0);
 	                    }
 	                    onDeviceSignatureRequested();
 	                    if (!useBip143) return [3 /*break*/, 23];
