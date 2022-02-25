@@ -2547,7 +2547,7 @@ $(document).ready(function() {
 				});
 
 				$("#signedData .signedToBroadcast").on( "click", function() {
-					$("#broadcast #rawTransaction").val(signed).fadeOut().fadeIn();
+					$("#broadcast #rawTransaction").val($("#signedData textarea").val()).fadeOut().fadeIn();
 					window.location.hash = "#broadcast";
 				});
 			} catch(e) {
