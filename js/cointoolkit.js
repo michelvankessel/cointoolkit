@@ -367,6 +367,13 @@ $(document).ready(function() {
 					h += '<td class="col-xs-1">'+(o.value/("1e"+coinjs.decimalPlaces)).toFixed(coinjs.decimalPlaces)+'</td>';
 					h += '<td class="col-xs-2"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
 					h += '</tr>';
+				} else if(o.script.chunks.length==0) {
+					h += '<tr>';
+					h += '<td><input type="text" class="form-control" value="coinstake" readonly></td>';
+					h += '<td></td>'; // to account for known address value
+					h += '<td class="col-xs-1">0.0000000</td>';
+					h += '<td class="col-xs-2"><input class="form-control" type="text" value="" readonly></td>';
+					h += '</tr>';
 				} else {
 
 					var addr = '';
@@ -382,6 +389,9 @@ $(document).ready(function() {
 						});
 					} else if((o.script.chunks.length==2) && o.script.chunks[0]==0){
 						addr = coinjs.bech32_encode(coinjs.bech32.hrp, [coinjs.bech32.version].concat(coinjs.bech32_convert(o.script.chunks[1], 8, 5, true)));
+					} else if((o.script.chunks.length==2) && o.script.chunks[1]==172){
+						var pubKey = Crypto.util.bytesToHex(o.script.chunks[0])
+						addr = coinjs.pubkey2address(pubKey, coinjs.pub);
 					} else {
 						var scriptHash = Crypto.util.bytesToHex(o.script.chunks[1]);
 						addr = coinjs.scripthash2address(scriptHash, coinjs.multisig);
@@ -707,11 +717,12 @@ $(document).ready(function() {
 				{verify: false, format: "legacy"}
 				);
 
+			var hasTimestamp = isPeercoin && currenttransaction.version < 3;
 			var publicKey = result.publicKey;
 			var path = coinjs.ledgerPath;
 
 			console.log("path",path,"address",result.bitcoinAddress,"pubkey",result.publicKey);
-			var txn = appBtc.splitTransaction(currenttransaction.serialize(),false,isPeercoin);
+			var txn = appBtc.splitTransaction(currenttransaction.serialize(),false,hasTimestamp,false);
 			var outputsBuffer = Crypto.util.bytesToHex(appBtc.serializeTransactionOutputs(txn));
 
 			var inputs = [];
@@ -729,7 +740,8 @@ $(document).ready(function() {
 			for (var i = 0; i < currenttransaction.ins.length; i++) {
 				var result = providers[$("#coinSelector").val()].getTransaction[toolkit.getTransaction](currenttransaction.ins[i].outpoint.hash,i,async function(result) {
 				// todo replace !isPeercoin with proper segwit support flag from coinjs params
-					inputs.push([result[1],appBtc.splitTransaction(result[0],!isPeercoin,isPeercoin),currenttransaction.ins[result[1]].outpoint.index,script]);
+					hasTimestamp = isPeercoin && ['1','2'].includes(result[0][1])
+					inputs.push([result[1],appBtc.splitTransaction(result[0],false,hasTimestamp,false),currenttransaction.ins[result[1]].outpoint.index,script]);
 					paths.push(path);
 					if (inputs.length == currenttransaction.ins.length) {
 						// we are ready
@@ -748,14 +760,18 @@ $(document).ready(function() {
 						var result=false;
 						if (currenttransaction.ins[0].script.buffer.slice(-1) == coinjs.opcode.OP_CHECKMULTISIG) {
 							// check if public key is part of multisig
-							result = await appBtc.signP2SHTransaction(inputs, paths, outputsBuffer, undefined, hashType, false, undefined, timeStamp);
+							var params = {inputs:inputs, associatedKeysets:paths, outputScriptHex:outputsBuffer, transactionVersion:currenttransaction.version, sigHashType: hashType, segwit:false};
+							if (timeStamp) {
+								params.initialTimestamp = timeStamp;
+								}
+							result = await appBtc.signP2SHTransaction(params);
 
 							var success=false;
 
 							console.log("signature result",result);
 							$.each(result, function(idx,itm) {
-								var signature = Crypto.util.hexToBytes(itm);
-								if (currenttransaction.signmultisig(idx,undefined,signature.slice(-1)[0]*1,signature)) {
+								var signature = Crypto.util.hexToBytes(itm+hashType.toString(16));
+								if (currenttransaction.signmultisig(idx,undefined,hashType*1,signature)) {
 									success=true;
 									}
 								});
@@ -767,7 +783,12 @@ $(document).ready(function() {
 									}
 								}
 						else {
-							result = await appBtc.createPaymentTransactionNew(inputs, paths, undefined, outputsBuffer, undefined, undefined, undefined, timeStamp);
+							var params = {inputs:inputs, associatedKeysets:paths, outputScriptHex:outputsBuffer, transactionVersion:currenttransaction.version, sigHashType: hashType, segwit:false};
+							if (timeStamp) {
+								params.initialTimestamp = timeStamp;
+								}
+
+							result = await appBtc.createPaymentTransactionNew(params);
 							callback(result);
 							}
 						}
@@ -2526,7 +2547,7 @@ $(document).ready(function() {
 				});
 
 				$("#signedData .signedToBroadcast").on( "click", function() {
-					$("#broadcast #rawTransaction").val(signed).fadeOut().fadeIn();
+					$("#broadcast #rawTransaction").val($("#signedData textarea").val()).fadeOut().fadeIn();
 					window.location.hash = "#broadcast";
 				});
 			} catch(e) {
