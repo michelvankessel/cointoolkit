@@ -354,6 +354,16 @@
 			coinjs.priv = 0xef;
 			coinjs.multisig = 0xc4;
 		}
+        if (network == "blk-mainnet") {
+			coinjs.pub = 0x19;
+			coinjs.priv = 0x99;
+			coinjs.multisig = 0x55;
+        }
+        if (network == "blk-testnet") {
+			coinjs.pub = 0x6f;
+			coinjs.priv = 0xef;
+			coinjs.multisig = 0xc4;
+		}
 		return savedParams;
 	}
 
